@@ -90,6 +90,32 @@
     return wrap;
   }
 
+  /* ---------- 5.5 渲染官方资源 ---------- */
+  function renderResources(host) {
+    const { RESOURCES } = window.KNOWLEDGE_DATA;
+    if (!RESOURCES) return;
+    RESOURCES.forEach((group) => {
+      const ghead = el("div", "res-group-head");
+      ghead.innerHTML = `<span class="res-dot" style="background:${group.color}"></span><span class="res-cat">${esc(group.cat)}</span><span class="res-count">${group.items.length} 项</span>`;
+      host.appendChild(ghead);
+
+      const grid = el("div", "res-grid");
+      group.items.forEach((it) => {
+        const card = el("div", "res-card");
+        card.style.setProperty("--accent", group.color);
+        const links = (it.links || [])
+          .map((l) => `<a class="res-link" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label)}<span class="res-ext">↗</span></a>`)
+          .join("");
+        card.innerHTML = `
+          <div class="res-name">${esc(it.name)}</div>
+          <div class="res-role">${esc(it.role)}</div>
+          <div class="res-links">${links}</div>`;
+        grid.appendChild(card);
+      });
+      host.appendChild(grid);
+    });
+  }
+
   /* ---------- 6. 渲染术语表 ---------- */
   let glossaryFilter = "全部";
   let glossaryQuery = "";
@@ -213,6 +239,13 @@
           block.appendChild(grid);
           // 延迟到 DOM 挂载后渲染
           setTimeout(renderGlossary, 0);
+        }
+
+        // 官方资源
+        if (blk.render === "resources") {
+          const resHost = el("div");
+          renderResources(resHost);
+          block.appendChild(resHost);
         }
 
         section.appendChild(block);

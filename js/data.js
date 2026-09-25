@@ -705,8 +705,194 @@ const SECTIONS = [
       ]
     }
   ]
+},
+
+/* ======================= 11. 官方资源 ======================= */
+{
+  id: "resources",
+  title: "官方资源",
+  en: "Resources",
+  icon: "⛓",
+  color: "#00d4ff",
+  summary: "内容中涉及的全部工具、模型、框架与平台的官方链接与权威资源，便于直接访问深入了解。",
+  sections: [
+    {
+      heading: "按类别浏览官方资源",
+      paragraphs: [
+        "下方按类别整理了本站内容涉及的主要基础模型、工具界面、微调技术、社区平台、算力服务与学习资源的官方入口。每个条目附核心定位说明，链接直达官网、文档或社区。"
+      ],
+      render: "resources"
+    }
+  ]
 }
 
 ];
 
-window.KNOWLEDGE_DATA = { SECTIONS, GLOSSARY };
+/* ---------- 官方资源数据（按类别分组） ---------- */
+const RESOURCES = [
+
+  { cat: "基础模型", color: "#ff2e88", items: [
+    { name: "Stable Diffusion", role: "开源潜扩散模型，SD 生态核心", links: [
+      { label: "官网 Stability AI", url: "https://stability.ai/" },
+      { label: "模型库 HF", url: "https://huggingface.co/stabilityai" },
+      { label: "论文 Latent Diffusion", url: "https://arxiv.org/abs/2112.10752" }
+    ]},
+    { name: "DALL·E 3", role: "OpenAI 文生图，与 ChatGPT 集成，理解力强", links: [
+      { label: "官网", url: "https://openai.com/dall-e-3" },
+      { label: "API 文档", url: "https://platform.openai.com/docs/guides/images" }
+    ]},
+    { name: "Midjourney", role: "闭源商业模型，艺术质感出众", links: [
+      { label: "官网", url: "https://www.midjourney.com" },
+      { label: "文档", url: "https://docs.midjourney.com/" }
+    ]},
+    { name: "NovelAI", role: "面向二次元的付费文生图/写作平台", links: [
+      { label: "官网", url: "https://novelai.net" },
+      { label: "文档", url: "https://docs.novelai.net/" }
+    ]},
+    { name: "Flux", role: "新一代高质量开源/半开源模型，原 SD 团队创办", links: [
+      { label: "官网 Black Forest Labs", url: "https://blackforestlabs.ai/" },
+      { label: "模型库 HF", url: "https://huggingface.co/black-forest-labs" }
+    ]},
+    { name: "Imagen (Google)", role: "Google 文生图研究模型，文字理解强", links: [
+      { label: "产品页", url: "https://deepmind.google/models/imagen-3/" }
+    ]},
+    { name: "文心一格", role: "百度文生图，中文友好、合规商用", links: [
+      { label: "官网", url: "https://yige.baidu.com" }
+    ]},
+    { name: "通义万相", role: "阿里通义旗下文生图，中文理解好", links: [
+      { label: "官网", url: "https://tongyi.aliyun.com/wanxiang" }
+    ]},
+    { name: "即梦", role: "字节跳动 AI 创作平台，含生图与视频", links: [
+      { label: "官网", url: "https://jimeng.jianying.com" }
+    ]},
+    { name: "腾讯混元生图", role: "腾讯混元大模型的图像生成能力", links: [
+      { label: "官网", url: "https://hunyuan.tencent.com" }
+    ]}
+  ]},
+
+  { cat: "工具与界面", color: "#ffb800", items: [
+    { name: "AUTOMATIC1111 WebUI", role: "SD 最经典图形界面，功能全面、插件丰富", links: [
+      { label: "GitHub", url: "https://github.com/AUTOMATIC1111/stable-diffusion-webui" },
+      { label: "Wiki 文档", url: "https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki" }
+    ]},
+    { name: "ComfyUI", role: "节点式 SD 工作流工具，灵活强大", links: [
+      { label: "GitHub", url: "https://github.com/comfyanonymous/ComfyUI" },
+      { label: "官方文档", url: "https://docs.comfy.org/" },
+      { label: "官网/工作流市场", url: "https://comfy.org/" }
+    ]},
+    { name: "秋叶整合包 / 绘世启动器", role: "民间打包的 SD 开箱即用环境（无单一官网）", links: [
+      { label: "B 站搜索『秋叶』", url: "https://search.bilibili.com/all?keyword=%E7%A7%8B%E5%8F%B" }
+    ]},
+    { name: "Kohya_ss", role: "LoRA / DreamBooth 训练图形工具", links: [
+      { label: "GitHub", url: "https://github.com/bmaltais/kohya_ss" }
+    ]},
+    { name: "WD14 Tagger", role: "从参考图反推提示词的 WebUI 插件", links: [
+      { label: "GitHub", url: "https://github.com/toriato/stable-diffusion-webui-wd14-tagger" }
+    ]},
+    { name: "ADetailer", role: "自动检测面部/手部并局部重绘修复", links: [
+      { label: "GitHub", url: "https://github.com/Bing-su/adetailer" }
+    ]},
+    { name: "Ultimate SD Upscale", role: "分块放大以突破显存限制", links: [
+      { label: "GitHub", url: "https://github.com/Coyote-A/ultimate-upscale-for-automatic1111" }
+    ]},
+    { name: "Real-ESRGAN", role: "图像放大算法与模型，补足细节", links: [
+      { label: "GitHub", url: "https://github.com/xinntao/Real-ESRGAN" }
+    ]}
+  ]},
+
+  { cat: "微调与控制技术", color: "#00d4ff", items: [
+    { name: "LoRA", role: "低秩适配微调，改画风/角色最流行方案", links: [
+      { label: "论文", url: "https://arxiv.org/abs/2106.09685" }
+    ]},
+    { name: "ControlNet", role: "用线稿/姿态/深度等精确控制构图", links: [
+      { label: "论文", url: "https://arxiv.org/abs/2302.05543" },
+      { label: "GitHub", url: "https://github.com/lllyasviel/ControlNet" }
+    ]},
+    { name: "DreamBooth", role: "把特定主体训练进模型，深度记忆", links: [
+      { label: "论文", url: "https://arxiv.org/abs/2208.12242" }
+    ]},
+    { name: "Textual Inversion", role: "学习新词向量代表概念，文件极小", links: [
+      { label: "论文", url: "https://arxiv.org/abs/2208.01618" }
+    ]},
+    { name: "IP-Adapter", role: "用参考图风格/角色即时引导生成", links: [
+      { label: "GitHub", url: "https://github.com/tencent-ailab/IP-Adapter" }
+    ]},
+    { name: "AnimateDiff", role: "把 SD 扩展到视频，生成数秒动画", links: [
+      { label: "GitHub", url: "https://github.com/guoyww/AnimateDiff" }
+    ]}
+  ]},
+
+  { cat: "社区与平台", color: "#7c5cff", items: [
+    { name: "Civitai", role: "全球最大 SD 模型/LoRA 分享社区", links: [
+      { label: "官网", url: "https://civitai.com" },
+      { label: "模型库", url: "https://civitai.com/models" }
+    ]},
+    { name: "Hugging Face", role: "AI 界的 GitHub，模型/数据集/Spaces 托管", links: [
+      { label: "官网", url: "https://huggingface.co" },
+      { label: "文档", url: "https://huggingface.co/docs" }
+    ]},
+    { name: "Liblib 哩布哩布", role: "国内版 Civitai，模型集中、访问快", links: [
+      { label: "官网", url: "https://www.liblib.art" }
+    ]},
+    { name: "魔搭 ModelScope", role: "阿里开源模型社区，国产模型集中地", links: [
+      { label: "官网", url: "https://modelscope.cn" }
+    ]},
+    { name: "r/StableDiffusion", role: "Reddit 上最活跃的 SD 英文社区", links: [
+      { label: "社区", url: "https://www.reddit.com/r/StableDiffusion/" }
+    ]},
+    { name: "OpenXLab 浦源", role: "上海 AI 实验室开源模型与算力平台", links: [
+      { label: "官网", url: "https://openxlab.org.cn" }
+    ]}
+  ]},
+
+  { cat: "算力与部署", color: "#00ffc8", items: [
+    { name: "Banana.dev", role: "无服务器 GPU，把 SD 等模型部署为 API", links: [
+      { label: "官网", url: "https://www.banana.dev" }
+    ]},
+    { name: "Replicate", role: "云端运行开源模型，按次付费，API 友好", links: [
+      { label: "官网", url: "https://replicate.com" }
+    ]},
+    { name: "RunPod", role: "按量租用 GPU，预置 SD/ComfyUI 模板", links: [
+      { label: "官网", url: "https://www.runpod.io" },
+      { label: "模板", url: "https://www.runpod.io/pod-template" }
+    ]},
+    { name: "AutoDL", role: "国内 GPU 租赁，延迟低、支付方便", links: [
+      { label: "官网", url: "https://www.autodl.com" }
+    ]},
+    { name: "矩池云", role: "国内 GPU 算力平台，预置镜像", links: [
+      { label: "官网", url: "https://matpool.com" }
+    ]},
+    { name: "Google Colab", role: "免费/付费云端笔记本，可跑 SD", links: [
+      { label: "官网", url: "https://colab.research.google.com" }
+    ]},
+    { name: "Modal", role: "无服务器云算力，部署 ML 工作流", links: [
+      { label: "官网", url: "https://modal.com" }
+    ]}
+  ]},
+
+  { cat: "学习与论文", color: "#ff2e88", items: [
+    { name: "DDPM", role: "现代扩散模型奠基论文", links: [
+      { label: "论文", url: "https://arxiv.org/abs/2006.11239" }
+    ]},
+    { name: "CLIP", role: "图文对比学习，让模型理解文字", links: [
+      { label: "OpenAI 介绍", url: "https://openai.com/research/clip" },
+      { label: "论文", url: "https://arxiv.org/abs/2103.00020" }
+    ]},
+    { name: "Transformer", role: "基于自注意力的架构，大模型基石", links: [
+      { label: "论文", url: "https://arxiv.org/abs/1706.03762" }
+    ]},
+    { name: "GAN", role: "生成对抗网络，生成式 AI 先驱", links: [
+      { label: "论文", url: "https://arxiv.org/abs/1406.2661" }
+    ]},
+    { name: "U-Net", role: "编码-解码+跳跃连接，去噪核心结构", links: [
+      { label: "论文", url: "https://arxiv.org/abs/1505.04597" }
+    ]},
+    { name: "bilibili", role: "国内 AI 生图教程/整合包第一视频阵地", links: [
+      { label: "官网", url: "https://www.bilibili.com" },
+      { label: "搜索 SD 教程", url: "https://search.bilibili.com/all?keyword=stable%20diffusion%20%E6%95%99%E7%A8%8B" }
+    ]}
+  ]}
+
+];
+
+window.KNOWLEDGE_DATA = { SECTIONS, GLOSSARY, RESOURCES };
