@@ -211,6 +211,7 @@
     /* ---------- 缩放与平移（放大后查看细节） ---------- */
     const stage = panel.querySelector(".mm2-stage");
     const svgEl = panel.querySelector("svg");
+    if (!stage || !svgEl) return; // 防御：DOM 结构异常时不注册缩放交互
     let view = { x: 0, y: 0, w: VW, h: VH };
     const setView = () => svgEl.setAttribute("viewBox", `${view.x} ${view.y} ${view.w} ${view.h}`);
     const clampView = () => {
