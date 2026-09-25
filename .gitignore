@@ -1,0 +1,13 @@
+# CodeBuddy 本地数据（不发布）
+.codebuddy/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+
+# 本地预览服务器缓存
+__pycache__/
+*.pyc

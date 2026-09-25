@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="面向零基础小白的 AI 生图硬核科普知识体系：系统梳理 Stable Diffusion、DALL·E、Midjourney、NovelAI、ComfyUI、LoRA、ControlNet 等主流模型、工具与生态，含技术原理、模型对比、学习路径与常见问题。" />
+  <meta name="keywords" content="AI生图,Stable Diffusion,ComfyUI,NovelAI,Banana AI,LoRA,ControlNet,扩散模型,CNN,RNN,Transformer,NLP,科普" />
+  <title>AI 生图知识图谱 · 零基础硬核科普</title>
+
+  <!-- 字体：Syne (显示) / Manrope (正文) / JetBrains Mono (代码) / Noto Sans SC (中文) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- 顶部滚动进度条 -->
+  <div class="progress" id="progress"></div>
+
+  <!-- 移动端侧边栏开关 -->
+  <button class="sidebar-toggle" id="sidebarToggle" aria-label="打开目录">☰</button>
+
+  <div class="app">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">
+          <div class="brand-glyph">A</div>
+          <div>
+            <div class="brand-title">AI 生图知识图谱</div>
+            <div class="brand-sub">Knowledge Atlas</div>
+          </div>
+        </div>
+      </div>
+      <nav class="nav" id="navList">
+        <div class="nav-label">目录 / Contents</div>
+        <!-- 由 app.js 渲染 -->
+      </nav>
+      <div class="sidebar-foot">
+        <span class="dot"></span>零基础硬核科普 · 2026
+      </div>
+    </aside>
+
+    <!-- 主内容区：由 app.js 渲染 -->
+    <main class="main" id="main"></main>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/explainer.js"></script>
+</body>
+</html>
