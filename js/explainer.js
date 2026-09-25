@@ -103,6 +103,13 @@
     return { type: "none", word: raw, related: [] };
   }
 
+  /* 查双向映射：选中词是否对应官方资源条目 */
+  function findMap(q) {
+    const RM = (window.KNOWLEDGE_DATA && window.KNOWLEDGE_DATA.RESOURCE_MAP) || [];
+    return RM.find((m) => m.names.some((n) => norm(n) === q)) ||
+           RM.find((m) => m.names.some((n) => norm(n).includes(q) || q.includes(norm(n))));
+  }
+
   /* ---------- 4. 悬浮窗 ---------- */
   let pop = null;
 
@@ -154,6 +161,9 @@
       });
       html += `</div>`;
     }
+    if (res.mapMatch) {
+      html += `<button class="ex-jump" type="button" data-cat="${esc(res.mapMatch.resCat)}" data-name="${esc(res.mapMatch.resName)}">查看官方资源 · ${esc(res.mapMatch.resName)} →</button>`;
+    }
     return html;
   }
 
@@ -199,6 +209,7 @@
       if (pop && sel && pop.contains(sel.anchorNode)) return; // 在悬浮窗内选择不重弹
       const res = explain(text);
       if (!res) { hide(); return; }
+      res.mapMatch = findMap(norm(text));
       let rect = null;
       try { rect = sel.getRangeAt(0).getBoundingClientRect(); } catch (e) { rect = null; }
       if (!rect || (rect.width === 0 && rect.height === 0)) { hide(); return; }
@@ -209,8 +220,18 @@
   document.addEventListener("mouseup", onSelect);
   document.addEventListener("touchend", onSelect);
 
-  /* 点击悬浮窗内链接跳转 */
+  /* 点击悬浮窗内按钮/链接跳转 */
   document.addEventListener("click", (e) => {
+    // 跳转到官方资源条目
+    const jump = e.target.closest(".ex-jump");
+    if (jump && pop && pop.contains(jump)) {
+      e.preventDefault();
+      const nav = window.KB_NAV;
+      if (nav && nav.scrollToResource) nav.scrollToResource(jump.dataset.cat, jump.dataset.name);
+      hide();
+      return;
+    }
+    // 跳转到站内章节
     const link = e.target.closest(".ex-link");
     if (!link || !pop || !pop.contains(link)) return;
     e.preventDefault();

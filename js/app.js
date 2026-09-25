@@ -20,23 +20,53 @@
   };
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
-  /* ---------- 1. 渲染侧边栏 ---------- */
+  /* ---------- 1. 渲染侧边栏（支持展开/收起子标题） ---------- */
   function renderNav() {
     SECTIONS.forEach((sec, i) => {
       const num = String(i + 1).padStart(2, "0");
-      const item = el("div", "nav-item fade-in", "");
+      const subs = sec.sections || [];
+      const hasChildren = subs.length > 0;
+      const item = el("div", "nav-item fade-in");
       item.dataset.target = sec.id;
       item.innerHTML = `
         <span class="num">${num}</span>
         <span class="ic" style="color:${sec.color}">${sec.icon}</span>
-        <span class="lbl">${sec.title}</span>
-        <span class="en">${sec.en}</span>`;
+        <span class="lbl">${esc(sec.title)}</span>
+        <span class="en">${esc(sec.en)}</span>
+        <span class="nav-chev${hasChildren ? "" : " nav-chev-none"}">▸</span>`;
+
+      // 主项点击 → 跳转到该章节
       item.addEventListener("click", () => {
         const target = document.getElementById(sec.id);
         if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
         if (window.innerWidth <= 720) sidebar.classList.remove("open");
       });
+      // 展开按钮点击 → 切换子标题（不触发跳转）
+      const chev = item.querySelector(".nav-chev");
+      if (chev && hasChildren) {
+        chev.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          item.classList.toggle("expanded");
+        });
+      }
       navList.appendChild(item);
+
+      // 子标题列表（默认收起，由 .nav-item.expanded + .nav-children 展开）
+      if (hasChildren) {
+        const children = el("div", "nav-children");
+        children.style.setProperty("--dot", sec.color);
+        subs.forEach((blk, j) => {
+          const sub = el("div", "nav-sub");
+          sub.innerHTML = `<span class="nav-sub-dot"></span><span class="nav-sub-txt">${esc(blk.heading)}</span>`;
+          sub.addEventListener("click", () => {
+            const blkEl = document.getElementById(sec.id + "-b" + j);
+            if (blkEl) blkEl.scrollIntoView({ behavior: "smooth", block: "start" });
+            if (window.innerWidth <= 720) sidebar.classList.remove("open");
+          });
+          children.appendChild(sub);
+        });
+        navList.appendChild(children);
+      }
     });
   }
 
@@ -90,9 +120,9 @@
     return wrap;
   }
 
-  /* ---------- 5.5 渲染官方资源 ---------- */
+  /* ---------- 5.5 渲染官方资源（含跳转正文按钮） ---------- */
   function renderResources(host) {
-    const { RESOURCES } = window.KNOWLEDGE_DATA;
+    const { RESOURCES, RESOURCE_MAP } = window.KNOWLEDGE_DATA;
     if (!RESOURCES) return;
     RESOURCES.forEach((group) => {
       const ghead = el("div", "res-group-head");
@@ -102,19 +132,64 @@
       const grid = el("div", "res-grid");
       group.items.forEach((it) => {
         const card = el("div", "res-card");
+        card.dataset.cat = group.cat;
+        card.dataset.name = it.name;
         card.style.setProperty("--accent", group.color);
         const links = (it.links || [])
           .map((l) => `<a class="res-link" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label)}<span class="res-ext">↗</span></a>`)
           .join("");
+        // 查双向映射：若该条目在正文有对应位置，加「跳转正文」按钮
+        const map = (RESOURCE_MAP || []).find((m) => m.resCat === group.cat && m.resName === it.name);
+        const jump = map
+          ? `<button class="res-jump" type="button">跳转正文 · ${esc(secTitle(map.secId))} →</button>`
+          : "";
         card.innerHTML = `
           <div class="res-name">${esc(it.name)}</div>
           <div class="res-role">${esc(it.role)}</div>
-          <div class="res-links">${links}</div>`;
+          <div class="res-links">${links}</div>
+          ${jump}`;
+        if (map) {
+          card.querySelector(".res-jump").addEventListener("click", () => scrollToBlock(map.secId, map.blockIdx));
+        }
         grid.appendChild(card);
       });
       host.appendChild(grid);
     });
   }
+
+  /* ---------- 5.6 跳转与高亮（正文↔资源双向，暴露给 explainer） ---------- */
+  function highlight(node) {
+    if (!node) return;
+    node.classList.add("kb-highlight");
+    setTimeout(() => node.classList.remove("kb-highlight"), 2200);
+  }
+  function secTitle(secId) {
+    const s = SECTIONS.find((x) => x.id === secId);
+    return s ? s.title : secId;
+  }
+  function scrollToBlock(secId, blockIdx) {
+    const sec = document.getElementById(secId);
+    if (!sec) return;
+    const blocks = sec.querySelectorAll(".block");
+    const blk = (blockIdx != null && blocks[blockIdx]) ? blocks[blockIdx] : sec;
+    blk.scrollIntoView({ behavior: "smooth", block: "start" });
+    highlight(blk);
+    if (window.innerWidth <= 720) sidebar.classList.remove("open");
+  }
+  function scrollToResource(cat, name) {
+    const cards = document.querySelectorAll(".res-card");
+    for (const c of cards) {
+      if (c.dataset.cat === cat && c.dataset.name === name) {
+        c.scrollIntoView({ behavior: "smooth", block: "center" });
+        highlight(c);
+        return true;
+      }
+    }
+    const resSec = document.getElementById("resources");
+    if (resSec) resSec.scrollIntoView({ behavior: "smooth", block: "start" });
+    return false;
+  }
+  window.KB_NAV = { scrollToBlock, scrollToResource, highlight };
 
   /* ---------- 6. 渲染术语表 ---------- */
   let glossaryFilter = "全部";

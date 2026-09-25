@@ -895,4 +895,38 @@ const RESOURCES = [
 
 ];
 
-window.KNOWLEDGE_DATA = { SECTIONS, GLOSSARY, RESOURCES };
+/* ---------- 正文↔官方资源 双向跳转映射 ----------
+ * names: 触发别名（框选匹配用）；resCat/resName: 官方资源卡片定位；secId/blockIdx: 正文子章节定位
+ * blockIdx 为该章节 SECTIONS[].sections 数组索引，对应 .block 顺序
+ */
+const RESOURCE_MAP = [
+  { names: ["Stable Diffusion", "SD"], resCat: "基础模型", resName: "Stable Diffusion", secId: "models", blockIdx: 0 },
+  { names: ["DALL·E", "DALL·E 3", "DALLE", "DALL E"], resCat: "基础模型", resName: "DALL·E 3", secId: "models", blockIdx: 1 },
+  { names: ["Midjourney", "MJ"], resCat: "基础模型", resName: "Midjourney", secId: "models", blockIdx: 2 },
+  { names: ["NovelAI", "NAI"], resCat: "基础模型", resName: "NovelAI", secId: "models", blockIdx: 3 },
+  { names: ["Banana AI", "Banana", "Banana.dev"], resCat: "算力与部署", resName: "Banana.dev", secId: "models", blockIdx: 4 },
+  { names: ["Flux", "FLUX"], resCat: "基础模型", resName: "Flux", secId: "models", blockIdx: 5 },
+  { names: ["ComfyUI"], resCat: "工具与界面", resName: "ComfyUI", secId: "tools", blockIdx: 1 },
+  { names: ["WebUI", "AUTOMATIC1111", "A1111", "SD WebUI"], resCat: "工具与界面", resName: "AUTOMATIC1111 WebUI", secId: "tools", blockIdx: 0 },
+  { names: ["秋叶", "整合包", "绘世", "绘世启动器"], resCat: "工具与界面", resName: "秋叶整合包 / 绘世启动器", secId: "tools", blockIdx: 2 },
+  { names: ["LoRA"], resCat: "微调与控制技术", resName: "LoRA", secId: "fine-tuning", blockIdx: 0 },
+  { names: ["ControlNet"], resCat: "微调与控制技术", resName: "ControlNet", secId: "fine-tuning", blockIdx: 2 },
+  { names: ["DreamBooth"], resCat: "微调与控制技术", resName: "DreamBooth", secId: "fine-tuning", blockIdx: 1 },
+  { names: ["Textual Inversion", "TI"], resCat: "微调与控制技术", resName: "Textual Inversion", secId: "fine-tuning", blockIdx: 1 },
+  { names: ["IP-Adapter"], resCat: "微调与控制技术", resName: "IP-Adapter", secId: "learning", blockIdx: 3 },
+  { names: ["AnimateDiff"], resCat: "微调与控制技术", resName: "AnimateDiff", secId: "learning", blockIdx: 3 },
+  { names: ["Civitai", "Civy"], resCat: "社区与平台", resName: "Civitai", secId: "community", blockIdx: 0 },
+  { names: ["Hugging Face", "HF", "HuggingFace"], resCat: "社区与平台", resName: "Hugging Face", secId: "community", blockIdx: 1 },
+  { names: ["Real-ESRGAN", "ESRGAN"], resCat: "工具与界面", resName: "Real-ESRGAN", secId: "fine-tuning", blockIdx: 4 },
+  { names: ["ADetailer"], resCat: "工具与界面", resName: "ADetailer", secId: "fine-tuning", blockIdx: 4 },
+  { names: ["Kohya", "Kohya_ss"], resCat: "工具与界面", resName: "Kohya_ss", secId: "learning", blockIdx: 2 },
+  { names: ["AutoDL"], resCat: "算力与部署", resName: "AutoDL", secId: "tools", blockIdx: 3 },
+  { names: ["RunPod"], resCat: "算力与部署", resName: "RunPod", secId: "tools", blockIdx: 3 },
+  { names: ["Replicate"], resCat: "算力与部署", resName: "Replicate", secId: "tools", blockIdx: 3 },
+  { names: ["Colab", "Google Colab"], resCat: "算力与部署", resName: "Google Colab", secId: "tools", blockIdx: 3 },
+  { names: ["Liblib", "哩布哩布"], resCat: "社区与平台", resName: "Liblib 哩布哩布", secId: "community", blockIdx: 2 },
+  { names: ["魔搭", "ModelScope"], resCat: "社区与平台", resName: "魔搭 ModelScope", secId: "community", blockIdx: 2 },
+  { names: ["OpenXLab", "浦源"], resCat: "社区与平台", resName: "OpenXLab 浦源", secId: "community", blockIdx: 2 }
+];
+
+window.KNOWLEDGE_DATA = { SECTIONS, GLOSSARY, RESOURCES, RESOURCE_MAP };
