@@ -3,16 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="AI 生图知识神经网络：以图谱可视化呈现整合方案、主流模型、微调技术与技术原理之间的强映射关联，降低入门门槛。" />
+  <meta name="description" content="AI 生图知识神经网络：Three.js 3D 发光节点图谱，可视化整合方案、主流模型、微调技术与技术原理之间的强映射关联。" />
   <title>知识神经网络 · AI 生图知识图谱</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=20260926a" />
+  <link rel="stylesheet" href="css/style.css?v=20260926b" />
   <style>
-    html, body { height: 100%; margin: 0; overflow: hidden; }
-    body { background: var(--bg-0); }
-    #bg-canvas { position: fixed; inset: 0; z-index: 0; }
+    html, body { height: 100%; margin: 0; overflow: hidden; background: var(--bg-0); }
+    #scene { position: fixed; inset: 0; z-index: 5; }
+    #scene canvas { display: block; }
+    #labels { position: fixed; inset: 0; z-index: 8; pointer-events: none; overflow: hidden; }
+    .nn-label {
+      position: absolute; transform: translate(-50%, -50%);
+      font-family: "Manrope", "Noto Sans SC", sans-serif; font-size: 12px; font-weight: 600;
+      color: #e6e9f0; padding: 2px 8px; border-radius: 6px; white-space: nowrap;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.9); transition: color .2s, font-size .2s, opacity .2s;
+      pointer-events: none; opacity: 0.92;
+    }
+    .nn-label.big { font-size: 14px; opacity: 1; }
+    .nn-label.hover { color: #fff; font-size: 14px; }
+    .nn-label.dim { opacity: 0.2; }
+
     .net-header {
       position: fixed; top: 0; left: 0; right: 0; z-index: 20;
       padding: 18px 28px 16px;
@@ -48,7 +60,7 @@
     }
     .net-legend .lt { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-3); margin-bottom: 2px; }
     .net-legend .li { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-1); }
-    .net-legend .d { width: 11px; height: 11px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+    .net-legend .d { width: 11px; height: 11px; border-radius: 50%; box-shadow: 0 0 10px currentColor; }
 
     .net-hint {
       position: fixed; right: 18px; bottom: 18px; z-index: 15;
@@ -56,9 +68,6 @@
       background: rgba(18,22,32,0.7); padding: 8px 14px; border-radius: 100px; border: 1px solid var(--line);
     }
 
-    #cy { position: fixed; inset: 0; z-index: 5; }
-
-    /* 悬浮缩略说明 tooltip */
     .net-tip {
       position: fixed; z-index: 30; max-width: 280px;
       background: rgba(18,22,32,0.85); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
@@ -73,7 +82,6 @@
     .net-tip .tt-blurb { font-size: 12.5px; color: var(--text-2); line-height: 1.55; }
     .net-tip .tt-cta { font-family: var(--font-mono); font-size: 10px; color: var(--c-mint); margin-top: 6px; opacity: 0.8; }
 
-    /* 点击详情面板 */
     .net-detail {
       position: fixed; right: 0; top: 0; bottom: 0; z-index: 25; width: 420px; max-width: 92vw;
       background: linear-gradient(180deg, rgba(16,22,32,0.92), rgba(10,14,20,0.96));
@@ -85,7 +93,7 @@
     }
     .net-detail.show { transform: translateX(0); }
     .nd-head { padding: 22px 22px 14px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
-    .nd-cat { display: inline-block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; margin-bottom: 10px; }
+    .nd-cat { display: inline-block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; margin-bottom: 10px; border: 1px solid; }
     .nd-name { font-family: var(--font-display); font-weight: 800; font-size: 26px; color: var(--text-0); letter-spacing: -0.02em; line-height: 1.1; }
     .nd-body { flex: 1; overflow-y: auto; padding: 20px 22px 28px; }
     .nd-section { margin-bottom: 22px; }
@@ -99,10 +107,9 @@
     }
     .nd-link:hover { border-color: var(--c-mint); background: var(--bg-2); transform: translateX(-2px); }
     .nd-link .ic { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; font-size: 16px; flex-shrink: 0; }
-    .nd-link .tx { flex: 1; }
     .nd-link .t1 { font-size: 13.5px; color: var(--text-0); font-weight: 600; }
     .nd-link .t2 { font-size: 11.5px; color: var(--text-2); margin-top: 2px; }
-    .nd-link .ar { color: var(--c-mint); font-family: var(--font-mono); }
+    .nd-link .ar { color: var(--c-mint); font-family: var(--font-mono); margin-left: auto; }
     .nd-rels { display: flex; flex-wrap: wrap; gap: 7px; }
     .nd-rel {
       font-size: 12px; padding: 5px 11px; border-radius: 100px; cursor: pointer;
@@ -111,10 +118,9 @@
     }
     .nd-rel:hover { color: var(--text-0); border-color: var(--c-mint); }
     .nd-rel .rl { font-family: var(--font-mono); font-size: 9.5px; color: var(--text-3); margin-left: 6px; }
-    .nd-close { position: absolute; top: 18px; right: 18px; width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 8px; color: var(--text-2); cursor: pointer; font-size: 15px; }
+    .nd-close { position: absolute; top: 18px; right: 18px; width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 8px; color: var(--text-2); cursor: pointer; font-size: 15px; background: transparent; }
     .nd-close:hover { color: var(--c-rose); border-color: var(--c-rose); }
 
-    /* 顶部说明条（结构化设计如何帮助新手） */
     .net-intro {
       position: fixed; left: 50%; top: 76px; transform: translateX(-50%); z-index: 14;
       max-width: 640px; padding: 12px 22px; border-radius: 14px;
@@ -136,7 +142,8 @@
   </style>
 </head>
 <body>
-  <canvas id="bg-canvas"></canvas>
+  <div id="scene"></div>
+  <div id="labels"></div>
 
   <header class="net-header">
     <div class="net-brand">
@@ -154,16 +161,12 @@
   </header>
 
   <div class="net-intro" id="netIntro">
-    <b>为什么用神经网络图谱？</b> 传统目录线性孤立地罗列知识点，新手难以看出关联。本页把「整合方案、主流模型、微调技术、技术原理」映射为互联的节点网络——一条边就是一条技术原理对应关系（如 ComfyUI→SD→U-Net→扩散模型）。沿边走即可理解「工具用了什么模型、模型基于什么原理、原理又被哪些微调扩展」，从任意节点出发都能构建完整知识链，显著降低入门门槛。
+    <b>为什么用神经网络图谱？</b> 传统目录线性孤立地罗列知识点，新手难以看出关联。本页把「整合方案、主流模型、微调技术、技术原理」映射为互联的 3D 节点网络——一条连线就是一条技术原理对应关系（如 ComfyUI→SD→U-Net→扩散模型）。沿连线走即可理解「工具用了什么模型、模型基于什么原理、原理又被哪些微调扩展」，从任意节点出发都能构建完整知识链，显著降低入门门槛。
     <span class="dismiss" id="introDismiss">✕ 知道了</span>
   </div>
 
-  <div id="cy"></div>
-
   <div class="net-legend" id="legend"></div>
-
-  <div class="net-hint">悬浮看简介 · 点击展开详情 · 滚轮缩放 · 拖拽平移</div>
-
+  <div class="net-hint">拖拽旋转 · 滚轮缩放 · 悬浮看简介 · 点击展开详情</div>
   <div class="net-tip" id="tip"></div>
 
   <aside class="net-detail" id="detail">
@@ -178,7 +181,7 @@
         <div class="nd-blurb" id="ndBlurb"></div>
       </div>
       <div class="nd-section" id="ndRelsWrap">
-        <div class="nd-label">技术原理关联（沿边探索）</div>
+        <div class="nd-label">技术原理关联（沿连线探索）</div>
         <div class="nd-rels" id="ndRels"></div>
       </div>
       <div class="nd-section">
@@ -188,214 +191,362 @@
     </div>
   </aside>
 
-  <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-  <script src="js/network-data.js?v=20260926a"></script>
+  <script src="js/network-data.js?v=20260926b"></script>
   <script>
-  /* ============ Three.js 神经网络背景氛围 ============ */
   (function () {
-    const canvas = document.getElementById("bg-canvas");
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    "use strict";
+    const D = window.NETWORK_DATA;
+    if (!D || !THREE) return;
+    const cats = D.categories;
+    const nodes = D.nodes, edges = D.edges;
+    const idx = {}; nodes.forEach((n, i) => (idx[n.id] = i));
+    const colorOf = (cat) => new THREE.Color(cats[cat].color);
+
+    /* ---------- 图例 ---------- */
+    const legend = document.getElementById("legend");
+    legend.innerHTML = `<div class="lt">节点类别</div>` +
+      Object.values(cats).map(c => `<div class="li"><span class="d" style="background:${c.color};color:${c.color}"></span>${c.name}</div>`).join("");
+
+    /* ---------- Three.js 场景 ---------- */
+    const container = document.getElementById("scene");
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 0);
+    container.appendChild(renderer.domElement);
+
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000);
-    camera.position.z = 420;
+    scene.fog = new THREE.FogExp2(0x07090e, 0.012);
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 2000);
 
-    // 神经元节点（粒子）
-    const N = 70;
-    const positions = [];
-    for (let i = 0; i < N; i++) {
-      positions.push(new THREE.Vector3(
-        (Math.random() - 0.5) * 900,
-        (Math.random() - 0.5) * 600,
-        (Math.random() - 0.5) * 400
-      ));
+    // 背景星点
+    {
+      const N = 600, arr = new Float32Array(N * 3);
+      for (let i = 0; i < N; i++) { arr[i*3]=(Math.random()-0.5)*400; arr[i*3+1]=(Math.random()-0.5)*400; arr[i*3+2]=(Math.random()-0.5)*400; }
+      const g = new THREE.BufferGeometry(); g.setAttribute("position", new THREE.BufferAttribute(arr, 3));
+      scene.add(new THREE.Points(g, new THREE.PointsMaterial({ color: 0x2a3346, size: 0.6, transparent: true, opacity: 0.7, depthWrite: false })));
     }
-    const posArr = new Float32Array(N * 3);
-    positions.forEach((p, i) => { posArr[i*3]=p.x; posArr[i*3+1]=p.y; posArr[i*3+2]=p.z; });
-    const pGeo = new THREE.BufferGeometry();
-    pGeo.setAttribute("position", new THREE.BufferAttribute(posArr, 3));
-    const pMat = new THREE.PointsMaterial({ color: 0x00ffc8, size: 3.2, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false });
-    const points = new THREE.Points(pGeo, pMat);
-    scene.add(points);
 
-    // 神经元连线（相近的连）
-    const linePositions = [];
-    for (let i = 0; i < N; i++) {
-      for (let j = i+1; j < N; j++) {
-        if (positions[i].distanceTo(positions[j]) < 160) {
-          linePositions.push(positions[i].x, positions[i].y, positions[i].z);
-          linePositions.push(positions[j].x, positions[j].y, positions[j].z);
+    /* ---------- 力导向布局（预计算 3D 位置） ---------- */
+    const pos = nodes.map(() => new THREE.Vector3((Math.random()-0.5)*40, (Math.random()-0.5)*40, (Math.random()-0.5)*40));
+    for (let iter = 0; iter < 320; iter++) {
+      for (let i = 0; i < pos.length; i++) {
+        for (let j = i + 1; j < pos.length; j++) {
+          const d = pos[i].clone().sub(pos[j]); let l = d.length();
+          if (l < 0.01) { d.set(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5); l = 0.5; }
+          const f = 60 / (l * l) * 0.5; d.multiplyScalar(f / l);
+          pos[i].add(d.clone().multiplyScalar(0.5)); pos[j].add(d.multiplyScalar(-0.5));
         }
       }
+      edges.forEach(e => {
+        const a = pos[idx[e.s]], b = pos[idx[e.t]]; const d = b.clone().sub(a); const l = d.length();
+        const f = (l - 7) * 0.06; d.multiplyScalar(f / Math.max(l, 0.01));
+        a.add(d); b.sub(d);
+      });
+      pos.forEach(p => p.multiplyScalar(0.985));
     }
-    const lGeo = new THREE.BufferGeometry();
-    lGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(linePositions), 3));
-    const lMat = new THREE.LineBasicMaterial({ color: 0x7c5cff, transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending });
-    const lines = new THREE.LineSegments(lGeo, lMat);
-    scene.add(lines);
 
+    /* ---------- 节点：发光球体（内核 + 外层 glow） ---------- */
+    const nodeGroup = new THREE.Group(); scene.add(nodeGroup);
+    const nodeObjs = nodes.map((n, i) => {
+      const c = colorOf(n.cat);
+      const g = new THREE.Group();
+      const isCore = n.id === "m-sd";
+      const r = isCore ? 1.8 : (n.cat === "M" ? 1.2 : 0.85);
+      // 内核
+      const core = new THREE.Mesh(
+        new THREE.SphereGeometry(r, 32, 32),
+        new THREE.MeshBasicMaterial({ color: c })
+      );
+      // glow 光晕（加性混合透明壳）
+      const glow = new THREE.Mesh(
+        new THREE.SphereGeometry(r * 2.4, 24, 24),
+        new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false })
+      );
+      const glow2 = new THREE.Mesh(
+        new THREE.SphereGeometry(r * 1.5, 24, 24),
+        new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending, depthWrite: false })
+      );
+      g.add(core, glow2, glow);
+      g.position.copy(pos[i]);
+      g.userData = { node: n, core, glow, glow2, baseR: r, scale: 1, targetScale: 1, color: c, index: i };
+      nodeGroup.add(g);
+      return g;
+    });
+
+    /* ---------- 边：渐变连线 + 流光粒子 ---------- */
+    const edgeObjs = edges.map(e => {
+      const a = pos[idx[e.s]], b = pos[idx[e.t]];
+      const cA = colorOf(nodes[idx[e.s]].cat), cB = colorOf(nodes[idx[e.t]].cat);
+      const geo = new THREE.BufferGeometry().setFromPoints([a.clone(), b.clone()]);
+      geo.setAttribute("color", new THREE.Float32BufferAttribute([cA.r, cA.g, cA.b, cB.r, cB.g, cB.b], 3));
+      const mat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false });
+      const line = new THREE.Line(geo, mat); scene.add(line);
+      // 流光小球
+      const flow = new THREE.Mesh(
+        new THREE.SphereGeometry(0.16, 10, 10),
+        new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false })
+      );
+      scene.add(flow);
+      return { line, mat, flow, a, b, cA, cB, t: Math.random(), speed: 0.0035 + Math.random() * 0.004, e };
+    });
+
+    /* ---------- 节点标签（HTML 投影层） ---------- */
+    const labelLayer = document.getElementById("labels");
+    const labels = nodes.map(n => {
+      const el = document.createElement("div");
+      el.className = "nn-label" + (n.id === "m-sd" ? " big" : "");
+      el.textContent = n.label;
+      labelLayer.appendChild(el);
+      return el;
+    });
+
+    /* ---------- 相机控制（球坐标：左键旋转 / 滚轮缩放 / 右键平移） ---------- */
+    const cam = { theta: 0.8, phi: 1.1, dist: 42, target: new THREE.Vector3() };
+    function updateCamera() {
+      camera.position.set(
+        cam.dist * Math.sin(cam.phi) * Math.cos(cam.theta),
+        cam.dist * Math.cos(cam.phi),
+        cam.dist * Math.sin(cam.phi) * Math.sin(cam.theta)
+      ).add(cam.target);
+      camera.lookAt(cam.target);
+    }
+    updateCamera();
+
+    let dragging = false, panMode = false, lastX = 0, lastY = 0, downX = 0, downY = 0, downT = 0;
+    renderer.domElement.addEventListener("mousedown", (e) => {
+      dragging = true; panMode = (e.button === 2); lastX = downX = e.clientX; lastY = downY = e.clientY; downT = Date.now();
+    });
+    window.addEventListener("mousemove", (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - lastX, dy = e.clientY - lastY; lastX = e.clientX; lastY = e.clientY;
+      if (panMode) {
+        const v = new THREE.Vector3(); camera.getWorldDirection(v);
+        const right = new THREE.Vector3().crossVectors(v, camera.up).normalize();
+        const up = camera.up.clone();
+        const s = cam.dist * 0.0015;
+        cam.target.addScaledVector(right, -dx * s).addScaledVector(up, dy * s);
+      } else {
+        cam.theta -= dx * 0.005; cam.phi -= dy * 0.005;
+        cam.phi = Math.max(0.2, Math.min(Math.PI - 0.2, cam.phi));
+      }
+      updateCamera();
+    });
+    window.addEventListener("mouseup", (e) => {
+      const moved = Math.hypot(e.clientX - downX, e.clientY - downY);
+      const quick = (Date.now() - downT) < 300 && moved < 5;
+      dragging = false; panMode = false;
+      if (quick) handleClick(e);
+    });
+    renderer.domElement.addEventListener("contextmenu", (e) => e.preventDefault());
+    renderer.domElement.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      cam.dist *= (1 + e.deltaY * 0.0012);
+      cam.dist = Math.max(14, Math.min(110, cam.dist));
+      updateCamera();
+    }, { passive: false });
+
+    // 触屏：单指旋转、双指缩放
+    let touchPrev = null, pinchPrev = null;
+    renderer.domElement.addEventListener("touchstart", (e) => {
+      if (e.touches.length === 1) { touchPrev = { x: e.touches[0].clientX, y: e.touches[0].clientY }; downT = Date.now(); downX = e.touches[0].clientX; downY = e.touches[0].clientY; }
+      else if (e.touches.length === 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX, dy = e.touches[0].clientY - e.touches[1].clientY;
+        pinchPrev = Math.hypot(dx, dy);
+      }
+    }, { passive: true });
+    renderer.domElement.addEventListener("touchmove", (e) => {
+      if (e.touches.length === 1 && touchPrev) {
+        const dx = e.touches[0].clientX - touchPrev.x, dy = e.touches[0].clientY - touchPrev.y;
+        touchPrev = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        cam.theta -= dx * 0.006; cam.phi -= dy * 0.006; cam.phi = Math.max(0.2, Math.min(Math.PI-0.2, cam.phi)); updateCamera();
+      } else if (e.touches.length === 2 && pinchPrev) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX, dy = e.touches[0].clientY - e.touches[1].clientY;
+        const d = Math.hypot(dx, dy); cam.dist *= pinchPrev / d; cam.dist = Math.max(14, Math.min(110, cam.dist)); pinchPrev = d; updateCamera(); e.preventDefault();
+      }
+    }, { passive: false });
+    renderer.domElement.addEventListener("touchend", (e) => {
+      const t = e.changedTouches[0];
+      const moved = Math.hypot(t.clientX - downX, t.clientY - downY);
+      if (Date.now() - downT < 350 && moved < 8) handleClick({ clientX: t.clientX, clientY: t.clientY });
+      touchPrev = null; pinchPrev = null;
+    });
+
+    /* ---------- Raycaster 悬停与点击 ---------- */
+    const raycaster = new THREE.Raycaster();
+    const mouseNDC = new THREE.Vector2();
+    let hovered = null;
+    const tip = document.getElementById("tip");
+
+    function pickNode(cx, cy) {
+      mouseNDC.x = (cx / window.innerWidth) * 2 - 1;
+      mouseNDC.y = -(cy / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouseNDC, camera);
+      const cores = nodeObjs.map(o => o.userData.core);
+      const hits = raycaster.intersectObjects(cores, false);
+      return hits.length ? nodeObjs.find(o => o.userData.core === hits[0].object) : null;
+    }
+
+    renderer.domElement.addEventListener("mousemove", (e) => {
+      if (dragging) { tip.classList.remove("show"); return; }
+      const obj = pickNode(e.clientX, e.clientY);
+      if (obj !== hovered) {
+        if (hovered) hovered.userData.targetScale = 1;
+        hovered = obj;
+        if (hovered) {
+          hovered.userData.targetScale = 1.45;
+          const d = hovered.userData.node;
+          tip.innerHTML = `<div class="tt-cat" style="color:${cats[d.cat].color}">${cats[d.cat].name}</div><div class="tt-name">${d.label}</div><div class="tt-blurb">${d.blurb}</div><div class="tt-cta">点击查看详情 →</div>`;
+          tip.classList.add("show");
+          renderer.domElement.style.cursor = "pointer";
+        } else { tip.classList.remove("show"); renderer.domElement.style.cursor = "grab"; }
+      }
+      if (hovered) {
+        let x = e.clientX + 16, y = e.clientY + 16;
+        if (x + tip.offsetWidth > window.innerWidth - 8) x = e.clientX - tip.offsetWidth - 16;
+        if (y + tip.offsetHeight > window.innerHeight - 8) y = e.clientY - tip.offsetHeight - 16;
+        tip.style.left = x + "px"; tip.style.top = y + "px";
+      }
+    });
+
+    /* ---------- 详情面板 ---------- */
+    const detail = document.getElementById("detail");
+    let activeId = null;
+    function showDetail(nodeId) {
+      const n = nodes[idx[nodeId]]; if (!n) return;
+      activeId = nodeId;
+      const cat = cats[n.cat];
+      document.getElementById("ndCat").textContent = cat.name;
+      document.getElementById("ndCat").style.color = cat.color;
+      document.getElementById("ndCat").style.borderColor = cat.color + "66";
+      document.getElementById("ndName").textContent = n.label;
+      document.getElementById("ndBlurb").textContent = n.blurb;
+
+      const rels = document.getElementById("ndRels"); rels.innerHTML = "";
+      const connected = edges.filter(e => e.s === nodeId || e.t === nodeId);
+      if (!connected.length) { document.getElementById("ndRelsWrap").style.display = "none"; }
+      else {
+        document.getElementById("ndRelsWrap").style.display = "";
+        connected.forEach(e => {
+          const otherId = e.s === nodeId ? e.t : e.s;
+          const other = nodes[idx[otherId]];
+          const dir = e.s === nodeId ? "→" : "←";
+          const chip = document.createElement("span");
+          chip.className = "nd-rel";
+          chip.innerHTML = `${dir} ${other.label}<span class="rl">${e.l}</span>`;
+          chip.style.borderColor = cats[other.cat].color + "55";
+          chip.onclick = () => showDetail(otherId);
+          rels.appendChild(chip);
+        });
+      }
+      const links = document.getElementById("ndLinks"); links.innerHTML = "";
+      if (n.detailRef) links.insertAdjacentHTML("beforeend",
+        `<a class="nd-link" href="${n.detailRef}"><span class="ic" style="background:rgba(0,255,200,0.12);color:var(--c-mint)">📖</span><span><span class="t1">参考书详细解读</span><br><span class="t2">跳转对应章节完整说明</span></span><span class="ar">→</span></a>`);
+      if (n.tut) links.insertAdjacentHTML("beforeend",
+        `<a class="nd-link" href="${n.tut}"><span class="ic" style="background:rgba(255,184,0,0.14);color:var(--c-amber)">🛠</span><span><span class="t1">配置操作教程</span><br><span class="t2">含安装步骤与参考来源</span></span><span class="ar">→</span></a>`);
+      if (!n.detailRef && !n.tut) links.innerHTML = `<div style="font-size:13px;color:var(--text-3)">该节点暂无独立文档，可沿关联节点继续探索。</div>`;
+      detail.classList.add("show");
+      // 平滑聚焦到该节点
+      focusTarget = pos[idx[nodeId]].clone();
+    }
+
+    function handleClick(e) {
+      const obj = pickNode(e.clientX, e.clientY);
+      if (obj) showDetail(obj.userData.node.id);
+    }
+    document.getElementById("detailClose").addEventListener("click", () => { detail.classList.remove("show"); activeId = null; clearHighlight(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") { detail.classList.remove("show"); activeId = null; clearHighlight(); } });
+
+    /* ---------- 高亮：激活节点邻边变亮，其余淡化 ---------- */
+    function clearHighlight() { highlightId = null; }
+    let highlightId = null;
+    function applyHighlight() {
+      const id = activeId || highlightId;
+      edgeObjs.forEach(eo => {
+        const isConn = id && (eo.e.s === id || eo.e.t === id);
+        eo.mat.opacity = isConn ? 0.95 : (id ? 0.08 : 0.45);
+      });
+      nodeObjs.forEach(o => {
+        const nid = o.userData.node.id;
+        const isConn = id && (nid === id || edges.some(e => (e.s === id && e.t === nid) || (e.t === id && e.s === nid)));
+        o.userData.dimmed = id ? !isConn : false;
+      });
+    }
+    /* ---------- 聚焦目标平滑移动 ---------- */
+    let focusTarget = null;
+
+    /* ---------- 动画循环 ---------- */
+    const tmp = new THREE.Vector3();
     let t = 0;
     function animate() {
-      t += 0.002;
-      points.rotation.y = t;
-      lines.rotation.y = t;
-      pMat.opacity = 0.5 + Math.sin(t * 20) * 0.15;
-      lMat.opacity = 0.14 + Math.sin(t * 14) * 0.06;
+      t += 0.016;
+      // 整体缓慢自转
+      nodeGroup.rotation.y += 0.0006;
+
+      // 聚焦：target 平滑移向节点
+      if (focusTarget) {
+        cam.target.lerp(focusTarget, 0.06);
+        if (cam.target.distanceTo(focusTarget) < 0.05) focusTarget = null;
+        updateCamera();
+      }
+
+      // 高亮刷新
+      applyHighlight();
+
+      // 节点脉动 + scale lerp
+      nodeObjs.forEach(o => {
+        const u = o.userData;
+        u.scale += (u.targetScale - u.scale) * 0.15;
+        const pulse = 1 + Math.sin(t * 1.5 + u.index) * 0.04;
+        o.scale.setScalar(u.scale * pulse);
+        const op = u.dimmed ? 0.12 : 1;
+        u.core.material.opacity = op; u.core.material.transparent = u.dimmed;
+        u.glow.material.opacity = (u.dimmed ? 0.02 : 0.16) * (0.7 + Math.sin(t * 1.5 + u.index) * 0.3);
+        u.glow2.material.opacity = u.dimmed ? 0.03 : 0.22;
+      });
+
+      // 边流光
+      edgeObjs.forEach(eo => {
+        eo.t += eo.speed; if (eo.t > 1) eo.t -= 1;
+        eo.flow.position.lerpVectors(eo.a, eo.b, eo.t);
+        const dim = (activeId && !(eo.e.s === activeId || eo.e.t === activeId));
+        eo.flow.material.opacity = dim ? 0.05 : 0.85;
+      });
+
       renderer.render(scene, camera);
+
+      // 标签投影
+      const v = new THREE.Vector3();
+      nodeObjs.forEach((o, i) => {
+        o.getWorldPosition(v);
+        v.project(camera);
+        const x = (v.x * 0.5 + 0.5) * window.innerWidth;
+        const y = (-v.y * 0.5 + 0.5) * window.innerHeight;
+        const visible = v.z < 1;
+        const lbl = labels[i];
+        lbl.style.left = x + "px"; lbl.style.top = (y + o.userData.baseR * 12 + 10) + "px";
+        lbl.style.display = visible ? "block" : "none";
+        lbl.classList.toggle("hover", hovered === o);
+        lbl.classList.toggle("dim", nodeObjs[i].userData.dimmed);
+      });
+
       requestAnimationFrame(animate);
     }
     animate();
+
     window.addEventListener("resize", () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
-  })();
 
-  /* ============ Cytoscape 知识图谱 ============ */
-  (function () {
-    const D = window.NETWORK_DATA;
-    const cats = D.categories;
-
-    // 图例
-    const legend = document.getElementById("legend");
-    legend.innerHTML = `<div class="lt">节点类别</div>` +
-      Object.values(cats).map(c => `<div class="li"><span class="d" style="background:${c.color};color:${c.color}"></span>${c.name}</div>`).join("");
-
-    const nodes = D.nodes.map(n => ({
-      data: {
-        id: n.id, label: n.label, cat: n.cat,
-        color: cats[n.cat].color, catName: cats[n.cat].name,
-        blurb: n.blurb, detailRef: n.detailRef || "", tut: n.tut || ""
-      }
-    }));
-    const edges = D.edges.map((e, i) => ({ data: { id: "e" + i, source: e.s, target: e.t, label: e.l } }));
-
-    const cy = cytoscape({
-      container: document.getElementById("cy"),
-      elements: [...nodes, ...edges],
-      style: [
-        { selector: "node", style: {
-          "label": "data(label)", "text-valign": "bottom", "text-halign": "center",
-          "text-margin-y": 6, "color": "#e6e9f0",
-          "font-family": "Manrope, Noto Sans SC, sans-serif", "font-size": 12, "font-weight": 600,
-          "width": 26, "height": 26, "background-color": "data(color)",
-          "border-color": "#fff", "border-width": 0, "border-opacity": 0.5,
-          "box-shadow": "0 0 12px data(color)",
-          "text-outline-color": "#07090e", "text-outline-width": 3
-        }},
-        { selector: "node[cat = 'M']", style: { "width": 34, "height": 34, "font-size": 13 } },
-        { selector: "node#m-sd", style: { "width": 48, "height": 48, "font-size": 15, "font-weight": 800 } },
-        { selector: "node:selected", style: { "border-width": 3, "border-color": "#fff", "border-opacity": 1 } },
-        { selector: "edge", style: {
-          "curve-style": "bezier", "width": 1.6, "line-color": "rgba(255,255,255,0.18)",
-          "target-arrow-color": "rgba(255,255,255,0.35)", "target-arrow-shape": "triangle",
-          "arrow-scale": 0.8, "label": "data(label)",
-          "color": "#8b94a6", "font-size": 9, "font-family": "JetBrains Mono, monospace",
-          "text-background-color": "#0a0e14", "text-background-opacity": 0.7,
-          "text-background-padding": 2, "text-rotation": "autorotate",
-          "text-outline-color": "#0a0e14", "text-outline-width": 2
-        }},
-        { selector: ".highlighted", style: { "line-color": "#00ffc8", "width": 3, "target-arrow-color": "#00ffc8", "opacity": 1 } },
-        { selector: ".faded", style: { "opacity": 0.15 } }
-      ],
-      layout: { name: "cose", animate: true, animationDuration: 800, nodeRepulsion: 9000, idealEdgeLength: 120, nodeOverlap: 24, padding: 90, gravity: 0.35, randomize: false }
-    });
-
-    /* ---- 悬浮缩略说明 ---- */
-    const tip = document.getElementById("tip");
-    let tipTimer = null;
-    cy.on("mouseover", "node", function (e) {
-      const d = e.target.data();
-      tip.innerHTML = `<div class="tt-cat" style="color:${d.color}">${d.catName}</div><div class="tt-name">${d.label}</div><div class="tt-blurb">${d.blurb}</div><div class="tt-cta">点击查看详情 →</div>`;
-      tip.classList.add("show");
-    });
-    cy.on("mouseout", "node", () => { tip.classList.remove("show"); });
-    cy.on("tap", "node", () => { tip.classList.remove("show"); });
-    document.addEventListener("mousemove", (e) => {
-      if (!tip.classList.contains("show")) return;
-      let x = e.clientX + 16, y = e.clientY + 16;
-      const w = tip.offsetWidth, h = tip.offsetHeight;
-      if (x + w > window.innerWidth - 8) x = e.clientX - w - 16;
-      if (y + h > window.innerHeight - 8) y = e.clientY - h - 16;
-      tip.style.left = x + "px"; tip.style.top = y + "px";
-    });
-
-    /* ---- 点击展开详情面板 ---- */
-    const detail = document.getElementById("detail");
-    function showDetail(nodeId) {
-      const node = cy.getElementById(nodeId);
-      if (!node.length) return;
-      const d = node.data();
-      document.getElementById("ndCat").textContent = d.catName;
-      document.getElementById("ndCat").style.color = d.color;
-      document.getElementById("ndCat").style.borderColor = d.color;
-      document.getElementById("ndName").textContent = d.label;
-      document.getElementById("ndBlurb").textContent = d.blurb;
-
-      // 关联节点
-      const rels = document.getElementById("ndRels");
-      rels.innerHTML = "";
-      const connected = cy.edges(`[source = "${nodeId}"], [target = "${nodeId}"]`);
-      if (!connected.length) { document.getElementById("ndRelsWrap").style.display = "none"; }
-      else {
-        document.getElementById("ndRelsWrap").style.display = "";
-        connected.forEach(edge => {
-          const sd = edge.data("source"), td = edge.data("target");
-          const otherId = sd === nodeId ? td : sd;
-          const other = cy.getElementById(otherId);
-          const od = other.data();
-          const dir = sd === nodeId ? "→" : "←";
-          const chip = document.createElement("span");
-          chip.className = "nd-rel";
-          chip.innerHTML = `${dir} ${od.label}<span class="rl">${edge.data("label")}</span>`;
-          chip.style.borderColor = od.color + "55";
-          chip.onclick = () => { cy.animate({ center: { eles: other } }, { duration: 400 }); showDetail(otherId); };
-          rels.appendChild(chip);
-        });
-      }
-
-      // 深入学习链接
-      const links = document.getElementById("ndLinks");
-      links.innerHTML = "";
-      if (d.detailRef) {
-        links.insertAdjacentHTML("beforeend",
-          `<a class="nd-link" href="${d.detailRef}"><span class="ic" style="background:rgba(0,255,200,0.12);color:var(--c-mint)">📖</span><span class="tx"><span class="t1">参考书详细解读</span><span class="t2">跳转至对应章节的完整技术说明</span></span><span class="ar">→</span></a>`);
-      }
-      if (d.tut) {
-        links.insertAdjacentHTML("beforeend",
-          `<a class="nd-link" href="${d.tut}"><span class="ic" style="background:rgba(255,184,0,0.14);color:var(--c-amber)">🛠</span><span class="tx"><span class="t1">配置操作教程</span><span class="t2">含具体安装配置步骤与参考来源</span></span><span class="ar">→</span></a>`);
-      }
-      if (!d.detailRef && !d.tut) {
-        links.innerHTML = `<div style="font-size:13px;color:var(--text-3)">该节点暂无独立文档，可沿关联节点继续探索。</div>`;
-      }
-      detail.classList.add("show");
-    }
-    cy.on("tap", "node", function (e) { e.preventDefault(); showDetail(e.target.id()); });
-
-    document.getElementById("detailClose").addEventListener("click", () => detail.classList.remove("show"));
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") detail.classList.remove("show"); });
-
-    /* ---- 高亮关联：点击节点时突出其邻边与邻居，淡化无关 ---- */
-    cy.on("tap", "node", function (e) {
-      const n = e.target;
-      cy.elements().removeClass("faded").removeClass("highlighted");
-      const connected = n.connectedEgdes().connectedNodes().add(n.connectedEdges());
-      n.connectedEdges().addClass("highlighted");
-      cy.elements().not(connected).addClass("faded");
-    });
-    cy.on("tap", function (e) {
-      if (e.target === cy) { cy.elements().removeClass("faded").removeClass("highlighted"); }
-    });
-
-    /* ---- 顶部说明 ---- */
+    /* ---------- 顶部说明 ---------- */
     const intro = document.getElementById("netIntro");
     document.getElementById("introBtn").addEventListener("click", () => intro.classList.toggle("show"));
     document.getElementById("introDismiss").addEventListener("click", () => intro.classList.remove("show"));
-    setTimeout(() => intro.classList.add("show"), 600);
-    setTimeout(() => intro.classList.remove("show"), 12000);
+    setTimeout(() => intro.classList.add("show"), 700);
+    setTimeout(() => intro.classList.remove("show"), 13000);
   })();
   </script>
 </body>
