@@ -323,6 +323,17 @@
           block.appendChild(resHost);
         }
 
+        // 配置教程映射：若该 block 有对应教程，加跳转链接
+        const tut = (window.KNOWLEDGE_DATA.TUT_MAP || []).find((m) => m.blockId === block.id);
+        if (tut) {
+          const tutLink = el("a", "block-tut-link");
+          tutLink.href = "docs.html#" + tut.tutId;
+          tutLink.target = "_blank";
+          tutLink.rel = "noopener";
+          tutLink.innerHTML = "🛠 查看配置教程 · " + esc(tut.label) + " →";
+          block.appendChild(tutLink);
+        }
+
         section.appendChild(block);
       });
 

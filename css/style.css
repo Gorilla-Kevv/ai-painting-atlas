@@ -1224,5 +1224,19 @@ td:first-child { color: var(--text-0); font-weight: 600; }
   100% { box-shadow: 0 0 0 0 rgba(0,255,200,0.0); background-color: transparent; }
 }
 
+/* 参考书 block 内「查看配置教程」跳转链接 */
+.block-tut-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 22px; padding: 9px 16px; border-radius: 100px;
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em;
+  color: var(--c-amber); background: rgba(255,184,0,0.06);
+  border: 1px solid rgba(255,184,0,0.35); text-decoration: none;
+  transition: all 0.18s var(--ease); font-weight: 600;
+}
+.block-tut-link:hover {
+  background: rgba(255,184,0,0.16); border-color: var(--c-amber);
+  color: var(--text-0); transform: translateX(3px);
+}
+
 /* 屏蔽打印 */
 @media print { body::before, body::after { display: none; } }

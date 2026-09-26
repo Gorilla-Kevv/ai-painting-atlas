@@ -929,4 +929,18 @@ const RESOURCE_MAP = [
   { names: ["OpenXLab", "浦源"], resCat: "社区与平台", resName: "OpenXLab 浦源", secId: "community", blockIdx: 2 }
 ];
 
-window.KNOWLEDGE_DATA = { SECTIONS, GLOSSARY, RESOURCES, RESOURCE_MAP };
+/* ---------- 参考书↔配置教程 双向跳转映射 ----------
+ * blockId: 参考书子章节 block 锚点（index.html#blockId）
+ * tutId:   配置教程 section 锚点（docs.html#tutId）
+ * app.js 渲染 block 时据此加「查看配置教程」链接；docs.html 静态写反向链接
+ */
+const TUT_MAP = [
+  { blockId: "models-b0",      tutId: "sd",      label: "Stable Diffusion 本地运行" },
+  { blockId: "tools-b0",       tutId: "webui",   label: "WebUI (A1111) 安装" },
+  { blockId: "tools-b1",       tutId: "comfyui", label: "ComfyUI 安装配置" },
+  { blockId: "tools-b2",       tutId: "pack",    label: "秋叶整合包使用" },
+  { blockId: "fine-tuning-b0", tutId: "lora",    label: "LoRA 训练 (Kohya)" },
+  { blockId: "tools-b3",       tutId: "cloud",   label: "云 GPU 平台使用" }
+];
+
+window.KNOWLEDGE_DATA = { SECTIONS, GLOSSARY, RESOURCES, RESOURCE_MAP, TUT_MAP };

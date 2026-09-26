@@ -12,20 +12,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css?v=20260926a" />
+  <link rel="stylesheet" href="css/style.css?v=20260926b" />
   <style>
-    .net-entry-fab{position:fixed;top:14px;right:18px;z-index:80;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:100px;font-family:var(--font-mono);font-size:12px;letter-spacing:.04em;color:var(--bg-0);background:linear-gradient(135deg,var(--c-mint),var(--c-rose));text-decoration:none;box-shadow:0 8px 24px rgba(0,255,200,.35);font-weight:600;transition:transform .2s,filter .2s}
-    .net-entry-fab:hover{transform:translateY(-2px);filter:brightness(1.1)}
-    .net-entry-fab .pulse{width:7px;height:7px;border-radius:50%;background:var(--bg-0);box-shadow:0 0 8px var(--bg-0);animation:pulse 2s infinite}
-    @media(max-width:720px){.net-entry-fab{top:auto;bottom:16px;right:14px;padding:9px 14px}}
+    .entry-fabs{position:fixed;top:14px;right:18px;z-index:80;display:flex;gap:8px}
+    .entry-fab{display:inline-flex;align-items:center;gap:7px;padding:10px 16px;border-radius:100px;font-family:var(--font-mono);font-size:12px;letter-spacing:.04em;text-decoration:none;font-weight:600;transition:transform .2s,filter .2s;box-shadow:0 8px 24px rgba(0,0,0,.32)}
+    .entry-fab:hover{transform:translateY(-2px);filter:brightness(1.1)}
+    .entry-fab.net{color:var(--bg-0);background:linear-gradient(135deg,var(--c-mint),var(--c-rose))}
+    .entry-fab.docs{color:var(--bg-0);background:linear-gradient(135deg,var(--c-amber),#ff8a3d)}
+    .entry-fab .pulse{width:7px;height:7px;border-radius:50%;background:var(--bg-0);box-shadow:0 0 8px var(--bg-0);animation:pulse 2s infinite}
+    @media(max-width:720px){.entry-fabs{top:auto;bottom:14px;left:50%;transform:translateX(-50%);right:auto}.entry-fab{padding:8px 12px;font-size:11px}}
   </style>
 </head>
 <body>
   <!-- 顶部滚动进度条 -->
   <div class="progress" id="progress"></div>
 
-  <!-- 知识神经网络入口 -->
-  <a class="net-entry-fab" href="network.html"><span class="pulse"></span>知识神经网络</a>
+  <!-- 入口：配置教程 + 知识神经网络 -->
+  <div class="entry-fabs">
+    <a class="entry-fab docs" href="docs.html">🛠 配置教程</a>
+    <a class="entry-fab net" href="network.html"><span class="pulse"></span>知识神经网络</a>
+  </div>
 
   <!-- 移动端侧边栏开关 -->
   <button class="sidebar-toggle" id="sidebarToggle" aria-label="打开目录">☰</button>
@@ -55,10 +61,10 @@
     <main class="main" id="main"></main>
   </div>
 
-  <script src="js/data.js?v=20260926a"></script>
-  <script src="js/app.js?v=20260926a"></script>
-  <script src="js/explainer.js?v=20260926a"></script>
-  <script src="js/mindmap-data.js?v=20260926a"></script>
-  <script src="js/mindmap-ui.js?v=20260926a"></script>
+  <script src="js/data.js?v=20260926b"></script>
+  <script src="js/app.js?v=20260926b"></script>
+  <script src="js/explainer.js?v=20260926b"></script>
+  <script src="js/mindmap-data.js?v=20260926b"></script>
+  <script src="js/mindmap-ui.js?v=20260926b"></script>
 </body>
 </html>

@@ -202,5 +202,35 @@ git clone https://github.com/ltdrdata/ComfyUI-Manager.git</div>
       </div>
     </section>
   </div>
+  <script>
+  // 反向映射：每个配置教程 section 末尾注入「返回参考书说明」链接
+  (function () {
+    var MAP = [
+      ["sd", "models-b0", "Stable Diffusion"],
+      ["webui", "tools-b0", "WebUI (A1111)"],
+      ["comfyui", "tools-b1", "ComfyUI"],
+      ["pack", "tools-b2", "秋叶整合包"],
+      ["lora", "fine-tuning-b0", "LoRA 训练"],
+      ["cloud", "tools-b3", "云 GPU 平台"]
+    ];
+    MAP.forEach(function (m) {
+      var sec = document.getElementById(m[0]); if (!sec) return;
+      var a = document.createElement("a");
+      a.href = "index.html#" + m[1];
+      a.innerHTML = "📖 返回参考书说明 · " + m[2] + " →";
+      Object.assign(a.style, {
+        display: "inline-flex", alignItems: "center", gap: "6px",
+        marginTop: "18px", padding: "10px 16px", borderRadius: "100px",
+        fontFamily: "var(--font-mono)", fontSize: "12px", letterSpacing: "0.04em",
+        color: "#00ffc8", background: "rgba(0,255,200,0.08)",
+        border: "1px solid rgba(0,255,200,0.3)", textDecoration: "none",
+        transition: "all .18s"
+      });
+      a.onmouseenter = function () { this.style.background = "rgba(0,255,200,0.16)"; this.style.transform = "translateY(-1px)"; };
+      a.onmouseleave = function () { this.style.background = "rgba(0,255,200,0.08)"; this.style.transform = ""; };
+      sec.appendChild(a);
+    });
+  })();
+  </script>
 </body>
 </html>
