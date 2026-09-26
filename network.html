@@ -16,13 +16,13 @@
     #labels { position: fixed; inset: 0; z-index: 8; pointer-events: none; overflow: hidden; }
     .nn-label {
       position: absolute; transform: translate(-50%, -50%);
-      font-family: "Manrope", "Noto Sans SC", sans-serif; font-size: 12px; font-weight: 600;
-      color: #e6e9f0; padding: 2px 8px; border-radius: 6px; white-space: nowrap;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.9); transition: color .2s, font-size .2s, opacity .2s;
-      pointer-events: none; opacity: 0.92;
+      font-family: "Manrope", "Noto Sans SC", sans-serif; font-size: 10.5px; font-weight: 400;
+      color: #aeb6c8; padding: 1px 6px; border-radius: 6px; white-space: nowrap;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.65); transition: color .2s, font-size .2s, opacity .2s;
+      pointer-events: none; opacity: 0.82; letter-spacing: 0.01em;
     }
-    .nn-label.big { font-size: 14px; opacity: 1; }
-    .nn-label.hover { color: #fff; font-size: 14px; }
+    .nn-label.big { font-size: 12px; opacity: 0.95; }
+    .nn-label.hover { color: #dbeafe; font-size: 12px; }
     .nn-label.dim { opacity: 0.2; }
 
     .net-header {
@@ -166,7 +166,7 @@
   </div>
 
   <div class="net-legend" id="legend"></div>
-  <div class="net-hint">拖拽旋转 · 滚轮缩放 · 悬浮看简介 · 点击展开详情</div>
+  <div class="net-hint">拖拽旋转 · 中键/右键平移 · 滚轮缩放 · 悬浮看简介 · 点击展开详情</div>
   <div class="net-tip" id="tip"></div>
 
   <aside class="net-detail" id="detail">
@@ -192,7 +192,7 @@
   </aside>
 
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-  <script src="js/network-data.js?v=20260926b"></script>
+  <script src="js/network-data.js?v=20260926c"></script>
   <script>
   (function () {
     "use strict";
@@ -229,22 +229,22 @@
     }
 
     /* ---------- 力导向布局（预计算 3D 位置） ---------- */
-    const pos = nodes.map(() => new THREE.Vector3((Math.random()-0.5)*40, (Math.random()-0.5)*40, (Math.random()-0.5)*40));
+    const pos = nodes.map(() => new THREE.Vector3((Math.random()-0.5)*55, (Math.random()-0.5)*55, (Math.random()-0.5)*55));
     for (let iter = 0; iter < 320; iter++) {
       for (let i = 0; i < pos.length; i++) {
         for (let j = i + 1; j < pos.length; j++) {
           const d = pos[i].clone().sub(pos[j]); let l = d.length();
           if (l < 0.01) { d.set(Math.random()-0.5, Math.random()-0.5, Math.random()-0.5); l = 0.5; }
-          const f = 60 / (l * l) * 0.5; d.multiplyScalar(f / l);
+          const f = 150 / (l * l) * 0.5; d.multiplyScalar(f / l);
           pos[i].add(d.clone().multiplyScalar(0.5)); pos[j].add(d.multiplyScalar(-0.5));
         }
       }
       edges.forEach(e => {
         const a = pos[idx[e.s]], b = pos[idx[e.t]]; const d = b.clone().sub(a); const l = d.length();
-        const f = (l - 7) * 0.06; d.multiplyScalar(f / Math.max(l, 0.01));
+        const f = (l - 15) * 0.05; d.multiplyScalar(f / Math.max(l, 0.01));
         a.add(d); b.sub(d);
       });
-      pos.forEach(p => p.multiplyScalar(0.985));
+      pos.forEach(p => p.multiplyScalar(0.993));
     }
 
     /* ---------- 节点：发光球体（内核 + 外层 glow） ---------- */
@@ -253,20 +253,20 @@
       const c = colorOf(n.cat);
       const g = new THREE.Group();
       const isCore = n.id === "m-sd";
-      const r = isCore ? 1.8 : (n.cat === "M" ? 1.2 : 0.85);
+      const r = isCore ? 1.2 : (n.cat === "M" ? 0.8 : 0.55);
       // 内核
       const core = new THREE.Mesh(
-        new THREE.SphereGeometry(r, 32, 32),
+        new THREE.SphereGeometry(r, 28, 28),
         new THREE.MeshBasicMaterial({ color: c })
       );
-      // glow 光晕（加性混合透明壳）
+      // glow 光晕（加性混合透明壳，偏蓝柔和）
       const glow = new THREE.Mesh(
-        new THREE.SphereGeometry(r * 2.4, 24, 24),
-        new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending, depthWrite: false })
+        new THREE.SphereGeometry(r * 2.0, 20, 20),
+        new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.13, blending: THREE.AdditiveBlending, depthWrite: false })
       );
       const glow2 = new THREE.Mesh(
-        new THREE.SphereGeometry(r * 1.5, 24, 24),
-        new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending, depthWrite: false })
+        new THREE.SphereGeometry(r * 1.35, 20, 20),
+        new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, depthWrite: false })
       );
       g.add(core, glow2, glow);
       g.position.copy(pos[i]);
@@ -279,16 +279,18 @@
     const edgeObjs = edges.map(e => {
       const a = pos[idx[e.s]], b = pos[idx[e.t]];
       const cA = colorOf(nodes[idx[e.s]].cat), cB = colorOf(nodes[idx[e.t]].cat);
-      const geo = new THREE.BufferGeometry().setFromPoints([a.clone(), b.clone()]);
-      geo.setAttribute("color", new THREE.Float32BufferAttribute([cA.r, cA.g, cA.b, cB.r, cB.g, cB.b], 3));
-      const mat = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false });
-      const line = new THREE.Line(geo, mat); scene.add(line);
-      // 流光小球
+      const mid = cA.clone().lerp(cB, 0.5);
+      // 粗圆柱连线（TubeGeometry，连续不中断，随节点同步旋转）
+      const path = new THREE.LineCurve3(a.clone(), b.clone());
+      const geo = new THREE.TubeGeometry(path, 1, 0.07, 8, false);
+      const mat = new THREE.MeshBasicMaterial({ color: mid, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false });
+      const line = new THREE.Mesh(geo, mat); nodeGroup.add(line);
+      // 流光小球（沿线流动，随节点同步）
       const flow = new THREE.Mesh(
-        new THREE.SphereGeometry(0.16, 10, 10),
-        new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false })
+        new THREE.SphereGeometry(0.12, 8, 8),
+        new THREE.MeshBasicMaterial({ color: 0xaad4ff, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false })
       );
-      scene.add(flow);
+      nodeGroup.add(flow);
       return { line, mat, flow, a, b, cA, cB, t: Math.random(), speed: 0.0035 + Math.random() * 0.004, e };
     });
 
@@ -303,7 +305,7 @@
     });
 
     /* ---------- 相机控制（球坐标：左键旋转 / 滚轮缩放 / 右键平移） ---------- */
-    const cam = { theta: 0.8, phi: 1.1, dist: 42, target: new THREE.Vector3() };
+    const cam = { theta: 0.8, phi: 1.1, dist: 52, target: new THREE.Vector3() };
     function updateCamera() {
       camera.position.set(
         cam.dist * Math.sin(cam.phi) * Math.cos(cam.theta),
@@ -316,7 +318,8 @@
 
     let dragging = false, panMode = false, lastX = 0, lastY = 0, downX = 0, downY = 0, downT = 0;
     renderer.domElement.addEventListener("mousedown", (e) => {
-      dragging = true; panMode = (e.button === 2); lastX = downX = e.clientX; lastY = downY = e.clientY; downT = Date.now();
+      dragging = true; panMode = (e.button === 2 || e.button === 1); lastX = downX = e.clientX; lastY = downY = e.clientY; downT = Date.now();
+      if (e.button === 1) e.preventDefault(); // 阻止中键默认自动滚动
     });
     window.addEventListener("mousemove", (e) => {
       if (!dragging) return;

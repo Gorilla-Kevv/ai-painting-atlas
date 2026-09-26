@@ -6,11 +6,11 @@
 window.NETWORK_DATA = {
   /* 节点类别配色 */
   categories: {
-    P: { name: "技术原理", color: "#7c5cff" },
-    M: { name: "主流模型", color: "#ff2e88" },
-    T: { name: "整合方案与工具", color: "#ffb800" },
-    F: { name: "微调与扩展", color: "#22c55e" },
-    C: { name: "社区与生态", color: "#00d4ff" }
+    P: { name: "技术原理", color: "#4f7cff" },
+    M: { name: "主流模型", color: "#60a5fa" },
+    T: { name: "整合方案与工具", color: "#22d3ee" },
+    F: { name: "微调与扩展", color: "#38bdf8" },
+    C: { name: "社区与生态", color: "#7dd3fc" }
   },
 
   nodes: [
@@ -96,6 +96,15 @@ window.NETWORK_DATA = {
     { s: "c-civitai", t: "f-lora", l: "分享LoRA" },
     { s: "c-civitai", t: "m-sd", l: "分享模型" },
     { s: "c-hf", t: "m-sd", l: "托管权重" },
-    { s: "c-hf", t: "m-flux", l: "托管权重" }
+    { s: "c-hf", t: "m-flux", l: "托管权重" },
+
+    // 补全连通：消除孤立漂浮节点
+    { s: "m-dalle", t: "m-sd", l: "同代对比" },
+    { s: "m-mj", t: "m-sd", l: "同代对比" },
+    { s: "m-dalle", t: "p-clip", l: "文本理解" },
+    { s: "m-mj", t: "p-prompt", l: "艺术质感" },
+    { s: "p-cnn", t: "p-transformer", l: "架构演进" },
+    { s: "p-transformer", t: "p-clip", l: "CLIP基于" },
+    { s: "m-sd3", t: "m-sd", l: "版本演进" }
   ]
 };
