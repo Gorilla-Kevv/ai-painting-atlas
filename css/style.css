@@ -136,6 +136,12 @@ ul { list-style: none; }
   box-shadow: 0 0 24px rgba(0,255,200,0.4);
   transform: rotate(-4deg);
 }
+.brand-glyph img {
+  width: 118%; height: 118%;
+  object-fit: contain; display: block;
+  margin: -10% auto 0;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.35));
+}
 .brand-title {
   font-family: var(--font-display);
   font-weight: 800;
