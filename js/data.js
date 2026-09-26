@@ -170,7 +170,8 @@ const SECTIONS = [
       paragraphs: [
         "Transformer 是 2017 年 Google 论文《Attention Is All You Need》提出的架构，核心是『自注意力（Self-Attention）』：对序列中每个元素，计算它和其他所有元素的相关度，然后加权聚合信息。这样模型能直接看到全局关系，且可并行计算。",
         "注意力机制让模型理解『词与词之间的关系』：比如处理『一只猫坐在窗台上』，模型能学到『坐』的动作主体是『猫』、位置是『窗台』，这种语义理解对生成至关重要。",
-        "Transformer 一统 NLP（GPT、BERT 都是它）后，又被引入视觉（ViT）。在 AI 生图中，SD 用 CLIP 文本编码器（基于 Transformer）把你的提示词编码成向量；新模型（如 SD3、Flux）更是在去噪网络里也用 Transformer 替代部分 U-Net。"
+        "Transformer 一统 NLP（GPT、BERT 都是它）后，又被引入视觉（ViT）。在 AI 生图中，SD 用 CLIP 文本编码器（基于 Transformer）把你的提示词编码成向量；新模型（如 SD3、Flux）更是在去噪网络里也用 Transformer 替代部分 U-Net。",
+        "深入一步——ViT（Vision Transformer）：它把一张图切成 16×16 的小方块（patch），每个方块拉平后当作一个『视觉单词』送入标准 Transformer。于是图像不再是『局部卷积逐层抽象』，而是一串 token 之间直接做全局自注意力——任意两个方块都能直接交换信息，感受野从一开始就是全图。ViT 证明了『注意力万能』，也直接催生了 SD3/Flux 所用的 DiT（Diffusion Transformer）架构：把去噪网络的卷积块换成 Transformer 块，文本与图像在同一注意力空间里交互，这是新世代模型文字理解飞跃的架构根源。"
       ],
       callout: { type: "key", title: "为什么 Transformer 火了", text: "可并行训练（快）+ 长程依赖好（准）+ 可堆叠巨大规模（强）。这三点让它在几乎所有序列/多模态任务中击败 RNN。" }
     },

@@ -20,6 +20,21 @@
   };
   const colorOf = (n) => PRESET[n.stylePreset] || PRESET.default;
 
+  /* ---------- 节点 → 参考书锚点映射（未列出的节点继承父级 ref） ---------- */
+  const REF_MAP = {
+    "1. 入门基础":"basics","什么是AI生图":"basics-b0","发展简史":"basics-b1","2014 GAN诞生":"basics-b1","2020 DDPM奠基":"basics-b1","2021 DALL·E初代":"basics-b1","2022.08 SD开源引爆":"basics-b1","2023+ ControlNet/LoRA":"basics-b1","能做什么与不能做什么":"basics-b2","核心术语速览":"basics-b3","Prompt 提示词":"basics-b3","Seed 种子":"basics-b3","Steps 采样步数":"basics-b3","CFG 引导强度":"basics-b3","Denoising 图生图强度":"basics-b3",
+    "2. 技术原理":"principles","神经网络":"principles-b0","权重":"principles-b0","偏置":"principles-b0","激活函数":"principles-b0","CNN卷积神经网络":"principles-b1","卷积核":"principles-b1","池化层":"principles-b1","特征图层级抽象":"principles-b1","RNN循环神经网络":"principles-b2","LSTM长短期记忆":"principles-b2","GRU":"principles-b2","长程依赖问题":"principles-b2","Transformer":"principles-b3","自注意力":"principles-b3","可并行训练":"principles-b3","ViT视觉Transformer":"principles-b3","GAN生成对抗网络":"principles-b4","生成器造假":"principles-b4","判别器辨真":"principles-b4","对抗博弈":"principles-b4","扩散模型":"principles-b5","前向加噪":"principles-b5","反向去噪":"principles-b5","潜扩散LDM":"principles-b5","VAE与潜空间":"principles-b6","编码器压缩":"principles-b6","解码器重建":"principles-b6","潜变量":"principles-b6","U-Net去噪核心":"principles-b7","U型结构":"principles-b7","跳跃连接":"principles-b7","预测噪声去噪":"principles-b7","CLIP让AI听懂文字":"principles-b8","图文对比学习":"principles-b8","文本编码器":"principles-b8","提示词工程本质":"principles-b8","NLP自然语言处理":"principles-b9","分词Tokenize":"principles-b9","文本编码上限":"principles-b9","注入生成网络":"principles-b9",
+    "3. 主流模型":"models","Stable Diffusion":"models-b0","开源潜扩散":"models-b0","1.4/1.5经典":"models-b0","SDXL 1024分辨率":"models-b0","SD3/3.5":"models-b0","DALL·E系列":"models-b1","DALL·E 3":"models-b1","特点":"models-b1","闭源付费":"models-b1","Midjourney":"models-b2","艺术质感":"models-b2","Discord/网页付费":"models-b2","定位":"models-b2","NovelAI":"models-b3","二次元付费平台":"models-b3","角色标签":"models-b3","衍生分支":"models-b3","Banana AI":"models-b4","算力部署平台":"models-b4","概念辨析":"faq-b3","同类Replicate/RunPod":"models-b4","Flux新标杆":"models-b5","Black Forest Labs":"models-b5","文本理解与质量极强":"models-b5","半开源":"models-b5","国产模型":"models-b5","文心一格":"models-b5","通义万相":"models-b5","即梦":"models-b5","腾讯混元":"models-b5",
+    "4. 整合方案与工具":"tools","AUTOMATIC1111 WebUI":"tools-b0","表单式界面":"tools-b0","必装插件":"tools-b0","新手到进阶首选":"tools-b0","ComfyUI":"tools-b1","节点式工作流":"tools-b1","优势":"tools-b1","SD3/Flux支持好":"tools-b1","民间整合包":"tools-b2","开箱即用":"tools-b2","含模型/插件/依赖":"tools-b2","代价":"tools-b2","云端平台":"tools-b3","AutoDL国内延迟低":"tools-b3","RunPod按量租GPU":"tools-b3","Colab免费试用":"tools-b3","Banana部署":"tools-b3",
+    "5. 微调与扩展":"fine-tuning","LoRA":"fine-tuning-b0","低秩适配":"fine-tuning-b0","小巧灵活":"fine-tuning-b0","角色/画风/物件主流":"fine-tuning-b0","DreamBooth":"fine-tuning-b1","深度记忆":"fine-tuning-b1","Textual Inversion":"fine-tuning-b1","词向量":"fine-tuning-b1","极小但弱":"fine-tuning-b1","ControlNet":"fine-tuning-b2","线稿Canny":"fine-tuning-b2","姿态OpenPose":"fine-tuning-b2","深度Depth":"fine-tuning-b2","革命性可控":"fine-tuning-b2","提示词工程":"fine-tuning-b3","提示词结构":"fine-tuning-b3","反向提示词兜底":"fine-tuning-b3","英文/Danbooru标签":"fine-tuning-b3","放大与高清修复":"fine-tuning-b4","Hires.fix":"fine-tuning-b4","ADetailer修脸":"fine-tuning-b4","放大模型":"fine-tuning-b4",
+    "6. 社区与生态":"community","Civitai":"community-b0","模型/LoRA分享":"community-b0","示例图墙可复现":"community-b0","全球最大SD社区":"community-b0","Hugging Face":"community-b1","模型托管平台":"community-b1","Spaces在线体验":"community-b1","官方权重下载":"community-b1","国内社区":"community-b2","Liblib哩布哩布":"community-b2","魔搭ModelScope":"community-b2","B站":"community-b2","生态分层全景":"community-b3","底层算法":"community-b3","基础模型":"community-b3","微调生态":"community-b3","工具链":"community-b3","算力/社区/应用层":"community-b3",
+    "7. 对比速查":"compare","模型横向对比":"compare-b0","工具链对比":"compare-b1","微调方法对比":"compare-b2",
+    "8. 学习路径":"learning","阶段一入门体验":"learning-b0","在线工具出50+图":"learning-b0","理解Prompt/Seed/Steps/CFG":"learning-b0","阶段二本地化":"learning-b1","下秋叶整合包":"learning-b1","掌握WebUI/LoRA/图生图":"learning-b1","装ADetailer/ControlNet":"learning-b1","阶段三可控生成":"learning-b2","OpenPose控制姿态":"learning-b2","ComfyUI工作流":"learning-b2","训练自己的LoRA":"learning-b2","阶段四进阶创作":"learning-b3","Flux/SD3新模型":"learning-b3","IP-Adapter/AnimateDiff":"learning-b3","Banana部署为API":"learning-b3",
+    "9. 术语表":"glossary","基础类":"glossary-b0","原理类":"glossary-b0","模型类":"glossary-b0","微调类":"glossary-b0","工具类":"glossary-b0","社区/资源类":"glossary-b0",
+    "10. 常见问题":"faq","硬件与配置":"faq-b0","模型与使用":"faq-b1","版权与商用":"faq-b2",
+    "11. 官方资源":"resources","基础模型官网":"resources-b0","工具与界面":"resources-b0","微调技术":"resources-b0","社区平台":"resources-b0","算力部署":"resources-b0","学习论文":"resources-b0"
+  };
+
   /* ---------- 1. 水平树布局 ---------- */
   const ROOT_H = 42, L1_H = 28, LEAF_H = 22, GAP = 7, LEVEL_W = 200;
   const fSize = (d) => (d === 0 ? 16 : d === 1 ? 13 : 11.5);
@@ -63,7 +78,7 @@
     const mx = (x1 + x2) / 2;
     return `<path d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}" fill="none" stroke="${colorOf(p).branch}" stroke-width="${p._d === 0 ? 2.2 : 1.6}" opacity="0.7"/>`;
   }
-  function node(n) {
+  function node(n, ref) {
     nodeCount++;
     const x = n._x, y = n._y - n._h / 2, w = n._w, h = n._h;
     const c = colorOf(n);
@@ -75,17 +90,18 @@
     const txt = isRoot ? "#06121a" : (isL1 ? "#fff" : c.text);
     const sw = isRoot ? 0 : (isL1 ? 1.5 : 1);
     const bold = isRoot || isL1 ? "bold" : "normal";
-    const title = n.note ? `<title>${esc(n.note)}</title>` : "";
     const rx = isRoot ? 21 : 6;
-    return `${title}<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>` +
-      `<text x="${x + w / 2}" y="${y + h / 2}" font-family="Manrope, Noto Sans SC, sans-serif" font-size="${fs}" font-weight="${bold}" fill="${txt}" text-anchor="middle" dominant-baseline="central">${esc(n.title)}</text>`;
+    const attrs = ` class="mm2-ng" data-ref="${esc(ref || "")}" data-note="${esc(n.note || "")}" data-label="${esc(n.title)}"`;
+    return `<g${attrs}><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>` +
+      `<text x="${x + w / 2}" y="${y + h / 2}" font-family="Manrope, Noto Sans SC, sans-serif" font-size="${fs}" font-weight="${bold}" fill="${txt}" text-anchor="middle" dominant-baseline="central">${esc(n.title)}</text></g>`;
   }
   function walkLinks(n, out) {
     (n.children || []).forEach((c) => { out.push(link(n, c)); walkLinks(c, out); });
   }
-  function walkNodes(n, out) {
-    out.push(node(n));
-    (n.children || []).forEach((c) => walkNodes(c, out));
+  function walkNodes(n, out, pRef) {
+    const ref = REF_MAP[n.title] || pRef || "";
+    out.push(node(n, ref));
+    (n.children || []).forEach((c) => walkNodes(c, out, ref));
   }
 
   function buildSVG() {
@@ -243,16 +259,17 @@
     }, { passive: false });
 
     // 鼠标拖拽平移（不与 handle 展开拖拽冲突：handle 在 stage 之外）
-    let panning = false, panStart = null;
+    let panning = false, panStart = null, panMoved = 0;
     stage.addEventListener("mousedown", (e) => {
       if (e.target.closest("button") || e.target.closest(".mm2-zoom")) return;
-      panning = true; stage.classList.add("panning");
+      panning = true; stage.classList.add("panning"); panMoved = 0;
       panStart = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y };
       e.preventDefault();
     });
     document.addEventListener("mousemove", (e) => {
       if (!panning) return;
       const r = svgEl.getBoundingClientRect(), s = r.width / view.w;
+      panMoved = Math.max(panMoved, Math.hypot(e.clientX - panStart.x, e.clientY - panStart.y));
       view.x = panStart.vx - (e.clientX - panStart.x) / s;
       view.y = panStart.vy - (e.clientY - panStart.y) / s;
       clampView(); setView();
@@ -297,6 +314,39 @@
         else if (z === "out") zoomCenter(1 / 1.35);
         else { view = { x: 0, y: 0, w: VW, h: VH }; setView(); }
       });
+    });
+
+    /* ---------- 节点悬浮提示与点击跳转参考书 ---------- */
+    const tip2 = document.createElement("div");
+    tip2.className = "mm2-tip";
+    document.body.appendChild(tip2);
+    let tipCur = null;
+    svgEl.addEventListener("mousemove", (e) => {
+      if (panning) { tip2.classList.remove("show"); return; }
+      const g = e.target.closest ? e.target.closest(".mm2-ng") : null;
+      if (g && g.dataset.note) {
+        if (tipCur !== g) {
+          tipCur = g;
+          tip2.innerHTML = `<div class="tt-name">${g.dataset.label}</div><div class="tt-blurb">${g.dataset.note}</div><div class="tt-cta">点击跳转参考书对应章节 →</div>`;
+        }
+        tip2.classList.add("show");
+        let x = e.clientX + 14, y = e.clientY + 14;
+        if (x + tip2.offsetWidth > window.innerWidth - 8) x = e.clientX - tip2.offsetWidth - 14;
+        if (y + tip2.offsetHeight > window.innerHeight - 8) y = e.clientY - tip2.offsetHeight - 14;
+        tip2.style.left = x + "px"; tip2.style.top = y + "px";
+      } else { tip2.classList.remove("show"); tipCur = null; }
+    });
+    svgEl.addEventListener("mouseleave", () => { tip2.classList.remove("show"); tipCur = null; });
+    svgEl.addEventListener("click", (e) => {
+      if (panMoved > 6) return; // 拖拽平移不触发跳转
+      const g = e.target.closest ? e.target.closest(".mm2-ng") : null;
+      if (!g || !g.dataset.ref) return;
+      const target = document.getElementById(g.dataset.ref);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (window.KB_NAV && window.KB_NAV.highlight) window.KB_NAV.highlight(target);
+      }
+      hide();
     });
 
     window.addEventListener("resize", () => {

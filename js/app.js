@@ -243,6 +243,20 @@
     host.appendChild(ctrl);
   }
 
+  /* ---------- 6.5 数学公式 + SVG 动画映射（硬核扩充） ---------- */
+  const ANIM_BY_HEADING = {
+    "什么是 AI 生图": "diffusion",
+    "神经网络：AI 的『大脑细胞』": "neuron",
+    "卷积神经网络（CNN）": "cnn",
+    "循环神经网络（RNN）与序列": "rnn",
+    "Transformer 与注意力机制": "attention",
+    "生成对抗网络（GAN）：先驱者": "gan",
+    "扩散模型：当前主流范式": "diffusion",
+    "VAE 与潜空间": "vae",
+    "U-Net：去噪核心": "unet",
+    "CLIP：让 AI 听懂你的话": "clip"
+  };
+
   /* ---------- 7. 渲染主内容 ---------- */
   function renderContent() {
     // Hero
@@ -291,6 +305,19 @@
         (blk.paragraphs || []).forEach((p) => {
           block.appendChild(el("p", "", p));
         });
+
+        // 数学公式 + SVG 动画 + 通俗解释（硬核扩充）
+        const animKey = ANIM_BY_HEADING[blk.heading];
+        if (animKey && window.SVG_ANIMS && window.SVG_ANIMS[animKey]) {
+          const A = window.SVG_ANIMS[animKey];
+          if (A.formula) block.appendChild(el("div", "formula-card", A.formula));
+          if (A.svg) block.appendChild(el("div", "anim-box", A.svg));
+          if (A.plain) {
+            const pc = el("div", "plain-card");
+            pc.innerHTML = '<div class="pc-t">💡 通俗解释</div><div class="pc-b">' + A.plain + "</div>";
+            block.appendChild(pc);
+          }
+        }
 
         // callout
         if (blk.callout) block.appendChild(renderCallout(blk.callout));
