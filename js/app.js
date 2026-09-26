@@ -248,7 +248,7 @@
     // Hero
     const hero = el("section", "hero");
     hero.innerHTML = `
-      <div class="hero-tag"><span class="ping"></span>面向零基础小白的硬核科普</div>
+      <div class="hero-tag"><span class="ping"></span>📖 参考书模式 · 零基础硬核科普</div>
       <h1>AI 生图<br><span class="accent">知识图谱</span> <span class="stroke">2026</span></h1>
       <p class="hero-lead">从神经元到扩散模型，从 Stable Diffusion 到 ComfyUI，系统梳理主流 AI 图像生成项目、模型与整合方案。技术原理 · 特点差异 · 适用场景 · 生态关系，一站看懂。</p>
       <div class="hero-meta">

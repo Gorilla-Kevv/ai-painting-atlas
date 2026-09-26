@@ -13,10 +13,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;700;900&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="css/style.css?v=20260926a" />
+  <style>
+    .net-entry-fab{position:fixed;top:14px;right:18px;z-index:80;display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:100px;font-family:var(--font-mono);font-size:12px;letter-spacing:.04em;color:var(--bg-0);background:linear-gradient(135deg,var(--c-mint),var(--c-rose));text-decoration:none;box-shadow:0 8px 24px rgba(0,255,200,.35);font-weight:600;transition:transform .2s,filter .2s}
+    .net-entry-fab:hover{transform:translateY(-2px);filter:brightness(1.1)}
+    .net-entry-fab .pulse{width:7px;height:7px;border-radius:50%;background:var(--bg-0);box-shadow:0 0 8px var(--bg-0);animation:pulse 2s infinite}
+    @media(max-width:720px){.net-entry-fab{top:auto;bottom:16px;right:14px;padding:9px 14px}}
+  </style>
 </head>
 <body>
   <!-- 顶部滚动进度条 -->
   <div class="progress" id="progress"></div>
+
+  <!-- 知识神经网络入口 -->
+  <a class="net-entry-fab" href="network.html"><span class="pulse"></span>知识神经网络</a>
 
   <!-- 移动端侧边栏开关 -->
   <button class="sidebar-toggle" id="sidebarToggle" aria-label="打开目录">☰</button>

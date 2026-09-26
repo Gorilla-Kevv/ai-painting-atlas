@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI 生图模型与整合方案的配置操作文档：ComfyUI、WebUI、秋叶整合包、LoRA 训练、云 GPU 等安装配置步骤与参考来源。" />
+  <title>配置操作文档 · AI 生图知识图谱</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=20260926a" />
+  <style>
+    .docs-wrap { max-width: 880px; margin: 0 auto; padding: 0 28px 80px; }
+    .docs-hero { padding: 72px 0 40px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+    .docs-hero h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(32px, 5vw, 52px); letter-spacing: -0.03em; color: var(--text-0); line-height: 1.05; margin-bottom: 16px; }
+    .docs-hero h1 .a { background: linear-gradient(120deg, var(--c-mint), var(--c-rose)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .docs-hero p { color: var(--text-2); font-size: 16px; max-width: 620px; line-height: 1.7; }
+    .docs-back { display: inline-flex; align-items: center; gap: 8px; margin-top: 22px; font-family: var(--font-mono); font-size: 12px; color: var(--c-mint); padding: 8px 16px; border: 1px solid rgba(0,255,200,0.3); border-radius: 100px; transition: all .2s; }
+    .docs-back:hover { background: rgba(0,255,200,0.1); }
+    .docs-toc { display: flex; flex-wrap: wrap; gap: 10px; margin: 28px 0 8px; }
+    .docs-toc a { font-family: var(--font-mono); font-size: 12px; color: var(--c-cyan); padding: 6px 14px; border: 1px solid rgba(0,212,255,0.28); border-radius: 100px; background: rgba(0,212,255,0.05); transition: all .18s; }
+    .docs-toc a:hover { background: rgba(0,212,255,0.16); color: var(--text-0); }
+    .doc-sec { padding: 44px 0 16px; border-bottom: 1px solid var(--line); scroll-margin-top: 24px; }
+    .doc-sec:last-of-type { border-bottom: none; }
+    .doc-sec h2 { font-family: var(--font-display); font-weight: 700; font-size: 28px; color: var(--text-0); letter-spacing: -0.02em; margin-bottom: 6px; }
+    .doc-sec h2 .n { color: var(--c-mint); font-family: var(--font-mono); font-size: 14px; margin-right: 12px; }
+    .doc-sec .lead { color: var(--text-2); font-size: 15px; margin-bottom: 22px; }
+    .doc-sec h3 { font-family: var(--font-display); font-weight: 600; font-size: 18px; color: var(--text-0); margin: 22px 0 10px; }
+    .doc-sec p, .doc-sec li { color: var(--text-1); font-size: 14.5px; line-height: 1.75; }
+    .doc-sec ol, .doc-sec ul { margin: 10px 0 16px; padding-left: 22px; }
+    .doc-sec ol li { margin-bottom: 8px; }
+    .doc-sec code, .doc-cmd { font-family: var(--font-mono); font-size: 13px; background: rgba(0,255,200,0.08); color: var(--c-mint); padding: 1px 7px; border-radius: 5px; }
+    .doc-cmd { display: block; margin: 10px 0; padding: 10px 14px; background: var(--bg-2); border: 1px solid var(--line); color: var(--c-mint); white-space: pre-wrap; word-break: break-all; }
+    .doc-src { margin-top: 20px; padding: 16px 18px; background: var(--bg-card); border: 1px solid var(--line); border-left: 3px solid var(--c-cyan); border-radius: 8px; }
+    .doc-src .t { font-family: var(--font-mono); font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--c-cyan); margin-bottom: 10px; }
+    .doc-src a { display: block; font-size: 13px; color: var(--c-cyan); margin-bottom: 6px; word-break: break-all; }
+    .doc-src a:hover { color: var(--text-0); }
+    .doc-src a .h { color: var(--text-2); }
+  </style>
+</head>
+<body>
+  <div class="docs-wrap">
+    <section class="docs-hero">
+      <h1>配置操作<span class="a">文档</span></h1>
+      <p>整合自联网搜索的官方文档与社区教程，覆盖 Stable Diffusion、ComfyUI、WebUI、秋叶整合包、LoRA 训练、云 GPU 等模型与整合方案的安装配置。每个教程含具体步骤与所参考的来源链接，便于核对原文。</p>
+      <a class="docs-back" href="network.html">← 返回知识神经网络</a>
+      <div class="docs-toc">
+        <a href="#sd">SD 本地运行</a>
+        <a href="#webui">WebUI A1111</a>
+        <a href="#comfyui">ComfyUI</a>
+        <a href="#pack">秋叶整合包</a>
+        <a href="#lora">LoRA 训练</a>
+        <a href="#cloud">云 GPU</a>
+      </div>
+    </section>
+
+    <section class="doc-sec" id="sd">
+      <h2><span class="n">01</span>Stable Diffusion 本地运行</h2>
+      <p class="lead">SD 是开源潜扩散模型，本地运行需 NVIDIA 显卡与模型权重文件。</p>
+      <h3>硬件要求</h3>
+      <ul>
+        <li>入门：GTX 1060 6GB 可跑 SD 1.5（512 分辨率）</li>
+        <li>主流：RTX 3060 12GB / 4060 8GB，可玩 SDXL</li>
+        <li>进阶：RTX 4080/4090 24GB+，跑 Flux/SD3 无压力</li>
+        <li>内存 ≥16GB，存储预留 50GB+（模型与生成结果）</li>
+      </ul>
+      <h3>配置步骤</h3>
+      <ol>
+        <li>准备 NVIDIA 显卡，安装最新显卡驱动与 CUDA</li>
+        <li>从 Hugging Face <code>stabilityai</code> 下载基础模型（如 <code>v1-5-pruned-emaonly.safetensors</code>）</li>
+        <li>把模型放入工具的 <code>models/Stable-diffusion</code> 目录</li>
+        <li>通过 WebUI 或 ComfyUI 加载并出图（见下方对应教程）</li>
+      </ol>
+      <div class="doc-src">
+        <div class="t">参考来源</div>
+        <a href="https://huggingface.co/stabilityai" target="_blank" rel="noopener">Hugging Face · stabilityai 模型库</a>
+        <a href="https://stability.ai/" target="_blank" rel="noopener">Stability AI 官网</a>
+      </div>
+    </section>
+
+    <section class="doc-sec" id="webui">
+      <h2><span class="n">02</span>WebUI (AUTOMATIC1111) 安装</h2>
+      <p class="lead">SD 最经典图形界面，官方推荐通过 git 克隆 + Python 环境安装。</p>
+      <h3>环境准备</h3>
+      <ul>
+        <li>安装 Python 3.10.6（64 位，勾选 Add to PATH）</li>
+        <li>安装 Git（<a href="https://git-scm.com" target="_blank" rel="noopener" style="color:var(--c-cyan)">git-scm.com</a>）</li>
+        <li>NVIDIA 显卡 + 最新驱动</li>
+      </ul>
+      <h3>配置步骤</h3>
+      <ol>
+        <li>克隆仓库</li>
+        <div class="doc-cmd">git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git</div>
+        <li>进入目录，编辑 <code>webui-user.bat</code>，按需设置 <code>COMMANDLINE_ARGS</code>（如 <code>--xformers --medvram</code> 低显存优化）</li>
+        <li>双击 <code>webui-user.bat</code>，首次运行会自动下载依赖（耗时较长）</li>
+        <li>把 SD 模型放入 <code>models/Stable-diffusion</code>，VAE 放入 <code>models/VAE</code></li>
+        <li>浏览器打开 <code>http://127.0.0.1:7860</code> 即可使用</li>
+      </ol>
+      <div class="doc-src">
+        <div class="t">参考来源</div>
+        <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui" target="_blank" rel="noopener">GitHub · AUTOMATIC1111/stable-diffusion-webui</a>
+        <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Install-and-Run-on-NVidia-GPUs" target="_blank" rel="noopener">Wiki · Install and Run on NVidia GPUs</a>
+      </div>
+    </section>
+
+    <section class="doc-sec" id="comfyui">
+      <h2><span class="n">03</span>ComfyUI 安装配置</h2>
+      <p class="lead">节点式 SD 工作流工具，推荐用便携版 + ComfyUI Manager 扩展管理器。</p>
+      <h3>配置步骤</h3>
+      <ol>
+        <li>从 GitHub Releases 下载 ComfyUI 便携版（含 Python 与依赖），解压到任意目录</li>
+        <li>把 SD 模型放入 <code>ComfyUI/models/checkpoints</code>，VAE 放 <code>models/vae</code>，LoRA 放 <code>models/loras</code></li>
+        <li>安装 ComfyUI Manager（节点应用商店）：进入 <code>custom_nodes</code> 目录克隆</li>
+        <div class="doc-cmd">cd ComfyUI/custom_nodes
+git clone https://github.com/ltdrdata/ComfyUI-Manager.git</div>
+        <li>运行 <code>run_nvidia_gpu.bat</code>（N 卡）启动</li>
+        <li>浏览器打开 <code>http://127.0.0.1:8188</code>，加载默认工作流出图</li>
+        <li>通过 Manager 菜单可一键安装/更新自定义节点与模型</li>
+      </ol>
+      <div class="doc-src">
+        <div class="t">参考来源</div>
+        <a href="https://github.com/comfyanonymous/ComfyUI" target="_blank" rel="noopener">GitHub · comfyanonymous/ComfyUI</a>
+        <a href="https://github.com/ltdrdata/ComfyUI-Manager" target="_blank" rel="noopener">GitHub · ComfyUI-Manager（官方扩展管理器）</a>
+        <a href="https://docs.comfy.org/" target="_blank" rel="noopener">ComfyUI 官方文档 docs.comfy.org</a>
+      </div>
+    </section>
+
+    <section class="doc-sec" id="pack">
+      <h2><span class="n">04</span>秋叶整合包（绘世启动器）</h2>
+      <p class="lead">民间打包的开箱即用 SD 环境，国内入门事实标准，3 分钟即可启动。</p>
+      <h3>配置步骤</h3>
+      <ol>
+        <li>从 B 站 up 主「秋叶」官方渠道下载整合包（如 <code>sd-webui-aki</code>），支持 SD3.5/Flux</li>
+        <li><b>先安装「启动器运行依赖」</b>（VC++ 运行库等，必装步骤）</li>
+        <li>解压整合包到无中文无空格路径的目录</li>
+        <li>双击 <code>A启动器.exe</code>（绘世启动器），首次会自动校验环境</li>
+        <li>在启动器「一键启动」处点击，自动拉起 WebUI，浏览器打开对应端口</li>
+        <li>启动器内可切换模型版本、管理插件、汉化界面、调整显存优化参数</li>
+      </ol>
+      <h3>常见问题</h3>
+      <ul>
+        <li>提示「没有 xformers」：低显存可关闭，或用 <code>--xformers</code> 参数安装替代</li>
+        <li>首次启动慢：自动下载程序文件，耐心等待</li>
+      </ul>
+      <div class="doc-src">
+        <div class="t">参考来源</div>
+        <a href="https://search.bilibili.com/all?keyword=%E7%A7%8B%E5%8F%B6" target="_blank" rel="noopener">B 站搜索 · 秋叶（aaaki）整合包发布渠道</a>
+        <a href="https://developer.baidu.com/article/details/3265996" target="_blank" rel="noopener">百度开发者 · Stable Diffusion 秋叶整合包安装指南</a>
+        <a href="https://blog.csdn.net/m0_64365896/article/details/145851523" target="_blank" rel="noopener">CSDN · 秋叶 SD 整合包安装全过程</a>
+      </div>
+    </section>
+
+    <section class="doc-sec" id="lora">
+      <h2><span class="n">05</span>LoRA 训练（Kohya_ss）</h2>
+      <p class="lead">用 Kohya_ss 图形工具训练自己的 LoRA，改画风/角色，门槛比想象低。</p>
+      <h3>硬件要求</h3>
+      <ul>
+        <li>显存 8GB 起步（12GB+ 更稳），SD 1.5 训练最友好</li>
+        <li>训练数据集：15–30 张同主体/同画风高清图</li>
+      </ul>
+      <h3>配置步骤</h3>
+      <ol>
+        <li>安装 Kohya_ss（<a href="https://github.com/bmaltais/kohya_ss" target="_blank" rel="noopener" style="color:var(--c-cyan)">github.com/bmaltais/kohya_ss</a>），按 README 安装 Python 环境与依赖</li>
+        <li>准备数据集：图片放 <code>img</code> 目录，按 <code>数字_触发词</code> 命名子文件夹（如 <code>20_mychar</code>）</li>
+        <li>为每张图编写描述文件（.txt），描述内容与触发词</li>
+        <li>启动 Kohya_ss GUI，切换到 <code>Dreambooth LoRA</code> 标签</li>
+        <li>设置参数：基础模型、训练步数（数据量×10–20）、batch size、学习率（常用 1e-4）</li>
+        <li>点击训练，完成后 LoRA 文件输出到 <code>output</code> 目录（几十~几百 MB）</li>
+        <li>把 LoRA 放入 WebUI/ComfyUI 的 <code>models/Lora</code>，提示词用 <code>&lt;lora:文件名:0.8&gt;</code> 触发</li>
+      </ol>
+      <div class="doc-src">
+        <div class="t">参考来源</div>
+        <a href="https://github.com/bmaltais/kohya_ss" target="_blank" rel="noopener">GitHub · bmaltais/kohya_ss 训练工具</a>
+        <a href="https://blog.csdn.net/weixin_33402252/article/details/165789355" target="_blank" rel="noopener">CSDN · 手把手训练 SD LoRA 模型（环境/数据/参数全解析）</a>
+        <a href="https://zhuanlan.zhihu.com/p/671353062" target="_blank" rel="noopener">知乎 · Stable Diffusion LoRA 训练详解（4 万字）</a>
+        <a href="https://help.aliyun.com/zh/pai/untitled-document-1700636579019" target="_blank" rel="noopener">阿里云 PAI · LoRA 使用方法与数据集要求</a>
+      </div>
+    </section>
+
+    <section class="doc-sec" id="cloud">
+      <h2><span class="n">06</span>云 GPU 平台使用</h2>
+      <p class="lead">没有显卡也能跑 SD/ComfyUI，国内推荐 AutoDL，国外 RunPod/Colab。</p>
+      <h3>配置步骤（以 AutoDL 为例）</h3>
+      <ol>
+        <li>注册 AutoDL（<a href="https://www.autodl.com" target="_blank" rel="noopener" style="color:var(--c-cyan)">autodl.com</a>），充值算力</li>
+        <li>选择 GPU 实例（如 RTX 3090/4090），选择预置镜像「Stable Diffusion / ComfyUI」</li>
+        <li>开机后通过控制台提供的链接访问 WebUI/ComfyUI（自动配置端口）</li>
+        <li>模型可通过 AutoDL 的模型市场一键挂载，或从 Hugging Face/Civitai 下载</li>
+        <li>关机不计费（只收存储费），按需开关节省成本</li>
+      </ol>
+      <h3>其他平台</h3>
+      <ul>
+        <li>RunPod：按量租 GPU，预置 SD/ComfyUI 模板</li>
+        <li>Google Colab：免费/付费笔记本，可跑 SD（资源有限）</li>
+        <li>Banana/Replicate：把 SD 部署为 API，面向开发者</li>
+      </ul>
+      <div class="doc-src">
+        <div class="t">参考来源</div>
+        <a href="https://www.autodl.com" target="_blank" rel="noopener">AutoDL 官网（国内 GPU 租赁）</a>
+        <a href="https://www.runpod.io" target="_blank" rel="noopener">RunPod 官网</a>
+        <a href="https://colab.research.google.com" target="_blank" rel="noopener">Google Colab</a>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

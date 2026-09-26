@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI 生图知识神经网络：以图谱可视化呈现整合方案、主流模型、微调技术与技术原理之间的强映射关联，降低入门门槛。" />
+  <title>知识神经网络 · AI 生图知识图谱</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=20260926a" />
+  <style>
+    html, body { height: 100%; margin: 0; overflow: hidden; }
+    body { background: var(--bg-0); }
+    #bg-canvas { position: fixed; inset: 0; z-index: 0; }
+    .net-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+      padding: 18px 28px 16px;
+      background: linear-gradient(180deg, rgba(7,9,14,0.92), rgba(7,9,14,0.5) 70%, transparent);
+      display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    }
+    .net-brand { display: flex; align-items: center; gap: 12px; }
+    .net-glyph {
+      width: 38px; height: 38px; display: grid; place-items: center;
+      background: linear-gradient(135deg, var(--c-mint), var(--c-rose));
+      color: var(--bg-0); font-family: var(--font-display); font-weight: 800; font-size: 20px;
+      border-radius: 10px; transform: rotate(-4deg); box-shadow: 0 0 24px rgba(0,255,200,0.4);
+    }
+    .net-title { font-family: var(--font-display); font-weight: 800; font-size: 19px; color: var(--text-0); letter-spacing: -0.02em; line-height: 1.1; }
+    .net-sub { font-family: var(--font-mono); font-size: 10.5px; color: var(--c-mint); letter-spacing: 0.18em; text-transform: uppercase; margin-top: 2px; }
+    .net-actions { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+    .net-btn {
+      font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.05em;
+      padding: 9px 16px; border-radius: 100px; cursor: pointer; transition: all 0.2s var(--ease);
+      border: 1px solid var(--line-strong); color: var(--text-1); background: var(--bg-2);
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .net-btn:hover { color: var(--c-mint); border-color: var(--c-mint); background: rgba(0,255,200,0.08); }
+    .net-btn.primary { background: linear-gradient(135deg, var(--c-mint), var(--c-rose)); color: var(--bg-0); border: none; font-weight: 600; }
+    .net-btn.primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+    .net-legend {
+      position: fixed; left: 18px; bottom: 18px; z-index: 15;
+      background: rgba(18,22,32,0.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+      display: flex; flex-direction: column; gap: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .net-legend .lt { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-3); margin-bottom: 2px; }
+    .net-legend .li { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-1); }
+    .net-legend .d { width: 11px; height: 11px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+
+    .net-hint {
+      position: fixed; right: 18px; bottom: 18px; z-index: 15;
+      font-family: var(--font-mono); font-size: 11px; color: var(--text-3); letter-spacing: 0.05em;
+      background: rgba(18,22,32,0.7); padding: 8px 14px; border-radius: 100px; border: 1px solid var(--line);
+    }
+
+    #cy { position: fixed; inset: 0; z-index: 5; }
+
+    /* 悬浮缩略说明 tooltip */
+    .net-tip {
+      position: fixed; z-index: 30; max-width: 280px;
+      background: rgba(18,22,32,0.85); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255,255,255,0.16); border-radius: 10px;
+      padding: 12px 14px; pointer-events: none; opacity: 0;
+      transform: translateY(6px); transition: opacity 0.18s, transform 0.18s;
+      box-shadow: 0 14px 36px rgba(0,0,0,0.5);
+    }
+    .net-tip.show { opacity: 1; transform: translateY(0); }
+    .net-tip .tt-cat { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; }
+    .net-tip .tt-name { font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--text-0); margin-bottom: 4px; }
+    .net-tip .tt-blurb { font-size: 12.5px; color: var(--text-2); line-height: 1.55; }
+    .net-tip .tt-cta { font-family: var(--font-mono); font-size: 10px; color: var(--c-mint); margin-top: 6px; opacity: 0.8; }
+
+    /* 点击详情面板 */
+    .net-detail {
+      position: fixed; right: 0; top: 0; bottom: 0; z-index: 25; width: 420px; max-width: 92vw;
+      background: linear-gradient(180deg, rgba(16,22,32,0.92), rgba(10,14,20,0.96));
+      backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+      border-left: 1px solid var(--line-strong);
+      box-shadow: -24px 0 60px rgba(0,0,0,0.5);
+      transform: translateX(105%); transition: transform 0.4s var(--ease);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .net-detail.show { transform: translateX(0); }
+    .nd-head { padding: 22px 22px 14px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+    .nd-cat { display: inline-block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; margin-bottom: 10px; }
+    .nd-name { font-family: var(--font-display); font-weight: 800; font-size: 26px; color: var(--text-0); letter-spacing: -0.02em; line-height: 1.1; }
+    .nd-body { flex: 1; overflow-y: auto; padding: 20px 22px 28px; }
+    .nd-section { margin-bottom: 22px; }
+    .nd-label { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; }
+    .nd-blurb { font-size: 14.5px; color: var(--text-1); line-height: 1.72; }
+    .nd-links { display: flex; flex-direction: column; gap: 8px; }
+    .nd-link {
+      display: flex; align-items: center; gap: 10px; text-decoration: none;
+      padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
+      background: var(--bg-card); transition: all 0.18s var(--ease);
+    }
+    .nd-link:hover { border-color: var(--c-mint); background: var(--bg-2); transform: translateX(-2px); }
+    .nd-link .ic { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; font-size: 16px; flex-shrink: 0; }
+    .nd-link .tx { flex: 1; }
+    .nd-link .t1 { font-size: 13.5px; color: var(--text-0); font-weight: 600; }
+    .nd-link .t2 { font-size: 11.5px; color: var(--text-2); margin-top: 2px; }
+    .nd-link .ar { color: var(--c-mint); font-family: var(--font-mono); }
+    .nd-rels { display: flex; flex-wrap: wrap; gap: 7px; }
+    .nd-rel {
+      font-size: 12px; padding: 5px 11px; border-radius: 100px; cursor: pointer;
+      border: 1px solid var(--line-strong); color: var(--text-1); background: var(--bg-2);
+      transition: all 0.16s;
+    }
+    .nd-rel:hover { color: var(--text-0); border-color: var(--c-mint); }
+    .nd-rel .rl { font-family: var(--font-mono); font-size: 9.5px; color: var(--text-3); margin-left: 6px; }
+    .nd-close { position: absolute; top: 18px; right: 18px; width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 8px; color: var(--text-2); cursor: pointer; font-size: 15px; }
+    .nd-close:hover { color: var(--c-rose); border-color: var(--c-rose); }
+
+    /* 顶部说明条（结构化设计如何帮助新手） */
+    .net-intro {
+      position: fixed; left: 50%; top: 76px; transform: translateX(-50%); z-index: 14;
+      max-width: 640px; padding: 12px 22px; border-radius: 14px;
+      background: rgba(18,22,32,0.62); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      font-size: 13px; color: var(--text-1); line-height: 1.6; text-align: center;
+      display: none;
+    }
+    .net-intro.show { display: block; }
+    .net-intro b { color: var(--c-mint); }
+    .net-intro .dismiss { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); cursor: pointer; margin-left: 10px; }
+    .net-intro .dismiss:hover { color: var(--c-rose); }
+
+    @media (max-width: 720px) {
+      .net-detail { width: 92vw; }
+      .net-legend { display: none; }
+      .net-intro { max-width: 92vw; top: 130px; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+
+  <header class="net-header">
+    <div class="net-brand">
+      <div class="net-glyph">N</div>
+      <div>
+        <div class="net-title">知识神经网络</div>
+        <div class="net-sub">Knowledge Neural Net</div>
+      </div>
+    </div>
+    <div class="net-actions">
+      <button class="net-btn" id="introBtn">设计说明</button>
+      <a class="net-btn" href="index.html">📖 参考书</a>
+      <a class="net-btn primary" href="docs.html">🛠 配置教程</a>
+    </div>
+  </header>
+
+  <div class="net-intro" id="netIntro">
+    <b>为什么用神经网络图谱？</b> 传统目录线性孤立地罗列知识点，新手难以看出关联。本页把「整合方案、主流模型、微调技术、技术原理」映射为互联的节点网络——一条边就是一条技术原理对应关系（如 ComfyUI→SD→U-Net→扩散模型）。沿边走即可理解「工具用了什么模型、模型基于什么原理、原理又被哪些微调扩展」，从任意节点出发都能构建完整知识链，显著降低入门门槛。
+    <span class="dismiss" id="introDismiss">✕ 知道了</span>
+  </div>
+
+  <div id="cy"></div>
+
+  <div class="net-legend" id="legend"></div>
+
+  <div class="net-hint">悬浮看简介 · 点击展开详情 · 滚轮缩放 · 拖拽平移</div>
+
+  <div class="net-tip" id="tip"></div>
+
+  <aside class="net-detail" id="detail">
+    <button class="nd-close" id="detailClose">✕</button>
+    <div class="nd-head">
+      <span class="nd-cat" id="ndCat"></span>
+      <div class="nd-name" id="ndName"></div>
+    </div>
+    <div class="nd-body">
+      <div class="nd-section">
+        <div class="nd-label">一句话理解</div>
+        <div class="nd-blurb" id="ndBlurb"></div>
+      </div>
+      <div class="nd-section" id="ndRelsWrap">
+        <div class="nd-label">技术原理关联（沿边探索）</div>
+        <div class="nd-rels" id="ndRels"></div>
+      </div>
+      <div class="nd-section">
+        <div class="nd-label">深入学习</div>
+        <div class="nd-links" id="ndLinks"></div>
+      </div>
+    </div>
+  </aside>
+
+  <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="js/network-data.js?v=20260926a"></script>
+  <script>
+  /* ============ Three.js 神经网络背景氛围 ============ */
+  (function () {
+    const canvas = document.getElementById("bg-canvas");
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000);
+    camera.position.z = 420;
+
+    // 神经元节点（粒子）
+    const N = 70;
+    const positions = [];
+    for (let i = 0; i < N; i++) {
+      positions.push(new THREE.Vector3(
+        (Math.random() - 0.5) * 900,
+        (Math.random() - 0.5) * 600,
+        (Math.random() - 0.5) * 400
+      ));
+    }
+    const posArr = new Float32Array(N * 3);
+    positions.forEach((p, i) => { posArr[i*3]=p.x; posArr[i*3+1]=p.y; posArr[i*3+2]=p.z; });
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute("position", new THREE.BufferAttribute(posArr, 3));
+    const pMat = new THREE.PointsMaterial({ color: 0x00ffc8, size: 3.2, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false });
+    const points = new THREE.Points(pGeo, pMat);
+    scene.add(points);
+
+    // 神经元连线（相近的连）
+    const linePositions = [];
+    for (let i = 0; i < N; i++) {
+      for (let j = i+1; j < N; j++) {
+        if (positions[i].distanceTo(positions[j]) < 160) {
+          linePositions.push(positions[i].x, positions[i].y, positions[i].z);
+          linePositions.push(positions[j].x, positions[j].y, positions[j].z);
+        }
+      }
+    }
+    const lGeo = new THREE.BufferGeometry();
+    lGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(linePositions), 3));
+    const lMat = new THREE.LineBasicMaterial({ color: 0x7c5cff, transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending });
+    const lines = new THREE.LineSegments(lGeo, lMat);
+    scene.add(lines);
+
+    let t = 0;
+    function animate() {
+      t += 0.002;
+      points.rotation.y = t;
+      lines.rotation.y = t;
+      pMat.opacity = 0.5 + Math.sin(t * 20) * 0.15;
+      lMat.opacity = 0.14 + Math.sin(t * 14) * 0.06;
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  })();
+
+  /* ============ Cytoscape 知识图谱 ============ */
+  (function () {
+    const D = window.NETWORK_DATA;
+    const cats = D.categories;
+
+    // 图例
+    const legend = document.getElementById("legend");
+    legend.innerHTML = `<div class="lt">节点类别</div>` +
+      Object.values(cats).map(c => `<div class="li"><span class="d" style="background:${c.color};color:${c.color}"></span>${c.name}</div>`).join("");
+
+    const nodes = D.nodes.map(n => ({
+      data: {
+        id: n.id, label: n.label, cat: n.cat,
+        color: cats[n.cat].color, catName: cats[n.cat].name,
+        blurb: n.blurb, detailRef: n.detailRef || "", tut: n.tut || ""
+      }
+    }));
+    const edges = D.edges.map((e, i) => ({ data: { id: "e" + i, source: e.s, target: e.t, label: e.l } }));
+
+    const cy = cytoscape({
+      container: document.getElementById("cy"),
+      elements: [...nodes, ...edges],
+      style: [
+        { selector: "node", style: {
+          "label": "data(label)", "text-valign": "bottom", "text-halign": "center",
+          "text-margin-y": 6, "color": "#e6e9f0",
+          "font-family": "Manrope, Noto Sans SC, sans-serif", "font-size": 12, "font-weight": 600,
+          "width": 26, "height": 26, "background-color": "data(color)",
+          "border-color": "#fff", "border-width": 0, "border-opacity": 0.5,
+          "box-shadow": "0 0 12px data(color)",
+          "text-outline-color": "#07090e", "text-outline-width": 3
+        }},
+        { selector: "node[cat = 'M']", style: { "width": 34, "height": 34, "font-size": 13 } },
+        { selector: "node#m-sd", style: { "width": 48, "height": 48, "font-size": 15, "font-weight": 800 } },
+        { selector: "node:selected", style: { "border-width": 3, "border-color": "#fff", "border-opacity": 1 } },
+        { selector: "edge", style: {
+          "curve-style": "bezier", "width": 1.6, "line-color": "rgba(255,255,255,0.18)",
+          "target-arrow-color": "rgba(255,255,255,0.35)", "target-arrow-shape": "triangle",
+          "arrow-scale": 0.8, "label": "data(label)",
+          "color": "#8b94a6", "font-size": 9, "font-family": "JetBrains Mono, monospace",
+          "text-background-color": "#0a0e14", "text-background-opacity": 0.7,
+          "text-background-padding": 2, "text-rotation": "autorotate",
+          "text-outline-color": "#0a0e14", "text-outline-width": 2
+        }},
+        { selector: ".highlighted", style: { "line-color": "#00ffc8", "width": 3, "target-arrow-color": "#00ffc8", "opacity": 1 } },
+        { selector: ".faded", style: { "opacity": 0.15 } }
+      ],
+      layout: { name: "cose", animate: true, animationDuration: 800, nodeRepulsion: 9000, idealEdgeLength: 120, nodeOverlap: 24, padding: 90, gravity: 0.35, randomize: false }
+    });
+
+    /* ---- 悬浮缩略说明 ---- */
+    const tip = document.getElementById("tip");
+    let tipTimer = null;
+    cy.on("mouseover", "node", function (e) {
+      const d = e.target.data();
+      tip.innerHTML = `<div class="tt-cat" style="color:${d.color}">${d.catName}</div><div class="tt-name">${d.label}</div><div class="tt-blurb">${d.blurb}</div><div class="tt-cta">点击查看详情 →</div>`;
+      tip.classList.add("show");
+    });
+    cy.on("mouseout", "node", () => { tip.classList.remove("show"); });
+    cy.on("tap", "node", () => { tip.classList.remove("show"); });
+    document.addEventListener("mousemove", (e) => {
+      if (!tip.classList.contains("show")) return;
+      let x = e.clientX + 16, y = e.clientY + 16;
+      const w = tip.offsetWidth, h = tip.offsetHeight;
+      if (x + w > window.innerWidth - 8) x = e.clientX - w - 16;
+      if (y + h > window.innerHeight - 8) y = e.clientY - h - 16;
+      tip.style.left = x + "px"; tip.style.top = y + "px";
+    });
+
+    /* ---- 点击展开详情面板 ---- */
+    const detail = document.getElementById("detail");
+    function showDetail(nodeId) {
+      const node = cy.getElementById(nodeId);
+      if (!node.length) return;
+      const d = node.data();
+      document.getElementById("ndCat").textContent = d.catName;
+      document.getElementById("ndCat").style.color = d.color;
+      document.getElementById("ndCat").style.borderColor = d.color;
+      document.getElementById("ndName").textContent = d.label;
+      document.getElementById("ndBlurb").textContent = d.blurb;
+
+      // 关联节点
+      const rels = document.getElementById("ndRels");
+      rels.innerHTML = "";
+      const connected = cy.edges(`[source = "${nodeId}"], [target = "${nodeId}"]`);
+      if (!connected.length) { document.getElementById("ndRelsWrap").style.display = "none"; }
+      else {
+        document.getElementById("ndRelsWrap").style.display = "";
+        connected.forEach(edge => {
+          const sd = edge.data("source"), td = edge.data("target");
+          const otherId = sd === nodeId ? td : sd;
+          const other = cy.getElementById(otherId);
+          const od = other.data();
+          const dir = sd === nodeId ? "→" : "←";
+          const chip = document.createElement("span");
+          chip.className = "nd-rel";
+          chip.innerHTML = `${dir} ${od.label}<span class="rl">${edge.data("label")}</span>`;
+          chip.style.borderColor = od.color + "55";
+          chip.onclick = () => { cy.animate({ center: { eles: other } }, { duration: 400 }); showDetail(otherId); };
+          rels.appendChild(chip);
+        });
+      }
+
+      // 深入学习链接
+      const links = document.getElementById("ndLinks");
+      links.innerHTML = "";
+      if (d.detailRef) {
+        links.insertAdjacentHTML("beforeend",
+          `<a class="nd-link" href="${d.detailRef}"><span class="ic" style="background:rgba(0,255,200,0.12);color:var(--c-mint)">📖</span><span class="tx"><span class="t1">参考书详细解读</span><span class="t2">跳转至对应章节的完整技术说明</span></span><span class="ar">→</span></a>`);
+      }
+      if (d.tut) {
+        links.insertAdjacentHTML("beforeend",
+          `<a class="nd-link" href="${d.tut}"><span class="ic" style="background:rgba(255,184,0,0.14);color:var(--c-amber)">🛠</span><span class="tx"><span class="t1">配置操作教程</span><span class="t2">含具体安装配置步骤与参考来源</span></span><span class="ar">→</span></a>`);
+      }
+      if (!d.detailRef && !d.tut) {
+        links.innerHTML = `<div style="font-size:13px;color:var(--text-3)">该节点暂无独立文档，可沿关联节点继续探索。</div>`;
+      }
+      detail.classList.add("show");
+    }
+    cy.on("tap", "node", function (e) { e.preventDefault(); showDetail(e.target.id()); });
+
+    document.getElementById("detailClose").addEventListener("click", () => detail.classList.remove("show"));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") detail.classList.remove("show"); });
+
+    /* ---- 高亮关联：点击节点时突出其邻边与邻居，淡化无关 ---- */
+    cy.on("tap", "node", function (e) {
+      const n = e.target;
+      cy.elements().removeClass("faded").removeClass("highlighted");
+      const connected = n.connectedEgdes().connectedNodes().add(n.connectedEdges());
+      n.connectedEdges().addClass("highlighted");
+      cy.elements().not(connected).addClass("faded");
+    });
+    cy.on("tap", function (e) {
+      if (e.target === cy) { cy.elements().removeClass("faded").removeClass("highlighted"); }
+    });
+
+    /* ---- 顶部说明 ---- */
+    const intro = document.getElementById("netIntro");
+    document.getElementById("introBtn").addEventListener("click", () => intro.classList.toggle("show"));
+    document.getElementById("introDismiss").addEventListener("click", () => intro.classList.remove("show"));
+    setTimeout(() => intro.classList.add("show"), 600);
+    setTimeout(() => intro.classList.remove("show"), 12000);
+  })();
+  </script>
+</body>
+</html>
