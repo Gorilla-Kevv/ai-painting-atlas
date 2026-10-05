@@ -4,11 +4,11 @@
  * 合并逻辑：js/app.js IIFE 顶部（blocks/glossary/resources）+ docs.html 底部（tutorials）
  * ===================================================================== */
 window.COMMUNITY_DATA = {
-  v: 1,
-  builtAt: null,
-  blocks: {},
-  overrides: {},
-  glossary: [],
-  resources: [],
-  tutorials: []
+  "v": 1,
+  "builtAt": "2026-10-04T19:34:10.633Z",
+  "blocks": {},
+  "overrides": {},
+  "glossary": [],
+  "resources": [],
+  "tutorials": []
 };
