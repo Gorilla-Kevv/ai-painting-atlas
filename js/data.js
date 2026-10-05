@@ -30,6 +30,13 @@ const GLOSSARY = [
   { term: "Midjourney", en: "MJ", cat: "模型", desc: "闭源商业模型，以艺术风格出众著称，通过 Discord/网页使用，付费订阅制。" },
   { term: "NovelAI", en: "NAI", cat: "模型", desc: "面向二次元文生图/写作的付费平台，基于 SD 衍生模型训练，动漫风格突出。" },
   { term: "Banana AI", en: "Banana", cat: "模型", desc: "面向开发者的无服务器 GPU 平台，可一键部署 SD 等 ML 模型为 API，也被用于生图算力托管。" },
+  { term: "WAI", en: "WAI-illustrious-SDXL", cat: "模型", desc: "社区最热开源动漫模型，基于 Illustrious XL 微调，角色知识丰富、多 LoRA 兼容，长期霸榜 Civitai/Tensor.Art。" },
+  { term: "Anima", en: "Anima", cat: "模型", desc: "CircleStone Labs 与 Comfy Org 合作的 2B 开源动漫文生图模型，含 Base/Aesthetic/Turbo 三版，轻量可本地运行。" },
+  { term: "Krea 2", en: "Krea 2", cat: "模型", desc: "Krea AI 首个从零训练的图像基础模型，美学优先，主打风格参考、情绪板与创意控制滑杆。" },
+  { term: "Wan 2.2", en: "Wan 2.2", cat: "模型", desc: "阿里通义万相开源视频生成模型，业界首个 MoE 架构开源视频大模型，图生视频可让静态生图动起来。" },
+  { term: "Z-Image", en: "Z-Image 造相", cat: "模型", desc: "阿里 Tongyi-MAI 的 6B 高效图像模型，S3-DiT 单流架构，8 步出图、中英双语文字渲染，Apache 2.0 开源。" },
+  { term: "Seedream", en: "Seedream 4.0", cat: "模型", desc: "字节跳动统一生成与编辑的图像模型，支持组图生成、知识生图、参考一致性与 4K 输出，经即梦/豆包/火山方舟提供。" },
+  { term: "GPT-Image", en: "GPT-Image", cat: "模型", desc: "OpenAI 自回归多模态图像模型家族，对话式精准编辑、图内文字与世界知识见长，经 ChatGPT 与 API 提供。" },
   { term: "LoRA", en: "Low-Rank Adaptation", cat: "微调", desc: "低秩适配微调方法，只训练极小参数即可改变画风/角色，是 SD 生态最流行的扩展形式。" },
   { term: "DreamBooth", en: "DreamBooth", cat: "微调", desc: "把特定主体（如你的猫）训练进模型的方法，比 LoRA 更深，但易过拟合、显存要求高。" },
   { term: "Textual Inversion", en: "TI / 嵌入式", cat: "微调", desc: "学习一个新词向量代表某概念，文件极小，适合定义风格/角色，训练慢、效果弱于 LoRA。" },
@@ -236,7 +243,7 @@ const SECTIONS = [
   en: "Models",
   icon: "◆",
   color: "#ff2e88",
-  summary: "盘点 Stable Diffusion、DALL·E、Midjourney、NovelAI、Banana AI 等主流模型的特点与定位。",
+  summary: "盘点 Stable Diffusion、DALL·E、Midjourney、NovelAI、Banana AI、Flux，以及 WAI、Anima、Krea 2、Wan 2.2、Z-Image、Seedream、GPT-Image 等新老主流模型的特点与定位。",
   sections: [
     {
       heading: "Stable Diffusion（SD）",
@@ -360,6 +367,111 @@ const SECTIONS = [
         title: "高频避坑清单",
         text: "①权重与权重符号必须用半角（全角无效）；②数字权重省略结尾双冒号会污染后续所有 tag；③角色名仅支持 ASCII，变音符号需转写；④赠送点数月末重置而非累积，未用完请先暂停自动续费；⑤最高档免费阈值是『≤28 步且像素乘积 ≲108 万』，超任一条件即计费；⑥PGR 通常不推荐启用；⑦扩图后必须用蒙版完全覆盖新增区域；⑧多氛围转移总强度请勿超过 1.00；⑨第三方代充/合租有封号与点数被脚本耗尽的风险。"
       }
+    },
+    {
+      heading: "WAI（WAI-illustrious 系列）",
+      paragraphs: [
+        "WAI（全称 WAI-illustrious-SDXL，作者 WAI0731）是当今社区最热门的开源动漫大模型之一，基于 OnomaAI 的 Illustrious XL 底座深度微调，长期霸榜 Civitai 与 Tensor.Art 动漫模型评分（Tensor.Art 星标数以万计）。它走的是『免费开放权重 + 社区持续迭代』路线，与闭源付费的 NovelAI 形成鲜明对照。",
+        "版本演进（约每月一更）：2024 年 10 月发布 v1.0 → v13（新增训练数据、增强自然语言支持）→ v14（更换基座，作者实测后坚持采用 Illustrious 1.0 而非 2.0）→ v15（完善多 LoRA 叠加）→ v16（更柔和干净的角色精度）→ v17（修复背景色彩一致性、增强高清修复对手脚的自动修正）。有审查/无审查双版本分发，另有 GGUF 量化版适配低显存。",
+        "核心特色：①<b>海量角色知识</b>——训练集覆盖大量动漫/游戏角色，多数角色『零 LoRA 直出』，写『角色名 + 作品名』tag 即可召回典型外观；②<b>Danbooru 标签原生精通</b>——对词条式提示词与 quality 标签（masterpiece, best quality, amazing quality）响应极强；③<b>多 LoRA 叠加引擎</b>——同时挂多个服装/画风 LoRA 不崩基础画质与人体；④<b>多人构图稳定</b>——2–3 角色属性串扰少；⑤标志性的柔软『Punipuni』质感与干净色彩科学。",
+        "推荐参数（作者官方）：采样器 Euler a，Steps 15–30，CFG 5–7，原生分辨率 ≥1024×1024（示例用 1024×1344）；VAE 已内置；高清修复用 R-ESRGAN 4x+ Anime6B、放大 1.5 倍、降噪 0.35–0.5。提示词按四级分级标签（general / sensitive / nsfw / explicit）管理内容尺度——想过滤不适宜内容，在负向提示词加 nsfw 即可。ComfyUI、WebUI、Forge 全兼容，作者推荐 forge-neo。",
+        "定位：想免费本地/云端出高质量二次元、又要角色召回能力的用户。与 NAI 的选型逻辑：WAI 可自由微调、配 LoRA、成本为零，但需自己配环境；NAI 开箱即用、角色库更系统，但闭源收费。二者同属『tag 驱动的动漫扩散模型』生态，提示词方法论互通。"
+      ],
+      callout: { type: "info", title: "生态溯源：Illustrious 家族", text: "Illustrious XL 是 OnomaAI 于 2024 年中开源的动漫底座（刻意『半成品』策略，靠社区微调壮大），WAI、NoobAI-XL、Hassaku XL 等头部动漫模型都源于此。同一底座的 LoRA 生态互通——选模型本质上是选生态。" }
+    },
+    {
+      heading: "Anima（CircleStone Labs / Comfy Org）",
+      paragraphs: [
+        "Anima 是由 CircleStone Labs（ComfyUI 背后的受资实体）与 Comfy Org 合作推出的开源动漫文生图模型，仅 20 亿（2B）参数，专精动漫与非照片级插画——角色设计、场景绘制、概念艺术，不擅长写实。它被视为开源社区对抗闭源二次元服务的『本地化答案』：模型文件仅约 4.2GB，8GB 显存的消费级显卡即可流畅运行。",
+        "时间线：2026 年 1 月发布预览版（此后按月迭代）→ 2026 年 5 月 15 日 Anima Base v1.0 稳定版发布。技术上它衍生于 NVIDIA Cosmos-Predict2-2B-Text2Image 架构，文本侧采用 Qwen3-0.6B 编码器、图像侧复用 Qwen-Image VAE，ComfyUI 原生支持（标准 UNETLoader/CLIPLoader/VAELoader 加载）。",
+        "三个官方版本：<b>Base</b>（预训练底模，灵活性与风格多样性最高，训练 LoRA 请用它）；<b>Aesthetic</b>（美学微调版，默认画风更稳定精致）；<b>Turbo</b>（蒸馏版，CFG 1 + 8–12 步极速出图，官方推荐入门首选）。参数：支持 512²–1536² 分辨率，Base/Aesthetic 用 30–50 步、CFG 4–5，采样器推荐 er_sde（锐利线条）或 euler_a（柔软偏 2.5D）。",
+        "训练数据：数百万张动漫图像 + 约 80 万张非动漫艺术图，未使用合成数据，动漫知识截止 2025 年 9 月。提示词同时支持 Danbooru 标签、自然语言及二者混合；推荐标签顺序：画质/元数据/年份/分级 → 人数 → 角色名 → 作品名 → 画师（@ 前缀）→ 通用标签；画质前缀推荐 masterpiece, best quality, score_7。权重调节比 SDXL 更钝，常需 (tag:2) 级别的高权重。",
+        "许可与生态：模型本体非商业许可（禁止未经授权托管到付费 API），但<b>生成的图像可以商用</b>；官方同步提供 LoRA 训练管线（sd-scripts + Anima Standalone Trainer GUI）。社区已出现扩层续训版本（如 2.9B 预览版）。定位：想要 NAI 式二次元画质、又坚持本地开源与可微调自由的用户的『正解』之一。"
+      ]
+    },
+    {
+      heading: "Krea 2（Krea AI）",
+      paragraphs: [
+        "Krea 2 是创意套件公司 Krea AI 于 2026 年 5 月发布的首个『完全从零训练』的图像基础模型（5 月 12 日官宣，5 月 27 日通过 Fal、Comfy、Runware 等 API 伙伴上线）。闭源商业服务，网页端 krea.ai 直接可用。",
+        "设计哲学是<b>『美学优先』（aesthetic-first）</b>：多数模型擅长理解『画什么』，Krea 2 则聚焦『看起来怎么样』——构图、光影和谐、色彩平衡与风格一致性。核心功能：①<b>风格参考迁移</b>——丢入参考图即可提取并迁移其风格，可多图组合、单独调强度；②<b>Moodboard 情绪板</b>——把一组图打包成『品味档案』（风格关键词 + 禁忌项），整批生成都自动沿用该方向；③<b>创意控制滑杆</b>——从 raw（严格贴提示词）到 high（自由再创作）；④<b>批量一致性</b>——控制同批图像的 variation 幅度，适合成套视觉输出。",
+        "三个变体：<b>Medium</b>（表现力向：插画、动漫、绘画、概念视觉）、<b>Large</b>（写实向：电影感光影、胶片颗粒、运动模糊、相机质感）、<b>Medium Turbo</b>（约 2 秒极速版）。出图普遍 15 秒内完成，支持多种宽高比。写实能力突出——motion blur、film grain、低动态范围等『真实摄影物理感』是它的招牌。",
+        "定位：品牌视觉探索、产品摄影、艺术指导、概念设计等对『风格统一』要求高的场景。与 Midjourney 同属『闭源省心、美学出众』阵营，差异在于 Krea 2 把『风格控制』做成了显式工具（参考图/情绪板/滑杆）而非纯靠提示词与参数猜。"
+      ],
+      table: {
+        title: "Krea 2 变体速览",
+        head: ["变体", "特长", "适合场景"],
+        rows: [
+          ["Medium", "插画/动漫/绘画表现力", "概念视觉、风格化创作"],
+          ["Large", "写实细节、电影感光影", "产品图、编辑类人像、概念艺术"],
+          ["Medium Turbo", "约 2 秒极速生成", "快速迭代、批量草稿"]
+        ]
+      }
+    },
+    {
+      heading: "Wan 2.2（通义万相 · 阿里）",
+      paragraphs: [
+        "Wan 2.2（万相 2.2）是阿里通义万相 Wan 系列的开源视频生成基础模型，2025 年 7 月 28 日发布，是业界首个引入 MoE（专家混合）架构的开源视频大模型，采用 Apache 2.0 许可完全开源可商用。对生图用户的意义：它是『静态图 → 动态视频』的主力开源引擎——你用任何生图模型产出的海报/插画/角色立绘，都能通过它的图生视频（I2V）能力一键动起来。",
+        "模型矩阵：<b>T2V-A14B</b>（文生视频 MoE）、<b>I2V-A14B</b>（图生视频 MoE）、<b>TI2V-5B</b>（文/图生视频统一稠密模型）、<b>S2V-14B</b>（语音生视频），均支持 480P 与 720P。",
+        "<b>MoE 双专家设计（硬核）</b>：A14B 系列总参数 270 亿，按去噪阶段拆成两位专家——高噪专家负责早期去噪、关注整体布局；低噪专家负责后期去噪、专注细节纹理。切换点由信噪比（SNR）阈值决定：每步推理只激活 140 亿参数，算力与显存开销几乎不变，却拿到了更大模型容量——这正是大语言模型领域 MoE 思路在扩散模型上的成功移植。",
+        "<b>TI2V-5B 轻量路线</b>：基于高压缩 Wan2.2-VAE（时空压缩 4×16×16，加 patchify 后总压缩 4×32×32），单张 RTX 4090 约 9 分钟即可生成 5 秒 720P@24fps 视频，是当时最快的 720P 消费级模型之一。另引入带精细标注（光照、构图、对比度、色调）的电影级美学数据集，支持按美学偏好精准控制；训练数据较 Wan2.1 扩充 65.6% 图像与 83.2% 视频。",
+        "获取与使用：权重在 Hugging Face / ModelScope（Wan-AI）、GitHub（Wan-Video/Wan2.2）开源，ComfyUI 有官方节点与 Kijai Wrapper 工作流；阿里云百炼提供 wan2.2 系列 API（t2v-plus / i2v-plus 等）。后续版本持续在云端迭代。定位：想要电影级画质、复杂运动与完全开源可控的视频生成的创作者；短视频快速出稿场景可搭配更快的同类模型。"
+      ],
+      table: {
+        title: "Wan 2.2 模型矩阵",
+        head: ["模型", "任务", "规格要点"],
+        rows: [
+          ["T2V-A14B", "文生视频", "MoE 双专家，480P/720P"],
+          ["I2V-A14B", "图生视频", "MoE 双专家，480P/720P，生图用户的动起来首选"],
+          ["TI2V-5B", "文/图生视频统一", "5B 稠密 + 高压缩 VAE，720P@24fps，4090 可跑"],
+          ["S2V-14B", "语音生视频", "音频驱动人物，480P/720P"]
+        ]
+      }
+    },
+    {
+      heading: "Z-Image 造相（阿里 Tongyi-MAI）",
+      paragraphs: [
+        "Z-Image（中文名『造相』）是阿里通义实验室 Tongyi-MAI 于 2025 年 11 月开源的高效图像生成基础模型，仅 60 亿（6B）参数，却打出旗舰级画质，是对『规模至上（scale-at-all-costs）』路线的一次正面回击——同期开源竞品（Qwen-Image、HunyuanImage-3.0、FLUX.2）普遍在 20B–80B 量级。全流程训练仅耗 31.4 万 H800 GPU 时。Apache 2.0 许可，完全开源可商用。",
+        "架构（硬核）：采用 <b>S3-DiT</b>（Scalable Single-Stream Diffusion Transformer，可扩展单流扩散 Transformer）——把文本 token（来自改造的 Qwen3-4B 编码器）、视觉语义 token、图像 VAE token 在序列层拼接为统一输入流。相比 FLUX 的双流设计，单流消除了模态间的参数冗余，6B 的每个参数同时服务文本理解与图像生成，这正是它以小博大的关键。",
+        "三个官方变体：<b>Z-Image-Turbo</b>——经 Decoupled-DMD 蒸馏 + DMDR 奖励后训练的少步版本，仅 8 步推理即可出图：H800 上亚秒级延迟，RTX 4090 约 2.3 秒，16GB 以下显存的消费级显卡可原生运行；<b>Z-Image-Base</b>——未蒸馏底模，供社区微调与二创；<b>Z-Image-Edit</b>——指令式图像编辑变体，自然语言局部修改/风格转换/全局调整，且保持主体与布局一致。",
+        "两大招牌能力：<b>写实人像/摄影质感</b>（媲美顶级商业模型）与<b>中英双语图内文字渲染</b>——海报标题卡、双语排版几乎不出错字，这在开源模型里极为罕见，配合对中文提示词的原生理解，是国内用户本地部署的高性价比之选。生态：diffusers 已原生支持 ZImagePipeline，ComfyUI 可用，权重在 Hugging Face（Tongyi-MAI）与 ModelScope 同步发布。"
+      ],
+      table: {
+        title: "Z-Image 变体速览",
+        head: ["变体", "定位", "关键参数"],
+        rows: [
+          ["Z-Image-Turbo", "少步快速出图（推荐日用）", "8 步推理，<16GB 显存，4090 约 2.3 秒"],
+          ["Z-Image-Base", "社区微调底模", "未蒸馏，LoRA/全参微调用"],
+          ["Z-Image-Edit", "指令式图像编辑", "局部修改/风格迁移，保持主体一致"]
+        ]
+      },
+      callout: { type: "info", title: "为什么 6B 够用", text: "Z-Image 的答案：把算力花在数据基建与训练课程设计上，而不是无脑堆参数。单流架构消灭双流冗余 + 少步蒸馏 + 奖励后训练，让推理成本降到 12B+ 模型的零头——『强画质 ≠ 大模型』。" }
+    },
+    {
+      heading: "Seedream（字节跳动 Seed）",
+      paragraphs: [
+        "Seedream 是字节跳动 Seed 团队的图像创作模型系列，主线版本 4.0 于 2025 年 9 月 9 日发布，把此前分线的 Seedream 3.0（生成）与 SeedEdit 3.0（编辑）合并为同一套统一架构——一套模型同时搞定文生图、图生图、图像编辑、多图编辑与组图生成。闭源商业模型，经由即梦、豆包 App 与火山方舟 API（doubao-seedream-4-0，0.2 元/张）提供服务，火山引擎持续推出增强快照（如 2026 年 4 月版显著强化人像与美感）。",
+        "核心能力：①<b>多图输入 + 组图生成</b>——原生支持文本/单图/多图组合输入，一次最多连续输出 15 张内容关联的图（漫画分镜、多角度产品图、故事组图）；②<b>知识生图与推理</b>——融合世界知识，能画科普插画、图表、时间轴、公式演算这类『需要先想明白再画』的内容；③<b>参考一致性</b>——从参考图中抽取人物身份/风格/结构，在全新场景再创造（角色手办化、风格穿梭 30+ 种不丢脸）；④<b>原生视觉信号控制</b>——草图、涂鸦、Canny、Depth 等控制信号无需 ControlNet，模型原生消化；⑤<b>4K 输出</b>——分辨率上限从 2K 扩展至 4K，并可按提示词自动适配最佳比例。",
+        "速度：全新高效架构 + 极致蒸馏，DiT 生图推理较 3.0 提速超 10 倍，2K 图约 1.8 秒。评测表现：MagicBench 多维基准与 Artificial Analysis 公开众测中，生成与编辑双榜均处头部（内部编辑 Elo 第一）。",
+        "定位：中文语境最强的『多模态创意引擎』之一，电商修图、广告设计、营销物料、专业插画的高生产力选择。与 Z-Image 的对照很典型：Seedream 走云端闭源 SOTA 路线、能力上限高；Z-Image 走开源高效路线、本地零成本。按『要上限还是要自由度』选即可。"
+      ],
+      list: { title: "Seedream 4.0 八大玩法（节选）", items: [
+        "精准编辑：一句话增删改替换，人物/光影/构图保持一致",
+        "灵活参考：提取身份与风格，在新场景再创造（2D 草图 → 3D 渲染）",
+        "视觉信号控制：草图/涂鸦/平面图直接引导生成",
+        "上下文推理：续写漫画、解谜填字、物理与时间约束生成",
+        "组图生成：一次 15 张内容关联图，分镜与套图利器",
+        "知识生图：科普插画、图表、时间轴等世界知识型图像"
+      ] }
+    },
+    {
+      heading: "GPT-Image（OpenAI）",
+      paragraphs: [
+        "GPT-Image 是 OpenAI 的图像生成模型家族，技术路线与扩散派不同：依托 GPT-4o 的原生多模态能力<b>自回归地『写出』图像</b>，因此天然继承了大语言模型的指令遵循、世界知识与对话能力。发展脉络：2025 年 3 月 GPT-4o 原生生图登陆 ChatGPT（一度把 GPU『熔断』）→ 2025 年 4 月以 gpt-image-1 名义开放 API → 2025 年 12 月 GPT Image 1.5（精准编辑、生成提速 4 倍）→ 2026 年 9 月 8 日 ChatGPT Images 2.5（当前旗舰）。",
+        "强项：①<b>对话式多轮编辑</b>——『只改这一处』级别的精准编辑，跨多轮修改保持人物与光线一致；②<b>图内文字渲染</b>——海报、UI mockup、信息图里的密集小字也能写对，长期是同类天花板；③<b>世界知识</b>——理解历史、科学、品牌等常识型指令，『画得对』而不只是『画得美』；④<b>创意变换</b>——风格滤镜、概念化转绘、草图（Sketch）起稿。",
+        "Images 2.5 世代：创作过程的图像保真度提升、多轮编辑一致性增强、延迟较 2.0 降低最多 50%。API 提供两个模型：<b>GPT-Image-2.5 Flare</b>——默认选择，质量高于 GPT-Image-2 且延迟减半，适合绝大多数应用；<b>GPT-Image-2.5 Sunburst</b>——面向高端精修工作流，跨编辑轮次的控制更精细。当前每周经 ChatGPT Images 与 GPT-Image API 生成的图像超 30 亿张。",
+        "局限与定位：闭源、API 按量计费（输出按 token 计价）、内容审核严格（含图像安全元数据），不可本地部署，二次元/写实人像的『美学上限』不及 MJ/NAI 阵营。适合：非技术用户零门槛创作、需要文字精准的海报与原型图、对话式迭代修改、对合规要求高的商业场景——与 DALL·E 3 一脉相承，但能力全面上位。"
+      ],
+      callout: { type: "info", title: "两条技术路线的分野", text: "扩散模型（SD/Flux/WAI/Z-Image）：从噪声逐步去噪，可控性强、生态开放；自回归多模态（GPT-Image）：把图像当 token 逐段生成，语言理解与知识推理强。两条路线正在互相融合——看懂这一点，就看清了整个生图版图。" }
     }
   ]
 },
@@ -807,6 +919,37 @@ const RESOURCES = [
       { label: "官网 Black Forest Labs", url: "https://blackforestlabs.ai/" },
       { label: "模型库 HF", url: "https://huggingface.co/black-forest-labs" }
     ]},
+    { name: "WAI-illustrious", role: "社区最热开源动漫模型，Illustrious XL 系微调，角色召回强", links: [
+      { label: "Civitai 模型页", url: "https://civitai.com/models/827184/wai-illustrious-sdxl" },
+      { label: "Tensor.Art", url: "https://tensorart.me/models/781294838206294336" }
+    ]},
+    { name: "Anima", role: "CircleStone Labs × Comfy Org 开源 2B 动漫文生图模型", links: [
+      { label: "Hugging Face", url: "https://huggingface.co/circlestone-labs/Anima" },
+      { label: "ComfyUI 工作流文档", url: "https://docs.comfy.org/zh/tutorials/image/anima/anima" }
+    ]},
+    { name: "Krea 2", role: "Krea AI 首个从零训练的美学优先图像基础模型", links: [
+      { label: "官网", url: "https://www.krea.ai" },
+      { label: "Krea 2 文档", url: "https://www.krea.ai/docs/cn/user-guide/features/krea-2" }
+    ]},
+    { name: "Wan 2.2", role: "阿里开源 MoE 视频生成模型，图生视频让静态图动起来", links: [
+      { label: "GitHub", url: "https://github.com/Wan-Video/Wan2.2" },
+      { label: "模型库 HF", url: "https://huggingface.co/Wan-AI" },
+      { label: "官方博客", url: "https://tongyi.aliyun.com/wan/blog/wan2.2" }
+    ]},
+    { name: "Z-Image", role: "阿里 Tongyi-MAI 6B 高效图像模型，8 步出图、中英文字渲染", links: [
+      { label: "GitHub", url: "https://github.com/Tongyi-MAI/Z-Image" },
+      { label: "Hugging Face Turbo", url: "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo" },
+      { label: "ModelScope", url: "https://modelscope.cn/models/Tongyi-MAI/Z-Image-Turbo" }
+    ]},
+    { name: "Seedream 4.0", role: "字节跳动统一生成+编辑图像模型，组图/知识生图/4K", links: [
+      { label: "项目主页", url: "https://research.doubao.com/zh/seedream4_0" },
+      { label: "字节 Seed 官网", url: "https://seed.bytedance.com" },
+      { label: "火山方舟 API", url: "https://www.volcengine.com/product/doubao" }
+    ]},
+    { name: "GPT-Image", role: "OpenAI 自回归多模态图像模型，对话编辑与文字渲染强", links: [
+      { label: "产品页 Images 2.5", url: "https://openai.com/zh-Hans-CN/index/introducing-chatgpt-images-2-5/" },
+      { label: "API 文档", url: "https://platform.openai.com/docs/guides/image-generation" }
+    ]},
     { name: "Imagen (Google)", role: "Google 文生图研究模型，文字理解强", links: [
       { label: "产品页", url: "https://deepmind.google/models/imagen-3/" }
     ]},
@@ -960,6 +1103,13 @@ const RESOURCE_MAP = [
   { names: ["NovelAI", "NAI"], resCat: "基础模型", resName: "NovelAI", secId: "models", blockIdx: 3 },
   { names: ["Banana AI", "Banana", "Banana.dev"], resCat: "算力与部署", resName: "Banana.dev", secId: "models", blockIdx: 4 },
   { names: ["Flux", "FLUX"], resCat: "基础模型", resName: "Flux", secId: "models", blockIdx: 5 },
+  { names: ["WAI", "WAI-illustrious", "WAI Illustrious"], resCat: "基础模型", resName: "WAI-illustrious", secId: "models", blockIdx: 7 },
+  { names: ["Anima", "Anima Base", "CircleStone"], resCat: "基础模型", resName: "Anima", secId: "models", blockIdx: 8 },
+  { names: ["Krea 2", "Krea"], resCat: "基础模型", resName: "Krea 2", secId: "models", blockIdx: 9 },
+  { names: ["Wan 2.2", "Wan2.2", "万相2.2", "万相 2.2"], resCat: "基础模型", resName: "Wan 2.2", secId: "models", blockIdx: 10 },
+  { names: ["Z-Image", "Z-Image Turbo", "造相"], resCat: "基础模型", resName: "Z-Image", secId: "models", blockIdx: 11 },
+  { names: ["Seedream", "Seedream 4.0", "即梦"], resCat: "基础模型", resName: "Seedream 4.0", secId: "models", blockIdx: 12 },
+  { names: ["GPT-Image", "GPT Image", "gpt-image", "ChatGPT Images"], resCat: "基础模型", resName: "GPT-Image", secId: "models", blockIdx: 13 },
   { names: ["ComfyUI"], resCat: "工具与界面", resName: "ComfyUI", secId: "tools", blockIdx: 1 },
   { names: ["WebUI", "AUTOMATIC1111", "A1111", "SD WebUI"], resCat: "工具与界面", resName: "AUTOMATIC1111 WebUI", secId: "tools", blockIdx: 0 },
   { names: ["秋叶", "整合包", "绘世", "绘世启动器"], resCat: "工具与界面", resName: "秋叶整合包 / 绘世启动器", secId: "tools", blockIdx: 2 },

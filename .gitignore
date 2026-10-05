@@ -1,6 +1,9 @@
 # CodeBuddy 本地数据（不发布）
 .codebuddy/
 
+# Trae 本地数据（不发布）
+.trae/
+
 # 系统与编辑器
 .DS_Store
 Thumbs.db
