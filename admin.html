@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>管理员审核后台 · AI 生图知识图谱</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-64.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=20261005e" />
+  <style>
+    .adm-wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px 80px; }
+    .adm-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 40px 0 20px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
+    .adm-head h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(24px, 4vw, 36px); color: var(--text-0); letter-spacing: -0.02em; }
+    .adm-actions { display: flex; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: 12px; }
+    .adm-actions a { color: var(--c-mint); text-decoration: none; }
+    .adm-actions a:hover { text-decoration: underline; }
+    #admWho { color: var(--text-3); }
+    .adm-section { margin-bottom: 28px; }
+    .adm-section > h2 { font-family: var(--font-mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--c-mint); margin-bottom: 12px; }
+    .adm-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .adm-tab { font-family: var(--font-mono); font-size: 12px; color: var(--text-2); background: transparent; border: 1px solid var(--line); border-radius: 100px; padding: 7px 14px; cursor: pointer; transition: all .18s; }
+    .adm-tab:hover { color: var(--text-0); border-color: var(--line-strong); }
+    .adm-tab.active { color: var(--c-mint); border-color: rgba(0,255,200,.45); background: rgba(0,255,200,.07); }
+    .adm-tab .cnt { opacity: .7; margin-left: 4px; }
+    .adm-list { display: flex; flex-direction: column; gap: 12px; }
+    .adm-row { border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; background: var(--bg-card); }
+    .adm-row-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .adm-row-type { font-weight: 700; color: var(--text-0); font-size: 14.5px; }
+    .adm-row-meta { font-family: var(--font-mono); font-size: 11px; color: var(--text-3); }
+    .adm-summary { margin-top: 8px; font-size: 14px; color: var(--text-1); line-height: 1.65; }
+    .adm-summary b { color: var(--text-0); }
+    .adm-row-acts { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .adm-row-acts .kb-btn { padding: 7px 14px; font-size: 12px; }
+    .kb-btn.ok { color: var(--c-mint); border-color: rgba(0,255,200,.4); background: rgba(0,255,200,.07); }
+    .kb-btn.ok:hover { color: var(--c-mint); border-color: var(--c-mint); }
+    .kb-btn.bad { color: var(--c-rose); border-color: rgba(255,46,136,.4); background: rgba(255,46,136,.06); }
+    .kb-btn.bad:hover { color: var(--c-rose); border-color: var(--c-rose); }
+    .kb-btn.mut { color: var(--text-3); }
+    .adm-details { margin-top: 10px; }
+    .adm-details summary { cursor: pointer; font-family: var(--font-mono); font-size: 11px; color: var(--text-3); letter-spacing: .06em; }
+    .adm-details summary:hover { color: var(--c-cyan); }
+    .adm-pre { margin-top: 8px; padding: 12px 14px; background: rgba(7,9,14,.6); border: 1px solid var(--line); border-radius: 8px; font-family: var(--font-mono); font-size: 12px; line-height: 1.6; color: var(--text-1); overflow-x: auto; max-height: 320px; }
+    .adm-pat { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .adm-pat .kb-input { max-width: 420px; font-family: var(--font-mono); font-size: 12px; }
+    .adm-log { margin-top: 10px; font-family: var(--font-mono); font-size: 12px; line-height: 1.8; color: var(--text-2); white-space: pre-wrap; word-break: break-all; }
+    .adm-log .l-ok { color: var(--c-mint); }
+    .adm-log .l-err { color: var(--c-rose); }
+    .adm-note { font-size: 12px; color: var(--text-3); line-height: 1.7; }
+  </style>
+</head>
+<body>
+  <div class="adm-wrap">
+    <header class="adm-head">
+      <h1>🛡 管理员审核后台</h1>
+      <div class="adm-actions">
+        <span id="admWho"></span>
+        <a href="index.html">← 返回参考书</a>
+        <button class="kb-btn mut" id="admLogout" type="button" hidden>退出登录</button>
+      </div>
+    </header>
+
+    <div id="admGuard" class="kb-tip"><span>检查登录状态…</span></div>
+
+    <main id="admMain" hidden>
+      <!-- 发布同步 -->
+      <section class="adm-section">
+        <h2>① 发布同步（GitHub）</h2>
+        <div class="kb-tip" style="width:100%">
+          <p class="adm-note">将「已批准 + 已发布」的全部投稿<b>全量重建</b>为 <code>js/community-data.js</code> 并提交到仓库 main 分支（内容寻址幂等：无变化时自动跳过）。Pages 重建 30–90s，公网最长延迟 10 分钟。</p>
+          <div class="adm-pat">
+            <input class="kb-input" id="admPat" type="password" placeholder="GitHub Fine-grained PAT（仅本仓库 Contents: 读写）" autocomplete="off" />
+            <button class="kb-btn" id="admPatSave" type="button">保存 PAT</button>
+            <button class="kb-btn mut" id="admPatClear" type="button">清除</button>
+          </div>
+          <div class="adm-log" id="admPatState"></div>
+          <p class="adm-note">PAT 创建：<a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer" style="color:var(--c-cyan)">github.com/settings/personal-access-tokens/new</a> —— Repository access 仅勾选本仓库，Permissions 仅 Contents: Read and write，建议短有效期。PAT 只保存在你当前浏览器的 localStorage，不经过任何服务器。</p>
+          <p class="adm-note">为什么换浏览器就"不见了"？PAT 按「设备 + 浏览器 + 站点域名」隔离存储（浏览器安全设计）：换浏览器、无痕窗口、或 localhost 与公网域名之间互不可见——并非丢失，回到原来保存的环境仍可用，换环境重新粘贴一次即可。</p>
+          <button class="kb-btn primary" id="admSync" type="button">🚀 生成并同步到仓库</button>
+          <div class="adm-log" id="admSyncLog"></div>
+        </div>
+      </section>
+
+      <!-- 审核队列 -->
+      <section class="adm-section">
+        <h2>② 审核队列</h2>
+        <div class="adm-tabs" id="admTabs"></div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+          <button class="kb-btn" id="admExport" type="button">📋 复制当前队列（AI 审查包 JSON）</button>
+          <span class="adm-note">本地 AI agent 全自动审核接入：见 HANDOFF.md「本地 AI Agent 自动审核接入」</span>
+        </div>
+        <div class="adm-list" id="admList"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/config.js?v=20261005c"></script>
+  <script src="js/vendor/supabase.umd.js?v=20261005a"></script>
+  <script src="js/admin.js?v=20261005e"></script>
+</body>
+</html>

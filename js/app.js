@@ -5,6 +5,76 @@
 (function () {
   "use strict";
 
+  /* ---------- 0. 社区内容叠加（必须在解构前合并：GLOSSARY 派生的 categories 在 IIFE 早期绑定） ---------- */
+  (function mergeCommunity() {
+    try {
+      const CD = window.COMMUNITY_DATA;
+      const KD = window.KNOWLEDGE_DATA;
+      if (!CD || !KD) return;
+      const okUrl = (u) => typeof u === "string" && /^https:\/\//i.test(u.trim());
+      // blocks：追加到对应 section 的 sections 末尾（append-only，保护既有 b0..bN 官方映射）
+      const blocks = CD.blocks || {};
+      Object.keys(blocks).forEach((secId) => {
+        const sec = KD.SECTIONS.find((s) => s.id === secId);
+        if (!sec || !Array.isArray(blocks[secId])) return;
+        sec.sections = sec.sections || [];
+        blocks[secId].forEach((blk, n) => {
+          if (!blk || !blk.heading) return;
+          blk.comm = true; // 社区标记：不挂 ANIM_BY_HEADING 动画、不进官方映射
+          blk.cid = blk.cid || (secId + "-cb" + n); // 与官方 b 序号解耦，data.js 增删不影响外链
+          sec.sections.push(blk);
+        });
+      });
+      // glossary：按 term 去重，官方优先
+      (CD.glossary || []).forEach((g) => {
+        if (!g || !g.term || !g.desc) return;
+        if (!KD.GLOSSARY.some((x) => x.term === g.term)) KD.GLOSSARY.push(g);
+      });
+      // resources：扁平项按 cat 归组（组已存在则 push，否则新建组），URL 强制 https
+      if (!Array.isArray(KD.RESOURCES)) KD.RESOURCES = [];
+      (CD.resources || []).forEach((r) => {
+        if (!r || !r.name || !r.cat) return;
+        const links = (r.links || []).filter((l) => l && okUrl(l.url)).map((l) => ({ label: l.label || "链接", url: l.url.trim() }));
+        if (!links.length) return;
+        let grp = KD.RESOURCES.find((x) => x.cat === r.cat);
+        if (!grp) {
+          grp = { cat: r.cat, color: r.color || "#00ffc8", items: [] };
+          KD.RESOURCES.push(grp);
+        }
+        grp.items.push({ name: r.name, role: r.role || "", links });
+      });
+      // overrides：修订既有 block（官方按 `${secId}-bN` 定位，社区按 cid 定位）
+      // 替换原位置对象 → blockIdx/b序号不变，RESOURCE_MAP/TUT_MAP 等映射保持安全；
+      // 标题未改则保留 ANIM_BY_HEADING 动画
+      const ov = CD.overrides || {};
+      Object.keys(ov).forEach((baseId) => {
+        const edit = ov[baseId];
+        if (!edit || !edit.heading) return;
+        let done = false;
+        const m = baseId.match(/^(.+)-b(\d+)$/);
+        if (m) {
+          const sec = KD.SECTIONS.find((s) => s.id === m[1]);
+          const idx = Number(m[2]);
+          if (sec && Array.isArray(sec.sections) && idx < sec.sections.length) {
+            const orig = sec.sections[idx];
+            sec.sections[idx] = Object.assign({}, edit, { comm: edit.heading !== orig.heading });
+            done = true;
+          }
+        }
+        if (!done) {
+          Object.keys(blocks).some((secId) => {
+            const arr = blocks[secId];
+            const i = Array.isArray(arr) ? arr.findIndex((b) => b && b.cid === baseId) : -1;
+            if (i >= 0) { arr[i] = Object.assign({}, edit, { cid: baseId, comm: true }); return true; }
+            return false;
+          });
+        }
+      });
+    } catch (e) {
+      console.warn("[community] 社区内容合并失败，已忽略", e);
+    }
+  })();
+
   const { SECTIONS, GLOSSARY } = window.KNOWLEDGE_DATA;
   const main = document.getElementById("main");
   const navList = document.getElementById("navList");
@@ -59,7 +129,7 @@
           const sub = el("div", "nav-sub");
           sub.innerHTML = `<span class="nav-sub-dot"></span><span class="nav-sub-txt">${esc(blk.heading)}</span>`;
           sub.addEventListener("click", () => {
-            const blkEl = document.getElementById(sec.id + "-b" + j);
+            const blkEl = document.getElementById(blk.cid || sec.id + "-b" + j);
             if (blkEl) blkEl.scrollIntoView({ behavior: "smooth", block: "start" });
             if (window.innerWidth <= 720) sidebar.classList.remove("open");
           });
@@ -293,7 +363,8 @@
       // 子章节
       sec.sections.forEach((blk, j) => {
         const block = el("div", "block fade-in");
-        block.id = sec.id + "-b" + j;
+        if (blk.comm) block.classList.add("comm-block");
+        block.id = blk.cid || sec.id + "-b" + j;
         block.style.animationDelay = `${j * 60}ms`;
         const bh = el("div", "block-head");
         bh.innerHTML = `
@@ -306,8 +377,8 @@
           block.appendChild(el("p", "", p));
         });
 
-        // 数学公式 + SVG 动画 + 通俗解释（硬核扩充）
-        const animKey = ANIM_BY_HEADING[blk.heading];
+        // 数学公式 + SVG 动画 + 通俗解释（硬核扩充；社区 block 明确排除）
+        const animKey = blk.comm ? undefined : ANIM_BY_HEADING[blk.heading];
         if (animKey && window.SVG_ANIMS && window.SVG_ANIMS[animKey]) {
           const A = window.SVG_ANIMS[animKey];
           if (A.formula) block.appendChild(el("div", "formula-card", A.formula));

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=20260926a" />
+  <link rel="stylesheet" href="css/style.css?v=20261005e" />
   <style>
     .docs-wrap { max-width: 880px; margin: 0 auto; padding: 0 28px 80px; }
     .docs-hero { padding: 72px 0 40px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
@@ -39,6 +39,7 @@
     .doc-src a { display: block; font-size: 13px; color: var(--c-cyan); margin-bottom: 6px; word-break: break-all; }
     .doc-src a:hover { color: var(--text-0); }
     .doc-src a .h { color: var(--text-2); }
+    .doc-sec h2 .comm-badge { font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; color: var(--c-amber); border: 1px solid rgba(255,184,0,.35); background: rgba(255,184,0,.08); border-radius: 100px; padding: 3px 10px; margin-left: 12px; vertical-align: middle; font-weight: 500; }
   </style>
 </head>
 <body>
@@ -233,6 +234,52 @@ git clone https://github.com/ltdrdata/ComfyUI-Manager.git</div>
       a.onmouseleave = function () { this.style.background = "rgba(0,255,200,0.08)"; this.style.transform = ""; };
       sec.appendChild(a);
     });
+  })();
+  </script>
+  <script src="js/community-data.js?v=cb1"></script>
+  <script>
+  // 社区教程动态渲染（数据源：js/community-data.js，由审核后台同步生成）
+  (function () {
+    try {
+      var CD = window.COMMUNITY_DATA;
+      var wrap = document.querySelector(".docs-wrap");
+      var toc = document.querySelector(".docs-toc");
+      if (!CD || !wrap || !Array.isArray(CD.tutorials) || !CD.tutorials.length) return;
+      var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+      var okUrl = function (u) { return typeof u === "string" && /^https:\/\//i.test(u.trim()); };
+      var seq = 0;
+      CD.tutorials.forEach(function (t) {
+        if (!t || !t.title) return;
+        seq += 1;
+        var sec = document.createElement("section");
+        sec.className = "doc-sec";
+        sec.id = t.id || ("c-doc-" + seq);
+        var html = '<h2><span class="n">C' + seq + '</span>' + esc(t.title) + '<span class="comm-badge">社区贡献</span></h2>';
+        if (t.lead) html += '<p class="lead">' + esc(t.lead) + '</p>';
+        (t.parts || []).forEach(function (p) {
+          if (!p) return;
+          if (p.h3) html += '<h3>' + esc(p.h3) + '</h3>';
+          (p.paras || []).forEach(function (x) { html += '<p>' + esc(x) + '</p>'; });
+          if (p.bullets && p.bullets.length) html += '<ul>' + p.bullets.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join("") + '</ul>';
+          if (p.steps && p.steps.length) html += '<ol>' + p.steps.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join("") + '</ol>';
+          (p.cmds || []).forEach(function (x) { html += '<div class="doc-cmd">' + esc(x) + '</div>'; });
+        });
+        var srcs = (t.sources || []).filter(function (s) { return s && okUrl(s.url); });
+        if (srcs.length) {
+          html += '<div class="doc-src"><div class="t">参考来源</div>' + srcs.map(function (s) {
+            return '<a href="' + esc(s.url) + '" target="_blank" rel="noopener noreferrer">' + esc(s.label || s.url) + '</a>';
+          }).join("") + '</div>';
+        }
+        sec.innerHTML = html;
+        wrap.appendChild(sec);
+        if (toc) {
+          var a = document.createElement("a");
+          a.href = "#" + sec.id;
+          a.textContent = "C" + seq + " " + t.title;
+          toc.appendChild(a);
+        }
+      });
+    } catch (e) { console.warn("[community] 教程渲染失败", e); }
   })();
   </script>
 </body>
