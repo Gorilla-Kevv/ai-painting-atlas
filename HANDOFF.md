@@ -4,7 +4,7 @@
 
 - **路径**：`f:/schoolCompWorks/clone/aiPaintingKownledge`
 - **技术栈**：纯静态站点（HTML/CSS/原生 JS），**无构建、无框架、无依赖安装**；Three.js 走 CDN；字体走 Google Fonts
-- **当前分支**：`main`
+- **当前分支**：`knowledge-expansion`（知识条目扩充专用，自 `main`@`0b45c96` 切出；`main` 为主线/发布分支）
 - **公网**：<https://gorilla-kevv.github.io/ai-painting-atlas/>
 - **仓库**：<https://github.com/Gorilla-Kevv/ai-painting-atlas>（GitHub Pages，源 `main` 根目录）
 
@@ -124,7 +124,7 @@ node --check js/app.js
   - 社区 block 移动端锚点目录
   - 3D 图谱/思维导图纳入社区投稿（当前明确排除）
   - 新模型接入 3D 图谱/思维导图（需评估固定 30 节点性能）
-- **本次文档更新时间**：10.6 02:16 [BY Trae]
+- **本次文档更新时间**：10.6 02:32 [BY Trae]（新增 knowledge-expansion 分支说明）
 
 ## Supabase 启用配置（社区功能上线的一次性步骤）
 
