@@ -42,6 +42,9 @@ const GLOSSARY = [
   { term: "Forge Neo", en: "Forge Neo", cat: "工具", desc: "Forge 停滞后由 Haoming02 接手的社区分支（sd-webui-forge-classic 的 neo 线）：支持 Z-Image/Anima/Krea 2/Wan 2.2 等新模型，SageAttention 自动适配，仅 Windows+NVIDIA。" },
   { term: "加速 LoRA", en: "Acceleration LoRA", cat: "微调", desc: "学『少步去噪行为』而非新概念的低秩适配（Lightning/Hyper-SD/LCM），可把 20–40 步压到 4–8 步；须配套 CFG=0 或低 CFG 与 trailing 调度器。" },
   { term: "原生分辨率", en: "Native Resolution", cat: "基础", desc: "模型训练时的画布尺寸（SD1.5≈512²、SDXL≈1024²、Illustrious 1536²）。出图越贴近原生越稳，超界会重复主体/构图崩坏，超高请走高清修复而非硬拉宽高。" },
+  { term: "工作流", en: "Workflow", cat: "基础", desc: "ComfyUI 中由节点与连线组成的完整生成流程，可存为 JSON 或嵌入 PNG 分享，他人导入即可复现——『可执行的原理图』。" },
+  { term: "ComfyUI Manager", en: "ComfyUI-Manager", cat: "工具", desc: "ComfyUI 必装管理器：界面内安装/更新自定义节点与模型、一键补齐缺失节点，背后是官方 Comfy Registry（语义化版本 + 恶意行为扫描）。" },
+  { term: "自定义节点", en: "Custom Nodes", cat: "工具", desc: "社区为 ComfyUI 扩展的节点包（如 KJNodes、Impact Pack、rgthree），经 Manager 或 comfy-cli 安装；数量数万，按需安装避免冲突。" },
   { term: "LoRA", en: "Low-Rank Adaptation", cat: "微调", desc: "低秩适配微调方法，只训练极小参数即可改变画风/角色，是 SD 生态最流行的扩展形式。" },
   { term: "DreamBooth", en: "DreamBooth", cat: "微调", desc: "把特定主体（如你的猫）训练进模型的方法，比 LoRA 更深，但易过拟合、显存要求高。" },
   { term: "Textual Inversion", en: "TI / 嵌入式", cat: "微调", desc: "学习一个新词向量代表某概念，文件极小，适合定义风格/角色，训练慢、效果弱于 LoRA。" },
@@ -534,10 +537,10 @@ const SECTIONS = [
       paragraphs: [
         "ComfyUI 是基于节点（Node）的 SD 工作流工具。它把生图过程拆解为一个个节点：加载模型 → CLIP 编码提示词 → 空Latent → KSampler 采样 → VAE 解码 → 保存图像，节点之间用线连接，组成完整流程。",
         "优点：极度灵活，任意拼装复杂流程（多 LoRA 叠加、ControlNet 组合、图生图+局部重绘+放大一条龙）；显存占用低（按需加载）；工作流可保存为 JSON 分享复用；新模型/新功能往往先在 ComfyUI 出现。",
-        "缺点：学习曲线陡，新手面对一堆节点易劝退；调试复杂。但一旦入门，效率远超 WebUI。",
-        "定位：进阶/专业用户、需要复用工作流、想玩最新特性的人。SD3、Flux 等新模型在 ComfyUI 上支持最好。"
+        "缺点：学习曲线陡，新手面对一堆节点易劝退；调试复杂。但一旦入门，效率远超 WebUI。好消息是官方已推出 App 模式（工作流简化视图）与桌面客户端（Manager 内置、一键安装），上手门槛大幅降低。",
+        "定位：进阶/专业用户、需要复用工作流、想玩最新特性的人。SD3、Flux 等新模型在 ComfyUI 上支持最好。它是目前最主流、社区最庞大的节点式工作流：官方 Registry 收录数万个节点包，社区工作流以千计——本节下方附三篇展开阅读：<b>官方生态 → 必装扩展 → 工作流资源与学习路径</b>。",
       ],
-      callout: { type: "key", title: "WebUI vs ComfyUI", text: "新手从 WebUI 起步，能稳定出图后再学 ComfyUI。两者不冲突，可共存于同一台机器，共享模型文件。" }
+      callout: { type: "key", title: "WebUI vs ComfyUI", text: "新手从 WebUI 起步，能稳定出图后再学 ComfyUI。两者不冲突，可共存于同一台机器，共享模型文件。如今 ComfyUI Desktop 的 App 模式也适合直接零基础入门。" }
     },
     {
       heading: "民间整合包（开箱即用）",
@@ -598,6 +601,84 @@ const SECTIONS = [
         "注意：仅 Windows + NVIDIA GPU（AMD/Intel 不支持，Mac 无官方方案）；VRAM 门槛 SD1.5 约 4GB、SDXL 约 6GB、Flux 系建议 16GB；更新非常频繁且偶有破坏性变更——稳定版本能不更就不更，更新前务必备份；部分 A1111 扩展不兼容（Regional Prompter 等头部插件自 2026 年 9 月起已适配）。"
       ],
       callout: { type: "key", title: "怎么选", text: "老机器+旧工作流求稳 → Forge Classic 或原版 Forge；追新模型（Anima/Z-Image/Wan 2.2/Qwen-Image）+ A1111 界面习惯 → Forge Neo；复杂多模型工作流 → 还是 ComfyUI。安装推荐经 Stability Matrix 包管理器，便于多 UI 共享模型目录。" }
+    },
+    {
+      sub: true,
+      parentIdx: 1,
+      heading: "ComfyUI 官方生态：平台、文档与 Registry（选读）",
+      paragraphs: [
+        "ComfyUI 已从个人项目（comfyanonymous）成长为 Comfy Org 运营的完整平台生态。按『装它 → 用它 → 扩展它』的脉络梳理如下。",
+        "<b>装它（三种形态）</b>：①<b>Desktop 桌面客户端</b>（Windows/macOS/Linux）——代码签名、自动更新、推荐 Python 环境免配置，ComfyUI-Manager 出厂内置，还能自动导入旧安装的模型与设置，新手的默认选择；②<b>便携版/源码</b>——GitHub 仓库 comfyanonymous/ComfyUI，配 Python 环境运行，老玩家的主流方式（秋叶 ComfyUI 整合包也属此类）；③<b>Comfy Cloud 云端</b>——官方托管 GPU，浏览器直接跑，无本地显卡也能用，支持付费节点免下载运行最新开源模型。",
+        "<b>用它（核心界面能力）</b>：<b>App 模式</b>——工作流的简化表单视图，新手可先把它当『网页版生图器』用，随时切回节点图深入研究；<b>模板系统</b>——官方精选工作流模板，缺失模型自动下载；<b>子图（Subgraph）与蓝图</b>——把一组节点打包成单个可复用组件，复杂工作流不再一屏炸裂。",
+        "<b>扩展它（Manager 与 Registry）</b>：<b>ComfyUI-Manager</b>（社区开发、官方采纳）是必装中的必装——在界面内搜索/安装/更新自定义节点与模型、一键装齐缺失节点；其背后是官方 <b>Comfy Registry</b> 节点注册表：所有节点包语义化版本管理（workflow JSON 会记录节点版本，可精确复现）、自动扫描恶意行为（危险 pip 包、任意系统调用），通过审核的节点带验证标志。",
+        "<b>周边设施</b>：<b>docs.comfy.org</b> 官方文档（含中文，教程/节点开发/Registry 发布全覆盖）；<b>Comfy CLI</b>——命令行驱动 ComfyUI（comfy node install 等），也是脚本化部署与 AI Agent 调用的接口；<b>Comfy API / Router</b>——把工作流发布为生产级 API，Router 聚合 Seedance、GPT-Image 等数千模型统一调用；<b>学习中心</b>——官方教程与开箱工作流。社区规模：60,000+ 节点、数千条工作流。"
+      ],
+      table: {
+        title: "官方生态入口速查",
+        head: ["设施", "地址 / 说明"],
+        rows: [
+          ["官网与下载", "comfy.org（桌面版 / Cloud / 模板入口）"],
+          ["官方文档", "docs.comfy.org（含中文）"],
+          ["源码仓库", "github.com/comfyanonymous/ComfyUI"],
+          ["节点注册表", "registry.comfy.org（Manager 的后端）"],
+          ["命令行工具", "github.com/Comfy-Org/comfy-cli"],
+          ["官方工作流示例", "comfyanonymous.github.io/ComfyUI_examples"]
+        ]
+      },
+      callout: { type: "info", title: "版本与许可", text: "ComfyUI 以 GPL-3.0 开源，更新极快（几乎周更）——Desktop 版走稳定通道，源码党可追 nightly。命名注意：项目本体叫 ComfyUI，公司/平台叫 Comfy Org（域名 comfy.org）。" }
+    },
+    {
+      sub: true,
+      parentIdx: 1,
+      heading: "ComfyUI 必装扩展与自定义节点（选读）",
+      paragraphs: [
+        "ComfyUI 的本体只是『节点引擎』，真正的生产力在社区自定义节点（Custom Nodes）上——官方 Registry 已收录数万个节点包。以下按用途分类，均为久经考验的主流之选，全部可经 Manager 一键安装。",
+        "<b>① 管理与效率（先装这两个）</b>：<b>ComfyUI-Manager</b>——节点/模型安装更新、缺失节点一键补齐、版本锁定，没有它寸步难行；<b>rgthree-comfy</b>——工作流整理神器：Context 上下文合并、Power LoRA Loader（一个节点叠一排 LoRA）、任意切换器、对比查看器，让凌乱画布瞬间清爽。",
+        "<b>② 通用工具箱</b>：<b>KJNodes</b>（kijai 出品）——万金油 QoL 合集，条件/合并/批处理/图像操作无所不包，社区工作流出镜率最高的节点包之一（kijai 同时维护 Wan/Flux 等视频模型的 ComfyUI wrapper）；<b>ComfyUI_essentials</b>（cubiq）——数学运算、缩放、批量、图像信息等基础件；<b>was-node-suite</b>——文本/图像/文件操作大百科；<b>Easy-Use</b>——把常用管线打包成一键节点，快速搭流程。",
+        "<b>③ 修脸与检测</b>：<b>Impact Pack</b>（Registry 下载量 300 万+ 级别）——FaceDetailer 自动检测并重绘面部/手部（对应 WebUI 的 ADetailer），还有 SEGS 检测体系与迭代放大，人像工作流标配；常配 <b>Impact Wildcard</b> 做随机提示词。",
+        "<b>④ 控制与条件</b>：<b>ControlNet Auxiliary Preprocessors</b>——Canny/Depth/OpenPose 等所有预处理器节点；<b>IPAdapter Plus</b>——图像提示词/风格迁移；<b>Inspire Pack</b>——区域提示、随机组合等进阶控制。",
+        "<b>⑤ 视频与动图</b>：<b>AnimateDiff-Evolved + Video Helper Suite</b>——动图/视频生成双件套；<b>WanVideoWrapper / VGM QoL</b>（kijai）——跑 Wan 2.2 等视频模型的主力 wrapper；<b>RES4LYF</b>——高级采样器与特殊调度（如 beta57，Anima 官方也推荐）。",
+        "<b>安装与避坑</b>：优先经 Manager 或 comfy-cli 安装（可升级、可锁版本）；git clone 到 custom_nodes 目录是备选。节点包之间偶有依赖冲突与版本不兼容——报错先更新 ComfyUI 本体与 Manager，再逐个排查节点包；无关的节点包装得越多启动越慢、冲突面越大，按需安装是美德。"
+      ],
+      table: {
+        title: "必装节点包速查（按安装顺序）",
+        head: ["优先级", "节点包", "用途"],
+        rows: [
+          ["★★★", "ComfyUI-Manager", "节点/模型管理中枢"],
+          ["★★★", "rgthree-comfy", "工作流整理与 LoRA 叠载"],
+          ["★★★", "KJNodes", "万能 QoL 工具箱"],
+          ["★★☆", "Impact Pack", "自动修脸/检测/迭代放大"],
+          ["★★☆", "essentials / was-suite / Easy-Use", "通用工具三件套"],
+          ["★★☆", "ControlNet aux + IPAdapter Plus", "控制类预处理与图像提示"],
+          ["★☆☆", "AnimateDiff-Evolved + VHS / WanVideoWrapper", "视频动图方向再加装"]
+        ]
+      },
+      callout: { type: "warn", title: "安全提醒", text: "只从 Manager/Registry 或可信 GitHub 仓库安装节点包；Registry 会对恶意行为扫描并给验证标志，来源不明的『汉化破解节点包』风险自担——节点包拥有本机 Python 执行权限。" }
+    },
+    {
+      sub: true,
+      parentIdx: 1,
+      heading: "ComfyUI 工作流资源地图与学习路径（选读）",
+      paragraphs: [
+        "工作流（Workflow）是 ComfyUI 的灵魂：一张节点图连同全部参数可存为 JSON 文件或直接嵌在输出 PNG 里分享——别人拖进来就能完整复现。以下是 2026 年当前的资源地图（注意时效：OpenArt 工作流区已于 2026 年 1 月停止服务，旧教程提到的它已成历史）。",
+        "<b>① 官方渠道</b>：<b>Comfy Hub</b>（comfy.org/workflows，2026 年 3 月上线）——官方工作流分享平台，数千条经过验证的社区工作流，可直接浏览/混搭，配合 App 模式对新手最友好；<b>ComfyUI_examples</b>——作者本人维护的最小示例集（文生图/图生图/修复/放大/LCM 等分类），学原理的最佳教材；<b>官方模板库</b>——Desktop/Cloud 内置模板，缺失模型自动下载。",
+        "<b>② 社区平台</b>：<b>Civitai</b>——模型与工作流一体（筛选 Workflows 标签，1800+ 条），优势是工作流连同所需 Checkpoint/LoRA 页面互相跳转，配套参数全；<b>ComfyWorkflows</b>——老牌工作流专享社区，可在线浏览节点图与云端运行；<b>国内</b>——eSheep 电子羊（工作流/应用可在线运行）、AIGODLIKE 奥术社区、LiblibAI 工作流区（含中文说明与配套模型）。",
+        "<b>③ 学习路径（五步法）</b>：<b>第 1 步</b>——装好后先跑官方模板，别急着看节点，先出图建立信心；<b>第 2 步</b>——打开默认文生图工作流，只搞懂一条主干：模型加载 → 两个 CLIP Text Encode → Empty Latent → KSampler → VAE Decode → Save（这条链就是「原理」章节扩散流程的图形化）；<b>第 3 步</b>——从 Comfy Hub/Civitai 挑一条带说明的工作流复现，用 Manager 一键补齐缺失节点；<b>第 4 步</b>——动手改造：换模型、加 LoRA 叠载、接 ControlNet、加 FaceDetailer 修脸；<b>第 5 步</b>——参考别人的成熟工作流（修图管线、产品图、视频）自建专属流程，并把常用组合保存为模板。",
+        "<b>④ 使用礼仪与安全</b>：导入陌生工作流前看一眼节点构成（警惕来路不明的『自动执行/请求外网』节点）；复现他人工作流记得遵守作者许可；分享自己的工作流时优先附带模型清单与版本信息，方便他人一键补齐。"
+      ],
+      table: {
+        title: "工作流资源站速查（2026 现状）",
+        head: ["平台", "性质", "特点"],
+        rows: [
+          ["Comfy Hub（comfy.org/workflows）", "官方", "验证模板 + App 模式，新手首选"],
+          ["ComfyUI_examples", "官方", "作者维护的最小示例，学原理"],
+          ["Civitai", "社区", "模型+工作流一体，1800+ 条"],
+          ["ComfyWorkflows", "社区", "老牌专享站，可在线运行"],
+          ["eSheep / AIGODLIKE / LiblibAI", "国内", "中文说明，部分可在线跑"],
+          ["OpenArt Workflows", "已停服", "2026.1 终止，旧教程提及请忽略"]
+        ]
+      },
+      callout: { type: "key", title: "给新手的忠告", text: "不要收藏一百条工作流——吃透一条默认工作流的主干，胜过乱拖十条网红流程。工作流是『可执行的原理图』，每条线都对应「技术原理」章节里的一步。" }
     }
   ]
 },
@@ -1126,6 +1207,15 @@ const RESOURCES = [
       { label: "GitHub", url: "https://github.com/comfyanonymous/ComfyUI" },
       { label: "官方文档", url: "https://docs.comfy.org/" },
       { label: "官网/工作流市场", url: "https://comfy.org/" }
+    ]},
+    { name: "ComfyUI-Manager", role: "ComfyUI 必装管理器，节点/模型安装与更新中枢", links: [
+      { label: "GitHub", url: "https://github.com/Comfy-Org/ComfyUI-Manager" },
+      { label: "Comfy Registry", url: "https://registry.comfy.org/" }
+    ]},
+    { name: "ComfyUI 工作流资源", role: "官方 Hub 与社区工作流站入口", links: [
+      { label: "Comfy Hub（官方）", url: "https://comfy.org/workflows" },
+      { label: "官方示例集", url: "https://comfyanonymous.github.io/ComfyUI_examples/" },
+      { label: "ComfyWorkflows", url: "https://comfyworkflows.com/" }
     ]},
     { name: "秋叶整合包 / 绘世启动器", role: "民间打包的 SD 开箱即用环境（无单一官网）", links: [
       { label: "B 站搜索『秋叶』", url: "https://search.bilibili.com/all?keyword=%E7%A7%8B%E5%8F%B" }

@@ -1,11 +1,11 @@
 # PROGRESS — AI 生图知识图谱
 
-## 进度看板（10.6 13:41 更新 · knowledge-expansion 分支）
+## 进度看板（10.6 13:46 更新 · knowledge-expansion 分支）
 - 当前分支：`knowledge-expansion`——知识条目扩充专用（阶段 16 完成后自 `main`@`0b45c96` 切出），后续新模型/术语/资源卡均在此分支追加；`main` 保持为主线/发布分支
-- 当前正在开发任务：无（阶段 18 已完成并本地提交）
-- 下一阶段任务：待定（候选见 HANDOFF「下一步」；阶段 17/18 均未推送远端，待用户确认后一并 push）
+- 当前正在开发任务：无（阶段 19 已完成并本地提交）
+- 下一阶段任务：待定（候选见 HANDOFF「下一步」；阶段 17/18/19 均未推送远端，待用户确认后一并 push）
 - 可提前进行的任务：投稿限流加固（RLS 每人 ≤5 条 pending）
-- 未完成的任务：3D 图谱 / 思维导图纳入阶段 16+18 新增条目（债务项，需评估性能）
+- 未完成的任务：3D 图谱 / 思维导图纳入阶段 16+18+19 新增条目（债务项，需评估性能）
 
 ## 阶段总览（按时间顺序，均已完成并推送）
 
@@ -29,6 +29,7 @@
 | 16 | 七大新模型知识扩充 | WAI / Anima / Krea 2 / Wan 2.2 / Z-Image / Seedream / GPT-Image（b7–b13） | ✅ |
 | 17 | NovelAI 实战手册改折叠子章节 | b6 改为 b3 内可折叠补充阅读面板（sub/parentIdx 机制，映射零破坏） | ✅ |
 | 18 | 六知识点扩充 + LoRA 双深度 | Illustrious XL / Forge / Forge Neo / 加速LoRA / 分辨率 / LoRA 浅显·硬核双版本 | ✅ |
+| 19 | ComfyUI 章节深度拓展 | 官方生态 / 必装扩展 / 工作流资源三篇选读 + Manager·Registry·Hub 资源体系 | ✅ |
 
 ## 阶段 15
 
@@ -99,6 +100,23 @@
 - **风险**：sub 块锚点 `fine-tuning-b7/b8` 已被 sub 机制占用——今后若在 fine-tuning 段中部插入正式块会使 sub 块索引位移（追加式扩充不受影响）；分辨率块无资源卡映射（概念性内容，属预期）
 - **下一阶段入口**：推送远端 / 其他难点概念的双深度化（如 CFG、采样器）
 - **本次文档更新时间**：10.6 13:41
+
+## 阶段 19 ComfyUI 章节深度拓展 [计划时间：10.6 13:50 BY Trae][完成时间：10.6 14:10 BY Trae]
+
+- **已完成**（均经联网检索核实，检索日期 2026-10-06；sub 机制复用阶段 17）：
+  - **主块 b1 增强**：补 App 模式/Desktop 降低门槛的最新信息，正文中给出三篇选读的导航脉络（官方生态 → 必装扩展 → 工作流资源）
+  - **tools 段尾追加 3 个 sub 块（parentIdx:1 挂在 ComfyUI 下）**：
+    - b6「ComfyUI 官方生态：平台、文档与 Registry」——按『装它（Desktop/便携版/Cloud）→ 用它（App 模式/模板/子图）→ 扩展它（Manager + Registry 语义化版本与恶意扫描）』脉络，附官方入口速查表（comfy.org、docs、registry、comfy-cli、示例集）
+    - b7「ComfyUI 必装扩展与自定义节点」——按用途五分类（管理与效率/通用工具箱/修脸检测/控制条件/视频动图）：Manager、rgthree、KJNodes、Impact Pack、essentials、was-suite、Easy-Use、ControlNet aux、IPAdapter、AnimateDiff-Evolved+VHS、WanVideoWrapper、RES4LYF；附优先级速查表与安装避坑（依赖冲突、按需安装）
+    - b8「ComfyUI 工作流资源地图与学习路径」——2026 现状资源地图（官方 Comfy Hub/Civitai 1800+/ComfyWorkflows/国内 eSheep·AIGODLIKE·LiblibAI；**OpenArt 工作流区已于 2026.1 停服**）、工作流 JSON/PNG 分享原理、五步学习路径、使用礼仪与安全
+  - **GLOSSARY**：+工作流（基础）、+ComfyUI Manager（工具）、+自定义节点（工具）
+  - **RESOURCES**：工具与界面 +ComfyUI-Manager、+ComfyUI 工作流资源两张卡
+  - `index.html` data.js 版本号 → `20261006d`
+- **测试结果**：`node --check` 通过；结构校验 tools=9 blocks（b6–b8=SUB→1）映射无越界、术语 59 条；浏览器实测：三子面板均嵌套于 tools-b1 且默认收起、三个展开按钮标签正确、开「官方生态」不影响其余面板、导航嵌套顺序正确（ComfyUI→官方生态→必装扩展→工作流资源）、console 仅既有 supabase ERR_ABORTED（与本改动无关）
+- **改动文件**：`js/data.js`（tools 主块增强 + 3 sub 块 + 3 术语 + 2 资源卡）、`index.html`（版本号）
+- **风险**：tools 段现有 6 个 sub 块（含 Forge Neo 正式块 b5 之后）——社区投稿若补充 tools 段会排在 sub 块之后（cid 机制不受影响）；工作流资源站信息有时效性，半年后建议复查
+- **下一阶段入口**：推送远端 / 其他重点章节拓展（如 ControlNet、采样器专题）
+- **本次文档更新时间**：10.6 13:46（内容实际完成于 13:55 前后，一并署名完成时间 14:10 以覆盖验证与提交时段）
 
 ## 当前风险与债务
 
