@@ -10,7 +10,7 @@ const GLOSSARY = [
   { term: "图生图", en: "Image-to-Image (I2I)", cat: "基础", desc: "输入一张参考图 + 文字描述，模型在保留原图结构的基础上生成新图，常用于风格迁移、线稿上色。" },
   { term: "提示词", en: "Prompt", cat: "基础", desc: "用户输入给模型的指令文字，决定生成内容。分正向提示词（要什么）与反向提示词（不要什么）。" },
   { term: "种子", en: "Seed", cat: "基础", desc: "随机数起点。相同种子 + 相同参数可复现同一张图，改种子会得到同一构图下的不同细节变体。" },
-  { term: "采样步数", en: "Steps", cat: "基础", desc: "扩散模型去噪的迭代次数。太少图糊噪点多，太多边际收益递减且变慢，常用 20–40。" },
+  { term: "采样步数", en: "Steps", cat: "基础", desc: "扩散模型去噪的迭代次数。太少图糊噪点多，太多边际收益递减且变慢，常规 20–40；蒸馏加速模型（Lightning/Hyper-SD）4–8 步即可出图，但必须配套低 CFG。" },
   { term: "采样器", en: "Sampler", cat: "基础", desc: "去噪所用的算法，如 Euler a、DPM++ 2M Karras 等，影响画面质感与收敛速度。" },
   { term: "CFG Scale", en: "Classifier Free Guidance", cat: "基础", desc: "提示词引导强度。值越大越听话但易过曝死板，值越小越自由但易跑偏，常用 5–12。" },
   { term: "神经网络", en: "Neural Network", cat: "原理", desc: "模仿生物神经元结构的计算模型，由层层节点与权重连接组成，是现代 AI 的基础。" },
@@ -37,6 +37,11 @@ const GLOSSARY = [
   { term: "Z-Image", en: "Z-Image 造相", cat: "模型", desc: "阿里 Tongyi-MAI 的 6B 高效图像模型，S3-DiT 单流架构，8 步出图、中英双语文字渲染，Apache 2.0 开源。" },
   { term: "Seedream", en: "Seedream 4.0", cat: "模型", desc: "字节跳动统一生成与编辑的图像模型，支持组图生成、知识生图、参考一致性与 4K 输出，经即梦/豆包/火山方舟提供。" },
   { term: "GPT-Image", en: "GPT-Image", cat: "模型", desc: "OpenAI 自回归多模态图像模型家族，对话式精准编辑、图内文字与世界知识见长，经 ChatGPT 与 API 提供。" },
+  { term: "Illustrious XL", en: "illu / ILXL", cat: "模型", desc: "OnomaAI 的开源 SDXL 动漫底模：原生 1536px、自然语言与 Danbooru 混合提示、刻意不调优的干净画布，WAI/NoobAI 皆源于此。" },
+  { term: "Forge", en: "SD WebUI Forge", cat: "工具", desc: "lllyasviel 的 A1111 高性能分支：UNet Patcher + 动态显存卸载，4GB 跑 SDXL，原生支持 Flux/SD3.5，界面与插件近乎无缝迁移。" },
+  { term: "Forge Neo", en: "Forge Neo", cat: "工具", desc: "Forge 停滞后由 Haoming02 接手的社区分支（sd-webui-forge-classic 的 neo 线）：支持 Z-Image/Anima/Krea 2/Wan 2.2 等新模型，SageAttention 自动适配，仅 Windows+NVIDIA。" },
+  { term: "加速 LoRA", en: "Acceleration LoRA", cat: "微调", desc: "学『少步去噪行为』而非新概念的低秩适配（Lightning/Hyper-SD/LCM），可把 20–40 步压到 4–8 步；须配套 CFG=0 或低 CFG 与 trailing 调度器。" },
+  { term: "原生分辨率", en: "Native Resolution", cat: "基础", desc: "模型训练时的画布尺寸（SD1.5≈512²、SDXL≈1024²、Illustrious 1536²）。出图越贴近原生越稳，超界会重复主体/构图崩坏，超高请走高清修复而非硬拉宽高。" },
   { term: "LoRA", en: "Low-Rank Adaptation", cat: "微调", desc: "低秩适配微调方法，只训练极小参数即可改变画风/角色，是 SD 生态最流行的扩展形式。" },
   { term: "DreamBooth", en: "DreamBooth", cat: "微调", desc: "把特定主体（如你的猫）训练进模型的方法，比 LoRA 更深，但易过拟合、显存要求高。" },
   { term: "Textual Inversion", en: "TI / 嵌入式", cat: "微调", desc: "学习一个新词向量代表某概念，文件极小，适合定义风格/角色，训练慢、效果弱于 LoRA。" },
@@ -474,6 +479,27 @@ const SECTIONS = [
         "局限与定位：闭源、API 按量计费（输出按 token 计价）、内容审核严格（含图像安全元数据），不可本地部署，二次元/写实人像的『美学上限』不及 MJ/NAI 阵营。适合：非技术用户零门槛创作、需要文字精准的海报与原型图、对话式迭代修改、对合规要求高的商业场景——与 DALL·E 3 一脉相承，但能力全面上位。"
       ],
       callout: { type: "info", title: "两条技术路线的分野", text: "扩散模型（SD/Flux/WAI/Z-Image）：从噪声逐步去噪，可控性强、生态开放；自回归多模态（GPT-Image）：把图像当 token 逐段生成，语言理解与知识推理强。两条路线正在互相融合——看懂这一点，就看清了整个生图版图。" }
+    },
+    {
+      heading: "Illustrious XL（illu · OnomaAI）",
+      paragraphs: [
+        "Illustrious XL（社区简称 illu / ILXL）是韩国 OnomaAI Research 于 2024 年中开源的 SDXL 动漫底模，与 Pony 并列为本世代动漫模型生态的两大底座。它的定位是『刻意不调优的干净画布』——不以特定美学为卖点，专为社区微调与 LoRA 训练而生。WAI、NoobAI-XL、Hassaku XL 等头部动漫模型都基于它（详见 WAI 章节）。",
+        "三大差异化设计：①<b>原生 1536×1536</b>——标准 SDXL 训练在 1024px，Illustrious 自 v1.0 起直接在 1536px 训练，高分辨率细节原生锐利而非靠放大器脑补，1248×1824 等非标比例也能稳定出图不复制主体；②<b>混合提示系统</b>——自然语言与 Danbooru 标签约五五开兼收，既可以写句子也可以甩 tag；③<b>文本编码器参与微调</b>——不同于常规冻结文本编码器的做法，OnomaAI 实现了稳定微调，概念理解更深、多角色提示串扰更少。",
+        "版本演进：v0.1（2024.6，刻意『半成品』开源策略）→ v1.0（引入 1536px 原生分辨率）→ v2.0 STABLE（余弦退火训练，色彩更可预测）→ v3.5 VPred（V-Prediction 参数，把 SDXL 的对比度、动态范围与透视遵循推到架构极限）。训练数据为 Danbooru2023，角色知识截止 2024 年 6 月。",
+        "推荐参数：Steps 20–28，CFG 5–7.5，采样器 Euler a；画质词 masterpiece, best quality, very aesthetic；避免滥用 close-up/upside-down 等强构图 tag（易冲突）。许可为 CreativeML OpenRAIL-M + Fair AI Public License：个人与研究免费，禁止闭源商业独占。",
+        "生态位与局限：底模好看程度不如精调衍生品——直接用 illu 出图偏『素材感』，社区普遍在其上二创（这正是它的价值）。注意其 LoRA 生态与 Pony 互不兼容（选模型即选生态）。v3.5 后 OnomaAI 已转向更新的 Lumina 架构（Illustrious LU），SDXL 系至此基本到顶。"
+      ],
+      table: {
+        title: "Illustrious XL 版本速览",
+        head: ["版本", "关键变化"],
+        rows: [
+          ["v0.1", "初始开源，『半成品』策略引来社区二创潮"],
+          ["v1.0", "原生 1536px 分辨率里程碑"],
+          ["v2.0 STABLE", "余弦退火，色彩科学可预测"],
+          ["v3.5 VPred", "V-Prediction：更深黑位、更亮高光、更强透视"]
+        ]
+      },
+      callout: { type: "info", title: "illu vs Pony", text: "两大动漫底座的 LoRA 互不通用。Illustrious 系胜在 Danbooru 标签忠实度与 1536 原生分辨率；Pony 系胜在 LoRA 数量与特殊提示体系（score_9 等）。新入坑建议跟 Illustrious 系（NoobAI/WAI 同源，迁移成本低）。" }
     }
   ]
 },
@@ -542,6 +568,36 @@ const SECTIONS = [
           ["商业合规、要省心", "国产商用模型（文心一格/通义/即梦）"]
         ]
       }
+    },
+    {
+      heading: "Forge（SD WebUI Forge）",
+      paragraphs: [
+        "Forge 是 ControlNet 作者 lllyasviel 于 2024 年推出的 A1111 高性能分支（stable-diffusion-webui-forge）。口号是『更好用的 WebUI』：界面、提示词语法、插件接口与 A1111 几乎一致，教程和肌肉记忆直接迁移，但底层重写了模型加载器、采样调度与显存管理。",
+        "核心是 <b>UNet Patcher + 动态显存卸载</b>技术：模型权重在 CPU/GPU 间按需分页，不再像原版 WebUI 那样一次性塞爆显存。效果（SDXL 1024 出图）：8GB 显存提速 30–45%、6GB 提速 60–75%、4GB 可跑 SDXL / 2GB 可跑 SD1.5；显存越大收益越小（4090 仅 3–6%）。ControlNet 组合场景再快 30–45%，最大可用分辨率与批次数提升 2–6 倍。",
+        "其他能力：原生支持 Flux Dev/Schnell、SD3.5（无需 ComfyUI 也能玩新架构）；预装 ControlNet、FreeU、PhotoMaker、SVD、Z123、AnimateDiff；内置 DDPM、DPM++ 2M Turbo、Euler a Turbo 等蒸馏友好采样器；Flux 支持 NF4/FP8/GGUF 量化——6GB 显存即可跑 Flux NF4。许可 AGPL-3.0。",
+        "定位：想保留 A1111 操作习惯、显存 6–8GB 又想玩 SDXL/Flux 的用户，以及从 A1111 无痛迁移的用户（指向原 models 目录即可）。社区还有 Panchovix 维护的 reForge 分支（更激进合并 A1111 新特性）。"
+      ],
+      table: {
+        title: "Forge 显存—能力速查（SDXL 1024）",
+        head: ["显存", "相对 A1111 提速", "可跑"],
+        rows: [
+          ["4GB", "—", "SD1.5 流畅 / SDXL 可用"],
+          ["6GB", "60–75%", "SDXL / Flux NF4 / SDXL Lightning"],
+          ["8GB", "30–45%", "SDXL 舒适 / Flux GGUF Q4"],
+          ["24GB(4090)", "3–6%", "全部，收益主要是省 1GB+ 显存"]
+        ]
+      },
+      callout: { type: "warn", title: "冷知识", text: "『Forge』之名来自 Minecraft Forge——目标是像它解决 MC 模组冲突一样，解决 WebUI 插件互相打架的问题。Unet Patcher 让自注意力引导、Kohya 高清修复、FreeU 等技术只需约 100 行代码即可接入。" }
+    },
+    {
+      heading: "Forge Neo 与 Forge Classic",
+      paragraphs: [
+        "lllyasviel 因繁忙导致 Forge 更新停滞后，社区开发者 Haoming02 在 sd-webui-forge-classic 仓库接手维护，分出两条分支：<b>Forge Neo</b>（活跃开发线）与 <b>Forge Classic</b>（冻结的稳定存档，专精 SD1.5/SDXL、兼容旧扩展）。",
+        "Forge Neo 的最大卖点是<b>新模型广度</b>：Flux（含 Nunchaku 量化加速）、Flux Kontext、Flux.2-Klein、Qwen-Image/-Edit、Z-Image、Wan 2.2、Anima、Krea 2、Chroma1-HD、Lumina-Image 等一众 2025–2026 新模型都能用熟悉的 A1111 式表单界面驱动——『想用 Anima/Krea2 但不想学 ComfyUI 节点』的人群的最佳归宿（WAI 作者也推荐它作为主力 UI）。",
+        "工程改进：SageAttention / FlashAttention / xformers 按卡自动选择（RTX 50 系必须走 Sage/FlashAttention，xformers 已不兼容）；uv 包管理使安装体积从数 GB 降到数百 MB；UI Presets（如选 Flux 预设）自动适配不同模型的界面与参数组。",
+        "注意：仅 Windows + NVIDIA GPU（AMD/Intel 不支持，Mac 无官方方案）；VRAM 门槛 SD1.5 约 4GB、SDXL 约 6GB、Flux 系建议 16GB；更新非常频繁且偶有破坏性变更——稳定版本能不更就不更，更新前务必备份；部分 A1111 扩展不兼容（Regional Prompter 等头部插件自 2026 年 9 月起已适配）。"
+      ],
+      callout: { type: "key", title: "怎么选", text: "老机器+旧工作流求稳 → Forge Classic 或原版 Forge；追新模型（Anima/Z-Image/Wan 2.2/Qwen-Image）+ A1111 界面习惯 → Forge Neo；复杂多模型工作流 → 还是 ComfyUI。安装推荐经 Stability Matrix 包管理器，便于多 UI 共享模型目录。" }
     }
   ]
 },
@@ -608,6 +664,86 @@ const SECTIONS = [
         "ADetailer（After Detailer）：生成后自动检测面部/手部并局部重绘修复，解决 SD 经典的『脸崩手崩』问题，几乎是必装插件。",
         "工作流示例（ComfyUI）：文生图 → 放大 1.5x → ADetailer 修脸 → 二次细化 → 出图。一条龙，可保存复用。"
       ]
+    },
+    {
+      heading: "加速 LoRA 与少步蒸馏（步数的极限）",
+      paragraphs: [
+        "常规扩散模型出图要 20–40 步去噪，而<b>加速 LoRA</b> 能把它压到 4–8 步甚至 1 步——原理是『蒸馏』：让一个小步数的学生模型模仿大步数教师在 ODE 轨迹上的行为，一次预测直接跳向更远的去噪终点。代表作谱系：LCM-LoRA（潜在一致性模型，通用加速）、SDXL Turbo（Stability AI，对抗蒸馏 ADD，1–4 步）、SDXL Lightning（字节，渐进+对抗蒸馏，1/2/4/8 步）、Hyper-SD（字节，统一 LoRA，1–8 步可调且保留 CFG）。",
+        "它们有两种形态：<b>完整 UNet/Checkpoint</b>（替换底模，质量最好）与 <b>LoRA 形态</b>（挂载到其他同架构底模上生效——这就是『加速 LoRA』名称的由来：低秩适配学到的不是新概念，而是『少步去噪行为』本身）。",
+        "使用规则（硬约束，配错直接出糊图）：①蒸馏模型/LoRA 必须<b>压低 CFG</b>——Turbo 与 Lightning 要求 CFG=0（负向提示词因此失效）；Hyper-SD 的 CFG LoRA 版本例外，12 步 CFG LoRA 可保留 5–8 的引导；②调度器与步数必须匹配对应 checkpoint（Lightning 用 Euler + trailing timesteps）；③LoRA 权重按官方建议（Hyper-SD 约 0.125）；④蒸馏模型与常规 LoRA/ControlNet 大多兼容，但与『步数敏感』的技巧（Hires.fix 高降噪）需重调参数。",
+        "步数（Steps）的一般规律：步数是『质量—时间』的滑杆，常规模型 20–40 步后边际收益趋近于零，更多步数主要提升同种子的确定性复现；蒸馏模型则把这条曲线整体左移——4–8 步即达可用质量，但细节上限与提示词精修度低于常规步数的教师模型。实战策略：<b>草稿迭代用少步（快出构图），定稿换常规步数重跑（拉满细节）</b>，同 seed 可继承构图。"
+      ],
+      table: {
+        title: "少步蒸馏方案速查",
+        head: ["方案", "步数", "CFG", "形态", "要点"],
+        rows: [
+          ["SDXL Turbo", "1–4", "0（无负向词）", "Checkpoint", "ADD 对抗蒸馏，出图最快"],
+          ["SDXL Lightning", "2/4/8", "0", "UNet / LoRA", "渐进对抗蒸馏，2 步起质量稳定"],
+          ["Hyper-SD", "1–8", "0 或 CFG-LoRA 保 5–8", "UNet / 统一 LoRA", "步数可调，兼容 ControlNet"],
+          ["LCM-LoRA", "4–8", "1–2", "通用 LoRA", "挂 SD1.5/SDXL 底模的通用加速"]
+        ]
+      },
+      callout: { type: "warn", title: "最常见翻车", text: "给 Lightning/Turbo 挂负向提示词或忘了改 CFG——蒸馏模型在 CFG>0 下必然过曝糊脸。出糊图先查三件事：CFG 归零了吗？步数对上 checkpoint 了吗？调度器用 trailing 了吗？" }
+    },
+    {
+      heading: "分辨率：原生分辨率与出图策略",
+      paragraphs: [
+        "每张糊图/复制人/构图崩坏的背后，十有八九是<b>出图分辨率超出了模型的原生训练分辨率</b>。扩散模型对『没见过的画布尺寸』外推能力很差：拉高会重复主体、拉宽会拆分人体、拉低则丢细节——训练时模型学的是特定分辨率下的构图分布，越界就等于让它盲画。",
+        "各代模型的原生分辨率与推荐尺寸：<b>SD1.5</b> 原生 512×512（可上探 768）；<b>SDXL</b> 原生 1024×1024，官方推荐按比例就近取值——1:1 用 1024×1024、5:4 用 1152×896、3:2 用 1216×832、16:9 用 1344×768、21:9 用 1536×640；<b>Illustrious/NoobAI 系</b>原生 1536×1536（v1.0 起），1248×1824 等竖版比例同样稳定。SDXL 还引入尺寸/裁剪条件化（size & crop conditioning），生成时会感知『画布多大、构图占多满』。",
+        "想要超过原生的分辨率，两条正路：<b>①Hires.fix / 高清修复</b>——先按原生分辨率出图，再放大 1.5–2 倍并以低降噪强度（0.3–0.5）重绘细节，本质是图生图；<b>②专用放大模型</b>（R-ESRGAN、4x-UltraSharp、Tiled 扩散），纯超分不改构图（详见「放大与高清修复」节）。直接把宽高拉到 2048 属于歪路。",
+        "策略优先级：能选原生高分辨率底模（Illustrious 系 1536）就别靠放大器——原生细节的『锐』是光学式的，放大细节是『推测式』的。注意分辨率的算力代价：潜空间面积与像素成正比，宽高各翻倍 ≈ 显存与耗时×4；搭配少步蒸馏模型可以显著对冲高分辨率的耗时（见上一节）。"
+      ],
+      table: {
+        title: "SDXL 推荐出图尺寸（像素）",
+        head: ["比例", "分辨率", "典型用途"],
+        rows: [
+          ["1:1", "1024×1024", "头像、方图"],
+          ["5:4", "1152×896", "插画、挂画"],
+          ["3:2", "1216×832", "横版插画、摄影"],
+          ["16:9", "1344×768", "壁纸、横幅"],
+          ["21:9", "1536×640", "超宽电影感"],
+          ["竖版 3:4 / 2:3", "832×1216 / 896×1344", "手机壁纸、立绘"]
+        ]
+      },
+      callout: { type: "key", title: "一句话心法", text: "构图交给原生分辨率，清晰度交给高清修复——宽高输入框不是越拉越大越好，而是越贴近训练分布越稳。" }
+    },
+    {
+      sub: true,
+      parentIdx: 0,
+      heading: "LoRA 浅显版：5 分钟看懂（选读）",
+      paragraphs: [
+        "把基础模型想象成一位<b>画功扎实但口味固定的画师</b>。LoRA 就是给他的一张<b>便利贴</b>：上面写着『见到某个词，就换这种画风 / 画这个角色 / 加这件服饰』。贴上便利贴，画师立刻会新本事；撕下来，立刻恢复原样——模型本体一个字都没改。",
+        "为什么便利贴这么小（几十 MB）而画师本身那么大（几个 GB）？因为 LoRA 只记录<b>差异</b>：『这个角色和普通人的区别』『这种画风和默认画风的区别』。记差异当然比重新学画画便宜得多。",
+        "日常使用三步：<b>①下载</b>——从 Civitai 下载 .safetensors 文件（注意页面标注的底模版本要和你的 Checkpoint 同族）；<b>②放入</b> models/Lora 文件夹，在生图界面点 LoRA 卡片把它加进提示词；<b>③调强度</b>——滑杆 0.6–1.0 之间试，1.0 是满强度。",
+        "新手最常困惑的三件事：<b>①为什么开太满会崩？</b>便利贴喊得太凶，画师手就乱了——降到 0.7 左右往往立刻正常；<b>②LoRA 和 Checkpoint 什么关系？</b>换 Checkpoint = 换一位画师，加 LoRA = 给现在的画师贴便利贴，二者叠加使用；<b>③能同时贴几张？</b>可以叠 2–3 张（画风+角色+服饰），但张数越多越互相干扰，权重适当调低。",
+        "看到这里已经够用了。想弄懂『低秩到底是什么』『为什么训练只要十几张图』，再去看下一篇<b>硬核版</b>。"
+      ],
+      callout: { type: "info", title: "一句话版本", text: "LoRA = 给画师的便利贴：小、快、即插即用；强度别拉满，叠贴别贪多，底模版本要对口。" }
+    },
+    {
+      sub: true,
+      parentIdx: 0,
+      heading: "LoRA 硬核版：低秩分解与训练细节（选读）",
+      paragraphs: [
+        "<b>数学结构</b>：LoRA 假设微调引起的权重变化矩阵 ΔW 是低秩的——可用两个瘦矩阵的乘积近似：ΔW = B·A，其中 B ∈ ℝ^(d×r)，A ∈ ℝ^(r×k)，秩 r ≪ min(d, k)（常见 r = 8–32，即 network_dim）。前向传播变为 W′x = Wx + (α/r)·BAx（α 即 network_alpha，控制缩放）。参数量从 d×k 骤降为 r(d+k)：以 SD U-Net 中一个 320×320 的注意力层为例，全量微调 10.2 万参数，r=4 的 LoRA 只要 2560 个——这就是『低秩适配』名字的由来。",
+        "<b>为什么低秩假设成立</b>：Aghajanyan 等（2020）与 LoRA 原论文（Hu et al., 2021）证明，微调到下游任务时权重更新的内在秩（intrinsic rank）非常低——模型只需要在极小的子空间内调整即可适配新概念。对 Stable Diffusion 的经验结论：画风/角色这类『窄概念』用 r=8–32 足够；风格泛化强、要素复杂时升到 64–128，但过高会过拟合训练图。",
+        "<b>训练流程（Kohya ss 为例）</b>：①准备 15–80 张高质量、构图多样的图（质量远比数量重要）；②打标——Danbooru tag 式（动漫系，角色用唯一触发词）或自然语言 caption（写实系），触发词建议用不在词表里的罕见词；③分桶 bucketing——按宽高比分桶避免裁切；④关键超参：学习率 1e-4（U-Net）/ 5e-5（Text Encoder）量级、每图 10–20 步 × epoch 数估算总步数、batch size 视显存、可开 noise offset 改善过暗、LoCon/LoHa 扩展卷积层适配；⑤训练中每 N 步存档，训练完用 XYZ Plot 扫不同 epoch × 权重的网格找最佳组合。",
+        "<b>过拟合的识别与治理</b>：信号——任何提示词都往训练图构图上靠、背景纹理出现蚀刻感/颗粒噪、负向词失效、其他角色被『同化』。治理：降 rank、减 epoch、加正则（先验保留损失）、提高学习率衰减、扩充数据集多样性；Text Encoder 学习率过高是『一词崩全图』的常见元凶，可设 TE lr=0 只训 U-Net 试对比。",
+        "<b>与加速 LoRA 的本质区别</b>：普通 LoRA 的训练目标是『让模型学会新概念』（改变条件分布），加速 LoRA（Lightning/Hyper-SD/LCM）的目标是『让模型在极少步数内完成去噪』（改变采样行为）——同为低秩适配，学的东西完全不同，因此加速 LoRA 可以叠在画风 LoRA 之上同时生效（详见「加速 LoRA 与少步蒸馏」节）。"
+      ],
+      table: {
+        title: "LoRA 训练关键超参速查",
+        head: ["超参", "典型值", "作用"],
+        rows: [
+          ["network_dim (rank)", "8–128", "适配矩阵的秩：容量上限，过高易过拟合"],
+          ["network_alpha", "≈ dim/2 或 =dim", "缩放系数，实际强度 = alpha/dim × 权重"],
+          ["学习率 U-Net", "1e-4 上下", "主网络适配速度"],
+          ["学习率 Text Encoder", "5e-5 或 0", "触发词绑定强度，过高易一词崩全图"],
+          ["每图步数", "10–20 × epoch", "总步数估算基准"],
+          ["Optimizer", "AdamW8bit / Prodigy", "省显存 / 自适应学习率"]
+        ]
+      },
+      callout: { type: "info", title: "延伸阅读", text: "原论文 LoRA: Low-Rank Adaptation of Large Language Models（arXiv:2106.09685）；稳定扩散场景的工程实践以 kohya-ss/sd-scripts 为事实标准——本站配置教程页有 LoRA 训练实操指引。" }
     }
   ]
 },
@@ -952,6 +1088,11 @@ const RESOURCES = [
       { label: "产品页 Images 2.5", url: "https://openai.com/zh-Hans-CN/index/introducing-chatgpt-images-2-5/" },
       { label: "API 文档", url: "https://platform.openai.com/docs/guides/image-generation" }
     ]},
+    { name: "Illustrious XL", role: "OnomaAI 开源 SDXL 动漫底模，原生 1536px，社区二创之母", links: [
+      { label: "官网", url: "https://illustriousxl.org/zh/" },
+      { label: "Hugging Face", url: "https://huggingface.co/OnomaAIResearch" },
+      { label: "Civitai", url: "https://civitai.com/models/795765/illustrious-xl" }
+    ]},
     { name: "Imagen (Google)", role: "Google 文生图研究模型，文字理解强", links: [
       { label: "产品页", url: "https://deepmind.google/models/imagen-3/" }
     ]},
@@ -973,6 +1114,13 @@ const RESOURCES = [
     { name: "AUTOMATIC1111 WebUI", role: "SD 最经典图形界面，功能全面、插件丰富", links: [
       { label: "GitHub", url: "https://github.com/AUTOMATIC1111/stable-diffusion-webui" },
       { label: "Wiki 文档", url: "https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki" }
+    ]},
+    { name: "Forge (SD WebUI Forge)", role: "lllyasviel 的 A1111 高性能分支，低显存优化", links: [
+      { label: "GitHub", url: "https://github.com/lllyasviel/stable-diffusion-webui-forge" }
+    ]},
+    { name: "Forge Neo", role: "社区接手的 Forge 活跃分支，支持 Z-Image/Anima/Krea 2 等新模型", links: [
+      { label: "GitHub (neo 分支)", url: "https://github.com/Haoming02/sd-webui-forge-classic/tree/neo" },
+      { label: "仓库主页", url: "https://github.com/Haoming02/sd-webui-forge-classic" }
     ]},
     { name: "ComfyUI", role: "节点式 SD 工作流工具，灵活强大", links: [
       { label: "GitHub", url: "https://github.com/comfyanonymous/ComfyUI" },
@@ -1002,6 +1150,11 @@ const RESOURCES = [
   { cat: "微调与控制技术", color: "#00d4ff", items: [
     { name: "LoRA", role: "低秩适配微调，改画风/角色最流行方案", links: [
       { label: "论文", url: "https://arxiv.org/abs/2106.09685" }
+    ]},
+    { name: "加速 LoRA (Lightning/Hyper-SD)", role: "少步蒸馏加速，4–8 步出图", links: [
+      { label: "SDXL-Lightning HF", url: "https://huggingface.co/ByteDance/SDXL-Lightning" },
+      { label: "Hyper-SD HF", url: "https://huggingface.co/ByteDance/Hyper-SD" },
+      { label: "Hyper-SD 论文", url: "https://arxiv.org/abs/2404.13686" }
     ]},
     { name: "ControlNet", role: "用线稿/姿态/深度等精确控制构图", links: [
       { label: "论文", url: "https://arxiv.org/abs/2302.05543" },
@@ -1112,6 +1265,10 @@ const RESOURCE_MAP = [
   { names: ["Z-Image", "Z-Image Turbo", "造相"], resCat: "基础模型", resName: "Z-Image", secId: "models", blockIdx: 11 },
   { names: ["Seedream", "Seedream 4.0", "即梦"], resCat: "基础模型", resName: "Seedream 4.0", secId: "models", blockIdx: 12 },
   { names: ["GPT-Image", "GPT Image", "gpt-image", "ChatGPT Images"], resCat: "基础模型", resName: "GPT-Image", secId: "models", blockIdx: 13 },
+  { names: ["Illustrious", "Illustrious XL", "illu", "ILXL", "OnomaAI"], resCat: "基础模型", resName: "Illustrious XL", secId: "models", blockIdx: 14 },
+  { names: ["Forge", "SD WebUI Forge", "WebUI Forge"], resCat: "工具与界面", resName: "Forge (SD WebUI Forge)", secId: "tools", blockIdx: 4 },
+  { names: ["Forge Neo", "forge-neo", "Forge Classic", "sd-webui-forge-classic"], resCat: "工具与界面", resName: "Forge Neo", secId: "tools", blockIdx: 5 },
+  { names: ["加速LoRA", "加速 LoRA", "Lightning", "SDXL Lightning", "Hyper-SD", "LCM", "Turbo", "蒸馏"], resCat: "微调与控制技术", resName: "加速 LoRA (Lightning/Hyper-SD)", secId: "fine-tuning", blockIdx: 5 },
   { names: ["ComfyUI"], resCat: "工具与界面", resName: "ComfyUI", secId: "tools", blockIdx: 1 },
   { names: ["WebUI", "AUTOMATIC1111", "A1111", "SD WebUI"], resCat: "工具与界面", resName: "AUTOMATIC1111 WebUI", secId: "tools", blockIdx: 0 },
   { names: ["秋叶", "整合包", "绘世", "绘世启动器"], resCat: "工具与界面", resName: "秋叶整合包 / 绘世启动器", secId: "tools", blockIdx: 2 },

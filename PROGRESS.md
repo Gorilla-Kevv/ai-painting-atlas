@@ -1,11 +1,11 @@
 # PROGRESS — AI 生图知识图谱
 
-## 进度看板（10.6 11:29 更新 · knowledge-expansion 分支）
+## 进度看板（10.6 13:41 更新 · knowledge-expansion 分支）
 - 当前分支：`knowledge-expansion`——知识条目扩充专用（阶段 16 完成后自 `main`@`0b45c96` 切出），后续新模型/术语/资源卡均在此分支追加；`main` 保持为主线/发布分支
-- 当前正在开发任务：无（阶段 17 已完成并本地提交）
-- 下一阶段任务：待定（候选见 HANDOFF「下一步」）
-- 可提前进行的任务：投稿限流加固（RLS 每人 ≤5 条 pending）；阶段 17 未推送远端，待用户确认后 push
-- 未完成的任务：3D 图谱 / 思维导图纳入阶段 16 新增模型条目（债务项，需评估性能）
+- 当前正在开发任务：无（阶段 18 已完成并本地提交）
+- 下一阶段任务：待定（候选见 HANDOFF「下一步」；阶段 17/18 均未推送远端，待用户确认后一并 push）
+- 可提前进行的任务：投稿限流加固（RLS 每人 ≤5 条 pending）
+- 未完成的任务：3D 图谱 / 思维导图纳入阶段 16+18 新增条目（债务项，需评估性能）
 
 ## 阶段总览（按时间顺序，均已完成并推送）
 
@@ -28,6 +28,7 @@
 | 15 | 社区共建系统 | Supabase 认证投稿 + admin 审核后台 + GitHub 同步回仓库 | ✅ |
 | 16 | 七大新模型知识扩充 | WAI / Anima / Krea 2 / Wan 2.2 / Z-Image / Seedream / GPT-Image（b7–b13） | ✅ |
 | 17 | NovelAI 实战手册改折叠子章节 | b6 改为 b3 内可折叠补充阅读面板（sub/parentIdx 机制，映射零破坏） | ✅ |
+| 18 | 六知识点扩充 + LoRA 双深度 | Illustrious XL / Forge / Forge Neo / 加速LoRA / 分辨率 / LoRA 浅显·硬核双版本 | ✅ |
 
 ## 阶段 15
 
@@ -80,6 +81,24 @@
 - **复用说明**：任何 block 加 `sub: true, parentIdx: N` 即成为 N 号章节的折叠补充阅读，无需改渲染代码；parentIdx 必须指向同 section 内的非 sub 块
 - **下一阶段入口**：推送远端 / 更多章节的补充阅读化（如 compare 表格扩展）
 - **本次文档更新时间**：10.6 11:29
+
+## 阶段 18 六知识点扩充 + LoRA 双深度选读 [计划时间：10.6 12:40 BY Trae][完成时间：10.6 13:41 BY Trae]
+
+- **已完成**（均经联网检索核实，检索日期 2026-10-06）：
+  - **models 段追加 b14「Illustrious XL（illu · OnomaAI）」**：三大差异化（原生 1536px / NLP+Danbooru 混合提示 / 文本编码器微调）、v0.1→v3.5 VPred 版本表、推荐参数、与 Pony 生态不兼容辨析
+  - **tools 段追加 b4「Forge」**（lllyasviel A1111 高性能分支：UNet Patcher + 动态显存卸载、4GB 跑 SDXL、原生 Flux、显存—提速速查表）与 **b5「Forge Neo 与 Forge Classic」**（Haoming02 接手双分支：Neo 支持/Z-Image/Anima/Krea 2/Wan 2.2 等新模型、SageAttention、uv 安装；Classic 稳定存档）
+  - **fine-tuning 段追加 b5「加速 LoRA 与少步蒸馏（步数的极限）」**：蒸馏原理、Turbo/Lightning/Hyper-SD/LCM 方案速查表（步数/CFG/形态/要点）、CFG=0 硬约束翻坑指南、step 通用规律与「草稿少步→定稿常规步」策略
+  - **fine-tuning 段追加 b6「分辨率：原生分辨率与出图策略」**：训练分布外推失败原理、SDXL 官方比例尺寸表、Illustrious 1536、Hires.fix 正路、显存×4 代价
+  - **LoRA 双深度选读**：fine-tuning 段尾追加 b7「LoRA 浅显版：5 分钟看懂」（画师与便利贴类比、使用三步、三大常见困惑）与 b8「LoRA 硬核版：低秩分解与训练细节」（ΔW=BA 数学结构、内在秩依据、Kohya 训练超参表、过拟合识别治理、与加速 LoRA 本质区别），均 `sub:true, parentIdx:0` 挂在 LoRA 主块下，复用阶段 17 折叠机制
+  - **GLOSSARY**：新增 Illustrious XL / Forge / Forge Neo / 加速 LoRA / 原生分辨率 5 条，扩写「采样步数」词条（补蒸馏 4–8 步与低 CFG 要求）
+  - **RESOURCES**：基础模型+Illustrious XL、工具与界面+Forge/Forge Neo、微调与控制技术+加速 LoRA (Lightning/Hyper-SD)
+  - **RESOURCE_MAP**：新增 4 条映射（Illustrious→models-b14、Forge→tools-b4、Forge Neo→tools-b5、加速LoRA→fine-tuning-b5）
+  - `index.html` data.js 版本号 → `20261006c`
+- **测试结果**：`node --check` 通过；结构校验 models=15 / tools=6 / fine-tuning=9 blocks，全部映射解析正确；浏览器实测：5 个新常规块渲染正常、LoRA 双子面板均嵌套于 b0 且默认收起、双展开按钮独立开合（开硬核版不影响浅显版、两面板可同时展开）、导航嵌套排序正确（NovelAI→4.5实战、LoRA→浅显→硬核→DreamBooth）、console 零报错
+- **改动文件**：`js/data.js`（models/tools/fine-tuning 追加 5 块 + 2 sub 块 + 术语/资源卡/映射）、`index.html`（版本号）
+- **风险**：sub 块锚点 `fine-tuning-b7/b8` 已被 sub 机制占用——今后若在 fine-tuning 段中部插入正式块会使 sub 块索引位移（追加式扩充不受影响）；分辨率块无资源卡映射（概念性内容，属预期）
+- **下一阶段入口**：推送远端 / 其他难点概念的双深度化（如 CFG、采样器）
+- **本次文档更新时间**：10.6 13:41
 
 ## 当前风险与债务
 
