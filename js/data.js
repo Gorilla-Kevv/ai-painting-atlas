@@ -320,6 +320,8 @@ const SECTIONS = [
       }
     },
     {
+      sub: true,
+      parentIdx: 3,
       heading: "NovelAI 4.5 实战全解（硬核操作手册）",
       paragraphs: [
         "本节按『准备与订阅经济 → 界面数据流 → 提示词工程 → 采样与参数 → 多角色构图 → 工具链 → 氛围转移』七条主线拆解 NovelAI 4.5。重点不在记住按钮位置，而在理解每个参数作用于扩散模型的哪一步——理解了原理，这套方法论可直接迁移到 WebUI / ComfyUI / 任何 SD 前端。",

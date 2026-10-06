@@ -125,11 +125,24 @@
       if (hasChildren) {
         const children = el("div", "nav-children");
         children.style.setProperty("--dot", sec.color);
-        subs.forEach((blk, j) => {
+        // sub=true 的补充阅读块紧跟其父章节显示（数组原始索引 j 不变，锚点 id 不受影响）
+        const entries = subs.map((blk, j) => ({ blk, j }));
+        const ordered = [];
+        entries.forEach((x) => {
+          if (x.blk.sub && !x.blk.cid) return;
+          ordered.push(x);
+          entries.forEach((s) => {
+            if (s.blk.sub && !s.blk.cid && s.blk.parentIdx === x.j) ordered.push(s);
+          });
+        });
+        entries.forEach((x) => { if (!ordered.includes(x)) ordered.push(x); });
+        ordered.forEach(({ blk, j }) => {
           const sub = el("div", "nav-sub");
+          if (blk.sub && !blk.cid) sub.classList.add("nav-sub-nested");
           sub.innerHTML = `<span class="nav-sub-dot"></span><span class="nav-sub-txt">${esc(blk.heading)}</span>`;
           sub.addEventListener("click", () => {
             const blkEl = document.getElementById(blk.cid || sec.id + "-b" + j);
+            expandIfSub(blkEl);
             if (blkEl) blkEl.scrollIntoView({ behavior: "smooth", block: "start" });
             if (window.innerWidth <= 720) sidebar.classList.remove("open");
           });
@@ -138,6 +151,22 @@
         navList.appendChild(children);
       }
     });
+  }
+
+  /* ---------- 1.5 可折叠补充阅读子章节（sub-block） ---------- */
+  function setSubExpanded(blkEl, on) {
+    if (!blkEl || !blkEl.classList || !blkEl.classList.contains("sub-block")) return;
+    blkEl.classList.toggle("expanded", !!on);
+    blkEl.classList.remove("collapsed");
+    const expanded = blkEl.classList.contains("expanded");
+    (blkEl._foldBtns || []).forEach((b) => { b.textContent = expanded ? "收起 ▴" : "展开 ▾"; });
+    document.querySelectorAll('.sub-toggle[data-sub-id="' + blkEl.id + '"]').forEach((b) => {
+      b.textContent = expanded ? b.dataset.labelOpen : b.dataset.labelClosed;
+      b.setAttribute("aria-expanded", expanded ? "true" : "false");
+    });
+  }
+  function expandIfSub(blkEl) {
+    if (blkEl && blkEl.classList && blkEl.classList.contains("sub-block")) setSubExpanded(blkEl, true);
   }
 
   /* ---------- 2. 渲染 callout ---------- */
@@ -240,10 +269,12 @@
   function scrollToBlock(secId, blockIdx) {
     const sec = document.getElementById(secId);
     if (!sec) return;
-    const blocks = sec.querySelectorAll(".block");
-    const blk = (blockIdx != null && blocks[blockIdx]) ? blocks[blockIdx] : sec;
-    blk.scrollIntoView({ behavior: "smooth", block: "start" });
-    highlight(blk);
+    // blockIdx 即数组索引 = 锚点 id 后缀（-bN），按 id 查找对 DOM 嵌套/重排免疫
+    const blk = (blockIdx != null) ? document.getElementById(secId + "-b" + blockIdx) : null;
+    expandIfSub(blk);
+    const target = blk || sec;
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    highlight(target);
     if (window.innerWidth <= 720) sidebar.classList.remove("open");
   }
   function scrollToResource(cat, name) {
@@ -360,15 +391,19 @@
         <p class="section-summary" style="border-left-color:${sec.color}">${esc(sec.summary)}</p>`;
       section.appendChild(head);
 
-      // 子章节
+      // 子章节（sub=true 渲染为 parentIdx 章节内的可折叠补充阅读面板，锚点 id 不变）
+      const blockEls = [];
       sec.sections.forEach((blk, j) => {
+        const isSub = !!blk.sub && !blk.comm && Number.isInteger(blk.parentIdx);
         const block = el("div", "block fade-in");
         if (blk.comm) block.classList.add("comm-block");
+        if (isSub) block.classList.add("sub-block", "collapsed");
         block.id = blk.cid || sec.id + "-b" + j;
-        block.style.animationDelay = `${j * 60}ms`;
+        if (!isSub) block.style.animationDelay = `${j * 60}ms`;
         const bh = el("div", "block-head");
         bh.innerHTML = `
           <span class="glyph" style="background:${sec.color}">${sec.icon}</span>
+          ${isSub ? '<span class="sub-badge">补充阅读</span>' : ""}
           <h3>${esc(blk.heading)}</h3>`;
         block.appendChild(bh);
 
@@ -432,7 +467,40 @@
           block.appendChild(tutLink);
         }
 
-        section.appendChild(block);
+        blockEls[j] = block;
+        if (isSub) {
+          // 折叠子块：嵌套挂载到父章节内部，头部带收起按钮
+          const foldBtn = el("button", "sub-fold");
+          foldBtn.type = "button";
+          foldBtn.textContent = "收起 ▴";
+          foldBtn.addEventListener("click", () => setSubExpanded(block, false));
+          block._foldBtns = [foldBtn];
+          bh.appendChild(foldBtn);
+          const parentEl = blockEls[blk.parentIdx];
+          if (parentEl) parentEl.appendChild(block); else section.appendChild(block);
+        } else {
+          section.appendChild(block);
+          // 父章节尾部挂载其补充阅读的展开按钮
+          sec.sections.forEach((sb, k) => {
+            if (!(sb.sub && !sb.comm && Number.isInteger(sb.parentIdx) && sb.parentIdx === j)) return;
+            if (!block._subWrap) {
+              block._subWrap = el("div", "sub-toggles");
+              block.appendChild(block._subWrap);
+            }
+            const btn = el("button", "sub-toggle");
+            btn.type = "button";
+            btn.setAttribute("aria-expanded", "false");
+            btn.dataset.subId = sec.id + "-b" + k;
+            btn.dataset.labelClosed = "📖 补充阅读 · " + sb.heading + " ▸";
+            btn.dataset.labelOpen = "📖 补充阅读 · " + sb.heading + " ▴";
+            btn.textContent = btn.dataset.labelClosed;
+            btn.addEventListener("click", () => {
+              const t = document.getElementById(btn.dataset.subId);
+              if (t) setSubExpanded(t, !t.classList.contains("expanded"));
+            });
+            block._subWrap.appendChild(btn);
+          });
+        }
       });
 
       main.appendChild(section);
@@ -530,6 +598,16 @@
     setupScroll();
     setupReveal();
     setupToggle();
+    // 直接以 #models-b6 这类锚点进入时，自动展开命中的折叠子章节。
+    // 展开前浏览器原生锚点滚动会因 display:none 落空，故展开后补一次定位。
+    const h = location.hash.slice(1);
+    if (h) {
+      const t = document.getElementById(h);
+      if (t && t.classList.contains("sub-block")) {
+        setSubExpanded(t, true);
+        t.scrollIntoView({ block: "start" });
+      }
+    }
   }
 
   if (document.readyState === "loading") {

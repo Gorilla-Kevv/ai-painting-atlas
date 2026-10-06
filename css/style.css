@@ -1431,3 +1431,49 @@ textarea.kb-input { resize: vertical; min-height: 60px; line-height: 1.6; }
   .kb-block-actions { opacity: .85; }
   .kb-block-add, .kb-block-edit { padding: 4px 10px; font-size: 10px; }
 }
+
+/* ---------- 可折叠补充阅读子章节（sub-block） ---------- */
+.sub-toggles { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+.sub-toggle {
+  display: inline-flex; align-items: center; gap: 8px; width: 100%;
+  padding: 12px 16px; border-radius: 12px;
+  border: 1px dashed rgba(255,255,255,.22);
+  background: rgba(255,255,255,.04);
+  color: var(--text-1, #c7cdd9); font: inherit; font-size: 14px; font-weight: 600;
+  text-align: left; cursor: pointer;
+  transition: border-color .2s, background .2s, transform .2s;
+}
+.sub-toggle:hover { border-color: var(--c-mint); background: rgba(255,255,255,.07); transform: translateY(-1px); }
+.block.sub-block {
+  display: none; /* 默认收起；expanded 才显示（collapsed 类仅作初始标记，可缺席） */
+  margin: 22px 0 6px;
+  padding: 18px 20px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 14px;
+  background: rgba(255,255,255,.03);
+  scroll-margin-top: 24px;
+}
+.block.sub-block.expanded { display: block; animation: subReveal .3s ease; }
+@keyframes subReveal { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+.sub-badge {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; font-weight: 500;
+  padding: 2px 8px; border-radius: 100px; white-space: nowrap; flex-shrink: 0;
+  color: var(--c-amber); border: 1px solid rgba(255,184,0,.35); background: rgba(255,184,0,.08);
+}
+.sub-fold {
+  margin-left: auto; padding: 5px 12px; border-radius: 8px; cursor: pointer; flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.05);
+  color: var(--text-1, #c7cdd9); font: inherit; font-size: 12px;
+  transition: background .2s, border-color .2s;
+  position: relative; z-index: 6; /* 高于社区悬浮按钮组(z-index:5, opacity:0 也拦截点击) */
+}
+.sub-fold:hover { border-color: var(--c-mint); background: rgba(255,255,255,.09); }
+/* 子面板内的社区悬浮按钮组上移到面板外沿，避免与折叠按钮抢占右上角 */
+.block.sub-block .kb-block-actions { top: -14px; }
+.nav-sub.nav-sub-nested { padding-left: 30px; opacity: .88; }
+.nav-sub.nav-sub-nested .nav-sub-txt::before { content: "└ "; opacity: .6; }
+@media (max-width: 720px) {
+  .block.sub-block { padding: 14px 14px; }
+  .sub-toggle { font-size: 13px; padding: 10px 12px; }
+  .block.sub-block .block-head { flex-wrap: wrap; }
+}

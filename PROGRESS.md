@@ -1,10 +1,10 @@
 # PROGRESS — AI 生图知识图谱
 
-## 进度看板（10.6 02:32 更新 · knowledge-expansion 分支）
+## 进度看板（10.6 11:29 更新 · knowledge-expansion 分支）
 - 当前分支：`knowledge-expansion`——知识条目扩充专用（阶段 16 完成后自 `main`@`0b45c96` 切出），后续新模型/术语/资源卡均在此分支追加；`main` 保持为主线/发布分支
-- 当前正在开发任务：知识条目持续扩充（下一批候选模型待定，扩充时沿用阶段 16 流程：联网核实 → 末尾追加 block → 资源卡/术语/RESOURCE_MAP 同步 → 版本号递增 → node --check + 本地预览验证）
-- 下一阶段任务：待定（候选见 HANDOFF「下一步」：投稿限流 / 移动端锚点 / 社区内容进 3D 图谱）
-- 可提前进行的任务：投稿限流加固（RLS 每人 ≤5 条 pending）
+- 当前正在开发任务：无（阶段 17 已完成并本地提交）
+- 下一阶段任务：待定（候选见 HANDOFF「下一步」）
+- 可提前进行的任务：投稿限流加固（RLS 每人 ≤5 条 pending）；阶段 17 未推送远端，待用户确认后 push
 - 未完成的任务：3D 图谱 / 思维导图纳入阶段 16 新增模型条目（债务项，需评估性能）
 
 ## 阶段总览（按时间顺序，均已完成并推送）
@@ -27,6 +27,7 @@
 | 14 | NovelAI 整合 | 教程字幕知识写入（原理 + 七主线实战手册） | ✅ |
 | 15 | 社区共建系统 | Supabase 认证投稿 + admin 审核后台 + GitHub 同步回仓库 | ✅ |
 | 16 | 七大新模型知识扩充 | WAI / Anima / Krea 2 / Wan 2.2 / Z-Image / Seedream / GPT-Image（b7–b13） | ✅ |
+| 17 | NovelAI 实战手册改折叠子章节 | b6 改为 b3 内可折叠补充阅读面板（sub/parentIdx 机制，映射零破坏） | ✅ |
 
 ## 阶段 15
 
@@ -60,6 +61,25 @@
 - **风险**：跳转按钮走与既有 6 条映射相同的 `scrollToBlock` 代码路径，实测缺失风险极低；模型信息有时效性（如版本号），后续迭代需复查
 - **下一阶段入口**：投稿限流 / 移动端锚点 / 3D 图谱扩节点评估 / 新模型接入 network-data 与 mindmap（需同步关注 30 节点性能）
 - **本次文档更新时间**：10.6 02:16
+
+## 阶段 17 NovelAI 实战手册改为折叠补充阅读 [计划时间：10.6 10:50 BY Trae][完成时间：10.6 11:29 BY Trae]
+
+- **已完成**：
+  - **数据标记**：`data.js` b6「NovelAI 4.5 实战全解（硬核操作手册）」加 `sub: true, parentIdx: 3`——数组位置与 heading 不变，锚点仍为 `models-b6`，四张映射表（RESOURCE_MAP/TUT_MAP/REF_MAP/ANIM_BY_HEADING）零改动
+  - **渲染机制**：`app.js` sub 块渲染为父章节（b3 NovelAI）内部的可折叠面板（默认收起），父章节尾部自动生成「📖 补充阅读 ▸」展开按钮；子面板头部带「补充阅读」徽章 + 「收起」按钮
+  - **导航层级**：侧边栏子标题按父子关系排序（b6 以 `└` 缩进紧跟 NovelAI），点击自动展开并滚动
+  - **跳转兼容**：`scrollToBlock` 由「按 .block DOM 索引查找」改为「按 `${secId}-b${blockIdx}` 锚点 id 查找」——DOM 嵌套后索引查找会错位，按 id 查找对嵌套/重排免疫；命中子块自动展开
+  - **hash 直达**：`init` 检测 `#models-b6` 类锚点，展开后主动 scrollIntoView（原生锚点滚动在 display:none 时期会落空）
+  - **样式**：`style.css` 新增折叠面板/按钮/徽章/导航缩进样式 + 移动端适配；版本号全线递增至 `20261006b`（index/docs/admin/network 四页共用 style.css）
+- **过程中发现并修复**：
+  - **社区悬浮按钮遮挡**：`.kb-block-actions`（absolute right:0, z-index:5，opacity:0 时仍拦截点击）盖住折叠按钮导致收起失效——`.sub-fold` 提 z-index:6，子面板内社区按钮组上移至面板外沿（top:-14px）
+  - **收起逻辑缺陷**：初版「collapsed/expanded 双类切换」在首次展开移除 collapsed 后收起失效——改为「默认 display:none，expanded 才显示」单向逻辑
+- **测试结果**：`node --check` 通过；结构校验 14 blocks（b6=SUB→3）映射无越界；浏览器实测：初始折叠/父按钮展开/收起按钮收起/重复开合/导航嵌套排序/hash 直达展开+定位全部通过；b6 嵌套于 b3、13 个顶层块 + 1 子块、b7–b13 回归正常；console 无本改动相关报错（仅社区 supabase 导航中断 ERR_ABORTED，与本次无关）
+- **改动文件**：`js/data.js`（+2 行标记）、`js/app.js`（导航排序/折叠控制/嵌套渲染/id 跳转/hash 展开）、`css/style.css`（+46 行）、`index.html`/`docs.html`/`admin.html`/`network.html`（版本号 20261006b）
+- **风险**：`.sub-fold` z-index 高于社区按钮组，子面板右上角 hover 时两按钮组相邻但不再互相遮挡；若未来有 block 同时设 `sub:true` 与 `comm:true`，comm 优先（已守卫）
+- **复用说明**：任何 block 加 `sub: true, parentIdx: N` 即成为 N 号章节的折叠补充阅读，无需改渲染代码；parentIdx 必须指向同 section 内的非 sub 块
+- **下一阶段入口**：推送远端 / 更多章节的补充阅读化（如 compare 表格扩展）
+- **本次文档更新时间**：10.6 11:29
 
 ## 当前风险与债务
 
