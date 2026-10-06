@@ -1434,6 +1434,8 @@ textarea.kb-input { resize: vertical; min-height: 60px; line-height: 1.6; }
 
 /* ---------- 可折叠补充阅读子章节（sub-block） ---------- */
 .sub-toggles { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+/* 面板在栏内跟随各自按钮展开：清掉自身外边距，由栏的 gap 统一节奏 */
+.sub-toggles .block.sub-block { margin: 0; }
 .sub-toggle {
   display: inline-flex; align-items: center; gap: 8px; width: 100%;
   padding: 12px 16px; border-radius: 12px;
@@ -1447,7 +1449,7 @@ textarea.kb-input { resize: vertical; min-height: 60px; line-height: 1.6; }
 .block.sub-block {
   display: none; /* 默认收起；expanded 才显示（collapsed 类仅作初始标记，可缺席） */
   margin: 22px 0 6px;
-  padding: 18px 20px;
+  padding: 16px 20px;
   border: 1px solid rgba(255,255,255,.10);
   border-radius: 14px;
   background: rgba(255,255,255,.03);

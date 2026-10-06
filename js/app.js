@@ -469,7 +469,7 @@
 
         blockEls[j] = block;
         if (isSub) {
-          // 折叠子块：嵌套挂载到父章节内部，头部带收起按钮
+          // 折叠子块：面板插入到父章节内「自己的展开按钮」正下方（栏内展开，按钮即栏头）
           const foldBtn = el("button", "sub-fold");
           foldBtn.type = "button";
           foldBtn.textContent = "收起 ▴";
@@ -477,7 +477,12 @@
           block._foldBtns = [foldBtn];
           bh.appendChild(foldBtn);
           const parentEl = blockEls[blk.parentIdx];
-          if (parentEl) parentEl.appendChild(block); else section.appendChild(block);
+          const wrap = parentEl && parentEl._subWrap;
+          const anchorBtn = wrap && wrap.querySelector('[data-sub-id="' + block.id + '"]');
+          if (anchorBtn) anchorBtn.insertAdjacentElement("afterend", block);
+          else if (wrap) wrap.appendChild(block);
+          else if (parentEl) parentEl.appendChild(block);
+          else section.appendChild(block);
         } else {
           section.appendChild(block);
           // 父章节尾部挂载其补充阅读的展开按钮

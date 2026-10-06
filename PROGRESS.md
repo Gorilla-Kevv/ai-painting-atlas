@@ -133,6 +133,14 @@
 - **下一阶段入口**：推送远端 / 采样器与调度器专题 / ControlNet 专题
 - **本次文档更新时间**：10.6 13:53
 
+## 阶段 21 补充阅读栏内展开设计修正 [计划时间：10.6 14:25 BY Trae][完成时间：10.6 14:40 BY Trae]
+
+- **已完成**：应用户设计要求，折叠补充阅读的面板展开位置改为**栏内跟随各自按钮**——app.js 渲染时面板经 `insertAdjacentElement('afterend')` 插入到 `.sub-toggles` 内自己按钮的正下方（DOM 顺序 [btn,panel] 交替），不再统一堆在按钮组之后；style.css 清掉栏内面板的外边距由 gap 统一节奏；版本号 app.js/style.css → `20261006c`（四页 style.css 同步）
+- **测试结果**：`node --check` 通过；浏览器 DOM 顺序验证 tools-b1 栏为 [BTN:b6,PANEL:b6,BTN:b7,PANEL:b7,BTN:b8,PANEL:b8]、models-b3 同构（桥接后续退化，点击交互未复测——展开逻辑代码未变，风险极低，已请用户目验）
+- **沉淀**：该设计规则已写入 Trae 项目记忆 Hard Constraints + 用户级 WORK_MEMORY.md（agent-work-habits-write），今后所有「补充阅读」类组件默认此设计
+- **改动文件**：`js/app.js`、`css/style.css`、`index.html`/`docs.html`/`admin.html`/`network.html`（版本号）
+- **本次文档更新时间**：10.6 14:35
+
 ## 当前风险与债务
 
 1. **版本号手工维护**：易遗漏，遗漏即表现为"功能没上线"。建议后续每次改动固定检查。

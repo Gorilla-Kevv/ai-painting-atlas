@@ -63,7 +63,7 @@ assets/             mascot.png、favicon-32/64/180.png
 6. **xmind-local MCP 的 workspace 不在项目内**（在 `c:\Users\kevin\.codebuddy\xmind\`），`outputPath` 必须用相对路径，绝对路径会报 `PATH_OUTSIDE_WORKSPACE`。
 7. **`network.html` 中边与流光必须挂在 `nodeGroup` 下**（与节点同步旋转），否则旋转时连线与节点脱节。
 8. **LineBasicMaterial 线宽在 WebGL 无效**，粗连线须用 `TubeGeometry`。
-9. **折叠补充阅读子章节（阶段 17）**：block 加 `sub: true, parentIdx: N` 即渲染为同 section 第 N 块内部的可折叠面板（默认收起）。锚点 id 不变（仍 `-bN`、数组索引不变），但 **DOM 已嵌套进父块**——任何按 `.block` DOM 顺序索引的查询都会错位，必须按锚点 id 查找（`scrollToBlock` 已改造）。`sub` 与 `comm` 同设时 comm 优先。
+9. **折叠补充阅读子章节（阶段 17 建、阶段 21 修正）**：block 加 `sub: true, parentIdx: N` 即渲染为同 section 第 N 块内的折叠面板。锚点 id 不变（仍 `-bN`、数组索引不变），但 **DOM 已嵌套进父块**——任何按 `.block` DOM 顺序索引的查询都会错位，必须按锚点 id 查找（`scrollToBlock` 已改造）。**面板展开位置：在 `.sub-toggles` 栏内紧跟自己的按钮（insertAdjacentElement 'afterend'，DOM 为 [btn,panel] 交替）——这是用户钦定设计，勿改回面板堆叠式**。`sub` 与 `comm` 同设时 comm 优先。
 10. **`.kb-block-actions`（社区悬浮按钮）opacity:0 时仍拦截点击**（z-index:5, absolute right:0）——凡在 block 右上角新增可点控件，z-index 须 >5，或像 `.block.sub-block .kb-block-actions { top:-14px }` 一样错位。
 
 ### 社区共建相关（阶段 15 新增）
@@ -126,7 +126,7 @@ node --check js/app.js
   - 社区 block 移动端锚点目录
   - 3D 图谱/思维导图纳入社区投稿（当前明确排除）
   - 新模型接入 3D 图谱/思维导图（需评估固定 30 节点性能）
-- **本次文档更新时间**：10.6 13:53 [BY Trae]（阶段 20 二次元工作流 + 审查分层）
+- **本次文档更新时间**：10.6 14:35 [BY Trae]（阶段 21 补充阅读栏内展开设计修正）
 
 ## Supabase 启用配置（社区功能上线的一次性步骤）
 
