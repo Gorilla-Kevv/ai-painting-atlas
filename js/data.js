@@ -45,6 +45,10 @@ const GLOSSARY = [
   { term: "工作流", en: "Workflow", cat: "基础", desc: "ComfyUI 中由节点与连线组成的完整生成流程，可存为 JSON 或嵌入 PNG 分享，他人导入即可复现——『可执行的原理图』。" },
   { term: "ComfyUI Manager", en: "ComfyUI-Manager", cat: "工具", desc: "ComfyUI 必装管理器：界面内安装/更新自定义节点与模型、一键补齐缺失节点，背后是官方 Comfy Registry（语义化版本 + 恶意行为扫描）。" },
   { term: "自定义节点", en: "Custom Nodes", cat: "工具", desc: "社区为 ComfyUI 扩展的节点包（如 KJNodes、Impact Pack、rgthree），经 Manager 或 comfy-cli 安装；数量数万，按需安装避免冲突。" },
+  { term: "EPS / VPred", en: "ε-prediction / v-prediction", cat: "原理", desc: "扩散模型的两种预测目标：EPS 为经典噪声预测（兼容性最好），VPred 预测速度场（对比度高、色彩浓）但需 Euler 系采样、低 CFG 与 Zero Terminal SNR 配套。" },
+  { term: "Safety Checker", en: "Safety Checker", cat: "原理", desc: "官方 SD 管线曾内置的 CLIP 输出分类器（显式内容替换为黑块）；仅存在于官方 diffusers 与少数 UI，社区 checkpoint 普遍不带，ComfyUI 默认无。" },
+  { term: "分级标签", en: "Content Rating Tags", cat: "基础", desc: "二次元模型的四级内容尺度标签（general/sensitive/nsfw/explicit）：正向控制生成尺度，负向加 nsfw 即可过滤不适宜内容。" },
+  { term: "NoobAI-XL", en: "NoobAI-XL", cat: "模型", desc: "Laxhar Dream Lab 基于 Illustrious 继续训练 Danbooru+e621 全量数据的动漫底模，画师 tag 召回最广，EPS/VPred 双分支。" },
   { term: "LoRA", en: "Low-Rank Adaptation", cat: "微调", desc: "低秩适配微调方法，只训练极小参数即可改变画风/角色，是 SD 生态最流行的扩展形式。" },
   { term: "DreamBooth", en: "DreamBooth", cat: "微调", desc: "把特定主体（如你的猫）训练进模型的方法，比 LoRA 更深，但易过拟合、显存要求高。" },
   { term: "Textual Inversion", en: "TI / 嵌入式", cat: "微调", desc: "学习一个新词向量代表某概念，文件极小，适合定义风格/角色，训练慢、效果弱于 LoRA。" },
@@ -503,6 +507,49 @@ const SECTIONS = [
         ]
       },
       callout: { type: "info", title: "illu vs Pony", text: "两大动漫底座的 LoRA 互不通用。Illustrious 系胜在 Danbooru 标签忠实度与 1536 原生分辨率；Pony 系胜在 LoRA 数量与特殊提示体系（score_9 等）。新入坑建议跟 Illustrious 系（NoobAI/WAI 同源，迁移成本低）。" }
+    },
+    {
+      heading: "二次元生成：主流工作流全景",
+      paragraphs: [
+        "本章把前面二次元模型（NovelAI/WAI/Illustrious）的知识收拢成一张实战地图。2026 年二次元创作的『主流默认工作流』由三部分组成：<b>Illustrious 系底模 + Danbooru 标签体系 + 修脸/高清双后期</b>——几乎所有社区教程、LoRA 与工作流分享都围绕这条链路展开。",
+        "<b>① 底模选型</b>：Illustrious 系三分天下——<b>WAI</b>（角色召回最强、开箱即用）、<b>NoobAI-XL</b>（Laxhar Dream Lab 基于 illu 继续训练完整 Danbooru+e621 数据集，画师 tag 召回最广）、<b>Illustrious 官方底模</b>（干净画布，训练 LoRA 用）。选型关键分支：<b>EPS 版</b>（ε-prediction，经典噪声预测）——与所有现有工具/工作流无缝兼容，新手从这里开始；<b>VPred 版</b>（v-prediction，v0.5/1.0 等版本）——对比度更高、色彩更浓、暗部更强，但必须专用参数：采样器 Euler 系、CFG 3–5、开启 Zero Terminal SNR（ZTSNR）、可选 CFG Rescale 0–0.6，且部分界面需配套 yaml/专用节点——用常规参数跑 VPred 必出灰图或过曝。",
+        "<b>② 标签体系（四段式）</b>：画质词（masterpiece, best quality, very aesthetic）→ 分级词（general/sensitive/nsfw/explicit，控制内容尺度，见下一节）→ 角色与画师（character_name (series), artist_tag——NoobAI 的画师 tag 召回是它对 WAI 的核心优势）→ 通用 tag（1girl, 服饰, 动作, 构图, 光影）。反向外加 worst quality, bad anatomy, bad hands 兜底。",
+        "<b>③ 标准管线（六步链）</b>：原生分辨率出图（1024×1344 等，Illustrious 系可 1280×1856）→ <b>Hires.fix 高清修复</b>（放大 1.5×、R-ESRGAN 4x+ Anime6B、降噪 0.35–0.5，二次元专用放大器）→ <b>ADetailer/FaceDetailer 修脸</b>（自动检测面部重绘，降噪 0.2–0.45，多人图可叠手部检测单元）→ 可选 ControlNet（OpenPose 定姿态/Lineart 保构图）→ 可选 LoRA 叠加（角色+画风，权重各 0.6–0.8）→ 出图。ComfyUI 侧对应 Impact Pack 的 FaceDetailer 节点与 Ultimate SD Upscale 流程。",
+        "<b>④ 参数基准（Illustrious 系）</b>：采样器 Euler a，Steps 20–30，CFG 5–7（EPS）或 3–5（VPred），Clip Skip 2，原生分辨率出图后再走高清修复。训练自己的角色 LoRA 走「LoRA 硬核版」章节的 Kohya 流程（社区常用起点：UNet lr 3e-4、TE lr 3e-5、Dim 64/Alpha 32、55–60 张干净图起）。"
+      ],
+      table: {
+        title: "二次元底模选型速查",
+        head: ["底模", "强项", "适合"],
+        rows: [
+          ["WAI-illustrious", "角色召回、多 LoRA 叠加、人体稳", "日常出图、角色还原"],
+          ["NoobAI-XL", "画师 tag 召回最广、双预测分支", "复刻画师风格、进阶控色"],
+          ["Illustrious 官方", "未调优干净画布", "训练 LoRA/二创底模"],
+          ["NAI 4.5（付费）", "开箱即用、角色知识库系统化", "免折腾订阅党"]
+        ]
+      },
+      callout: { type: "key", title: "VPred 避坑", text: "灰图/惨白 = 忘开 Zero Terminal SNR；过曝油腻 = CFG 没压到 3–5。EPS 与 VPred 的 LoRA 原则上不通用——下载前看清模型页标注的预测类型。" }
+    },
+    {
+      heading: "审查机制的分层真相与合规边界",
+      paragraphs: [
+        "『AI 生图有没有审查』不是一个开关，而是<b>四个层面的叠加</b>。理解这个分层，就理解了为什么同样一个模型，在不同地方用，体验完全不同——这也是开源生态与云端服务最本质的分野。",
+        "<b>① 平台层（云端服务的审查所在）</b>：Midjourney、DALL·E/GPT-Image、即梦等在线服务的审核全部发生在<b>厂商服务器</b>上——提示词分类器先拦一遍，输出分类器再查一遍，请求与结果全程经过并留存于他人机器。你感受到的『严格』是平台政策与合规成本，而非模型能力上限。",
+        "<b>② 运行时层（可选的安全检查器）</b>：Stability AI 官方 pipeline 曾内置 Safety Checker（CLIP 分类器，把判定为显式的输出替换成黑块）；A1111/Forge 设置里留有 Safety Check 开关；ComfyUI 默认<b>不含</b>任何运行时过滤。注意：运行时检查器只存在于官方 diffusers 管线与少数场景，Civitai 等社区的社区 checkpoint 基本都不带。",
+        "<b>③ 权重层（开源权重的固有属性）</b>：开源模型的权重就是一组文件，其中<b>没有编译进去的审查器</b>——FLUX/SDXL/Illustrious 系的模型卡写明的是『可接受使用政策』（许可证层面的约定），不是运行时过滤。所以『本地运行无审核』不是破解或漏洞，而是开源架构的客观事实：没有云中间人，就没有服务端审核。代价是责任完全转移到使用者身上。",
+        "<b>④ 数据层（模型训练时的分级）</b>：即前面模型章节反复出现的『censored/uncensored 版本』——NovelAI 4.5 Full 与 Curated 的区别、WAI 的审查/无审查双版本、NoobAI 因训练集含 e621 而具备的分级标签体系。这是训练数据选择带来的『能力分级』，而非运行时开关。",
+        "<b>⑤ 合规边界（必须严肃对待）</b>：技术上的『无过滤』绝不等于法律上的『无禁区』——<b>涉及未成年人的任何性化内容是刑事犯罪，与是否 AI 生成无关，全球主要法域零容忍</b>；真人肖像需本人同意（Civitai 2026 年起封禁真人 likeness 内容并不允许变现）；非自愿性内容被所有主流平台与许可证禁止。平台侧也在收紧：Civitai 于 2026 年 4 月拆分为 civitai.com（SFW）与 civitai.red（成人内容，年齡验证 + 加密货币支付，起因是 Visa/Mastercard 将 AI 成人内容列为高风险），并要求 NSFW 上传必须携带生成元数据、强化 AI 审核管线。本地创作请遵守模型许可证与当地法律，公开分发前自查内容分级与署名义务。"
+      ],
+      table: {
+        title: "审查机制四层结构速查",
+        head: ["层面", "位置", "现状"],
+        rows: [
+          ["平台层", "云端服务服务器", "提示词+输出双分类器，最严格"],
+          ["运行时层", "官方管线/部分 UI", "Safety Checker 可选模块，社区 checkpoint 普遍不带"],
+          ["权重层", "开源权重文件", "无内置审查器，许可证约定代替技术过滤"],
+          ["数据层", "训练集选择", "censored/uncensored 版本分级（NAI Full/Curated 等）"]
+        ]
+      },
+      callout: { type: "warn", title: "红线清单（零容忍）", text: "①未成年人性化内容——刑事犯罪，AI 生成同样追责；②真人肖像未经同意；③非自愿性内容；④违反模型许可证的商用与分发。『本地无审核』意味着责任主体是你自己，而非平台替你把关。" }
     }
   ]
 },
@@ -1173,6 +1220,11 @@ const RESOURCES = [
       { label: "官网", url: "https://illustriousxl.org/zh/" },
       { label: "Hugging Face", url: "https://huggingface.co/OnomaAIResearch" },
       { label: "Civitai", url: "https://civitai.com/models/795765/illustrious-xl" }
+    ]},
+    { name: "NoobAI-XL", role: "Illustrious 系续训底模，Danbooru+e621 全量，画师 tag 召回最广", links: [
+      { label: "官网", url: "https://noobaixl.org/" },
+      { label: "Hugging Face", url: "https://huggingface.co/Laxhar" },
+      { label: "Civitai", url: "https://civitai.com/models/833294/noobai-xl-nai-xl" }
     ]},
     { name: "Imagen (Google)", role: "Google 文生图研究模型，文字理解强", links: [
       { label: "产品页", url: "https://deepmind.google/models/imagen-3/" }
