@@ -119,14 +119,14 @@ node --check js/app.js
 
 ## 状态
 
-- **当前状态**：功能完整（阶段 15 社区共建已实现并通过本地三轮浏览器验证，含测试数据清理），公网已上线；**社区功能上线前需完成下方「Supabase 启用配置」**（未配置时社区按钮显示"未启用"，站点不受影响）。阶段 16（2026-10-06）已完成七大新模型知识扩充：models 段 b0–b13 共 14 个 block，新增 WAI / Anima / Krea 2 / Wan 2.2 / Z-Image / Seedream / GPT-Image（含资源卡/术语/RESOURCE_MAP，data.js 版本号 20261006a），内容按 2026-10-06 联网检索核实。阶段 17（2026-10-06，knowledge-expansion 分支）已将 b6「NovelAI 4.5 实战全解」改为 b3 内可折叠补充阅读（sub/parentIdx 机制，见决策与坑 9/10，版本号 20261006b）。阶段 18（2026-10-06，同分支）完成六知识点扩充：Illustrious XL（models-b14）、Forge（tools-b4）、Forge Neo（tools-b5）、加速 LoRA 与步数（fine-tuning-b5）、分辨率（fine-tuning-b6），并为 LoRA 主块挂「浅显版/硬核版」双深度选读子块（fine-tuning-b7/b8，sub 机制复用）；data.js 版本号 20261006c。阶段 19（2026-10-06，同分支）深度拓展 ComfyUI 章节：tools 段追加 3 个 sub 块（官方生态/必装扩展/工作流资源与学习路径，parentIdx:1），主块补 App 模式与 Desktop 信息，GLOSSARY +3 术语、RESOURCES +2 卡；data.js 版本号 20261006d。阶段 20（2026-10-06，同分支）追加二次元工作流全景（models-b15：Illustrious 系选型/EPS·VPred 分支/六步管线）与审查机制分层科普（models-b16：平台/运行时/权重/数据四层 + 合规红线，科普导向不提供规避手段）；GLOSSARY +4（EPS/VPred、Safety Checker、分级标签、NoobAI-XL）、RESOURCES +NoobAI-XL；data.js 版本号 20261006e。阶段 17–21（knowledge-expansion 分支）已全部合并进 `main` 并推送发布（版本号演进 20261006a→e，app.js/style.css 20261006c）
+- **当前状态**：功能完整（阶段 15 社区共建已实现并通过本地三轮浏览器验证，含测试数据清理），公网已上线；**社区功能上线前需完成下方「Supabase 启用配置」**（未配置时社区按钮显示"未启用"，站点不受影响）。阶段 16（2026-10-06）已完成七大新模型知识扩充：models 段 b0–b13 共 14 个 block，新增 WAI / Anima / Krea 2 / Wan 2.2 / Z-Image / Seedream / GPT-Image（含资源卡/术语/RESOURCE_MAP，data.js 版本号 20261006a），内容按 2026-10-06 联网检索核实。阶段 17（2026-10-06，knowledge-expansion 分支）已将 b6「NovelAI 4.5 实战全解」改为 b3 内可折叠补充阅读（sub/parentIdx 机制，见决策与坑 9/10，版本号 20261006b）。阶段 18（2026-10-06，同分支）完成六知识点扩充：Illustrious XL（models-b14）、Forge（tools-b4）、Forge Neo（tools-b5）、加速 LoRA 与步数（fine-tuning-b5）、分辨率（fine-tuning-b6），并为 LoRA 主块挂「浅显版/硬核版」双深度选读子块（fine-tuning-b7/b8，sub 机制复用）；data.js 版本号 20261006c。阶段 19（2026-10-06，同分支）深度拓展 ComfyUI 章节：tools 段追加 3 个 sub 块（官方生态/必装扩展/工作流资源与学习路径，parentIdx:1），主块补 App 模式与 Desktop 信息，GLOSSARY +3 术语、RESOURCES +2 卡；data.js 版本号 20261006d。阶段 20（2026-10-06，同分支）追加二次元工作流全景（models-b15：Illustrious 系选型/EPS·VPred 分支/六步管线）与审查机制分层科普（models-b16：平台/运行时/权重/数据四层 + 合规红线，科普导向不提供规避手段）；GLOSSARY +4（EPS/VPred、Safety Checker、分级标签、NoobAI-XL）、RESOURCES +NoobAI-XL；data.js 版本号 20261006e。阶段 17–21（knowledge-expansion 分支）已全部合并进 `main` 并推送发布（版本号演进 20261006a→e，app.js/style.css 20261006c）。阶段 22（2026-10-07）新增<b>反推流</b>专题：tools 段追加 b9 主块「反推流：把图变回提示词（图像打标）」+ 两个 sub 补充阅读（b10 打标模型选型 PixAI Tagger v1.0 vs WD14、b11 ComfyUI 反推流实战与节点包）；GLOSSARY +7（反推/Tagger/WD14 Tagger/PixAI Tagger/TIPO/VLM 打标/Danbooru 标签）、RESOURCES +6 卡（WD14 权重、PixAI Tagger v1.0、sln77、TaggerPlus、TIPO/DanTagGen、RunningHub）、RESOURCE_MAP +5 条；models-b15 正文加反推交叉引用；data.js 版本号 20261007a。内容经联网检索核实（PixAI Tagger v1.0 官方模型卡、ComfyUI-TaggerPlus / sln77 / z-tipo-extension 仓库，检索日期 2026-10-07）
 - **验收标准**：三页互链可达；思维导图节点点击→参考书对应章节并高亮；参考书/教程双向跳转生效；3D 图谱可旋转/中键平移/悬浮/点击；社区：注册→验证邮箱→投稿→管理员批准→同步→公网可见全链路；本地 `python -m http.server` 下无 console 报错
 - **下一步（候选）**：
   - 投稿限流加固（RLS 加"每人 ≤5 条 pending"）
   - 社区 block 移动端锚点目录
   - 3D 图谱/思维导图纳入社区投稿（当前明确排除）
   - 新模型接入 3D 图谱/思维导图（需评估固定 30 节点性能）
-- **本次文档更新时间**：10.6 14:45 [BY Trae]（阶段 17–21 合并发布记录）
+- **本次文档更新时间**：10.7 15:40 [BY Trae]（阶段 22 反推流知识扩充）
 
 ## Supabase 启用配置（社区功能上线的一次性步骤）
 

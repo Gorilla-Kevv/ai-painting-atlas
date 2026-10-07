@@ -1,8 +1,8 @@
 # PROGRESS — AI 生图知识图谱
 
-## 进度看板（10.6 14:45 更新 · 阶段 17–21 已合并发布）
-- 分支策略：`knowledge-expansion`（知识条目扩充专用）↔ `main`（发布线）——阶段 17–21 已合并进 `main` 并推送 GitHub Pages；两分支当前同步，后续知识扩充继续在 `knowledge-expansion` 上进行
-- 当前正在开发任务：无（阶段 21 已完成、已合并、已发布）
+## 进度看板（10.7 15:40 更新 · 阶段 22 反推流扩充已完成）
+- 分支策略：`knowledge-expansion`（知识条目扩充专用）↔ `main`（发布线）——阶段 17–21 已合并进 `main` 并推送 GitHub Pages；阶段 22 直接在 `main` 上完成（待提交发布）
+- 当前正在开发任务：无（阶段 22 内容已完成、已校验，待提交/推送）
 - 下一阶段任务：待定（候选见 HANDOFF「下一步」）
 - 可提前进行的任务：投稿限流加固（RLS 每人 ≤5 条 pending）
 - 未完成的任务：3D 图谱 / 思维导图纳入阶段 16–21 新增条目（债务项，需评估性能）
@@ -31,6 +31,8 @@
 | 18 | 六知识点扩充 + LoRA 双深度 | Illustrious XL / Forge / Forge Neo / 加速LoRA / 分辨率 / LoRA 浅显·硬核双版本 | ✅ |
 | 19 | ComfyUI 章节深度拓展 | 官方生态 / 必装扩展 / 工作流资源三篇选读 + Manager·Registry·Hub 资源体系 | ✅ |
 | 20 | 二次元工作流 + 审查分层 | 主流工作流全景（EPS/VPred、六步链）+ 审查机制四层结构与合规边界 | ✅ |
+| 21 | 补充阅读栏内展开修正 | 面板改为栏内跟随各自按钮（[btn,panel] 交替） | ✅ |
+| 22 | 反推流知识扩充 | 反推原理/三条路线 + PixAI Tagger vs WD14 选型 + ComfyUI 反推流实战与节点包 | ✅ |
 
 ## 阶段 15
 
@@ -140,6 +142,26 @@
 - **沉淀**：该设计规则已写入 Trae 项目记忆 Hard Constraints + 用户级 WORK_MEMORY.md（agent-work-habits-write），今后所有「补充阅读」类组件默认此设计
 - **改动文件**：`js/app.js`、`css/style.css`、`index.html`/`docs.html`/`admin.html`/`network.html`（版本号）
 - **本次文档更新时间**：10.6 14:35
+
+## 阶段 22 反推流知识扩充 [计划时间：10.7 15:10 BY Trae][完成时间：10.7 15:40 BY Trae]
+
+- **素材来源（用户收集）**：RunningHub「Anima 本地简易反推流」工作流（国内站/国际站）、PixAI Tagger v1.0 发布页、视频整合包与模型（夸克）、KJNodes / rgthree / Easy-Use / ComfyUI-TaggerPlus（Zove-try）/ z-tipo-extension / ComfyUI-Tagger（sln77）/ D 站插件 / TE 启动器
+- **已完成**（联网检索核实，检索日期 2026-10-07）：
+  - **tools 段追加 b9「反推流：把图变回提示词（图像打标）」**（正式块）：反推定义与存在理由（模型吃 Danbooru 标签、人写散文，反推即翻译器）、原理（多标签分类 + sigmoid 置信度 + 阈值，非生成）、三条技术路线速查表（专用打标模型 / VLM / LLM 扩写）、六类标签体系（general/character/style/copyright/meta/rating）、标准六步管线（选图→打标→清洗→扩写→按序重组→出图，含 Anima 的十段顺序约定）、三大用途（复刻参考图/数据集打标/图库检索）、常见坑（标签是起点非答案、顺序影响权重、角色与系列锁死、rating 处理、写实图走 VLM、官方声明不可用于审核判定）
+  - **tools 段追加两个 sub 块（parentIdx:9 挂在反推流下）**：
+    - b10「PixAI Tagger v1.0 vs WD14：打标模型怎么选」——v1.0 规格（30,877 标签 / SAM3 骨干 486.3M / 1008² / 数据截止 2026-05 / Apache-2.0）、六类默认阈值（0.17/0.27/0.15/0.24/0.17/0.41）、官方 8 模型共享词表 benchmark（general micro F1 0.6660 第一、character 0.9242 第二、style 0.8143 领先）、v0.9→v1.0 进步、H100 吞吐 48.3 img/s、WD14 v3 与社区 canary（16,473 标签）、Camie v2 / AnimeTIMM 概览、局限与红线
+    - b11「ComfyUI 反推流实战：插件、节点与一条完整链路」——WD14(pysssss) / sln77（PixAI + Camie + Taggerine + Tag Combiner）/ TaggerPlus（会话缓存、device 显示、模型下拉、safetensors+timm、hf-mirror、CUDA12 静默退回 CPU 坑，实测 16.5s→0.09–0.2s）/ z-tipo-extension（tag length、NL length、Ban tags、Prompt Format 占位符、Seed、Temperature）/ 六节点完整链路 / 模型放置路径 / 云端工作流平台注意事项 / 安全提醒
+  - **GLOSSARY +7**：反推（图像打标）、Tagger、WD14 Tagger、PixAI Tagger、TIPO、VLM 打标、Danbooru 标签（术语总数 63→70）
+  - **RESOURCES +6 卡**（工具与界面）：WD14 Tagger 权重（SmilingWolf）、PixAI Tagger v1.0、ComfyUI-Tagger(sln77)、ComfyUI-TaggerPlus、TIPO/DanTagGen、RunningHub（在线 ComfyUI 工作流，链接已去除 inviteCode 推广参数）
+  - **RESOURCE_MAP +5** 条，全部指向 `tools-b9`
+  - **models-b15 正文补交叉引用**：把「反推」标注为二次元工作流的第 0 步
+  - `index.html` data.js 版本号 → `20261007a`
+- **未纳入（有意）**：夸克网盘整合包/模型、「D 站插件」网盘包、TE 启动器视频——均为网盘分发或视频教程，链接易失效且不便核验，未写入资源卡（B 站视频 BV1s1HL6VE8Q 已在 RunningHub 卡说明中隐含指向）
+- **测试结果**：`node --check js/data.js` 通过；临时结构校验脚本（已删除）验证：tools=12 blocks（b6–b8 SUB→1、b10/b11 SUB→9，parentIdx 均指向非 sub 块）、models 仍 17 blocks、RESOURCE_MAP 全部 resCat/resName/secId/blockIdx 解析有效、TUT_MAP 无越界、术语 70 条、资源卡无重名；lint 零报错
+- **改动文件**：`js/data.js`（tools +3 块、models 正文 1 处、术语 +7、资源卡 +6、映射 +5）、`index.html`（版本号）、`HANDOFF.md` / `PROGRESS.md`
+- **风险**：PixAI Tagger benchmark 与版本号时效性强（半年内建议复查）；TaggerPlus/sln77 为社区小众插件（star 数低），信息以仓库 README 为准，后续可能变动；RunningHub 工作流页可能下架
+- **下一阶段入口**：推送发布 / 采样器与调度器专题 / ControlNet 专题 / 3D 图谱与思维导图纳入 16–22 阶段新增条目（债务项）
+- **本次文档更新时间**：10.7 15:40
 
 ## 当前风险与债务
 

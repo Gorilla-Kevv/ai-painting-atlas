@@ -68,6 +68,13 @@ const GLOSSARY = [
   { term: "图生图强度", en: "Denoising Strength", cat: "基础", desc: "图生图时改变原图的程度，0=不变，1=完全重画，常用 0.3–0.7。" },
   { term: "Hires.fix", en: "高清修复", cat: "基础", desc: "先低分辨率生成再放大细化的两步流程，常用放大算法补足细节。" },
   { term: "ADetailer", en: "After Detailer", cat: "微调", desc: "自动检测面部/手部并局部重绘修复的插件，解决崩坏问题。" },
+  { term: "反推（图像打标）", en: "Image Tagging / Reverse Prompting", cat: "基础", desc: "用打标模型把一张图自动转成结构化标签或描述文字，再拿来当提示词。它不是生成而是『多标签分类』：从固定词表里按置信度挑词，因此认不出词表外的概念。" },
+  { term: "Tagger", en: "Tagger / 打标模型", cat: "工具", desc: "反推用的模型与插件统称。主流有 WD14 Tagger（SmilingWolf 系）、PixAI Tagger、Camie、JoyTag 等，输出的是带置信度的 Danbooru 标签。" },
+  { term: "WD14 Tagger", en: "wd-eva02-large-tagger-v3", cat: "工具", desc: "SmilingWolf 的开源动漫打标模型：v3 系列约 1 万标签、448×448 输入、ONNX 分发。生态支持最广、速度快，是各 UI 插件的默认选项。" },
+  { term: "PixAI Tagger", en: "pixai-tagger-v1.0", cat: "工具", desc: "PixAI Labs 开源动漫打标模型（Apache-2.0）：30,877 标签、微调 SAM3 骨干 486M 参数、1008×1008 输入，按 general/character/style/copyright/meta/rating 六类分组输出且各带推荐阈值。" },
+  { term: "TIPO", en: "Text to Image with text Presampling for Prompt Optimization", cat: "工具", desc: "KohakuBlueleaf 的提示词扩写模型系统（含 DanTagGen）：把少量关键词或一句自然语言，扩写成按分类排好的完整标签串；ComfyUI 节点在 utils/promptgen 分类下。" },
+  { term: "VLM 打标", en: "VLM Captioning / CLIP Interrogator", cat: "原理", desc: "用视觉语言模型（Florence2、CLIP Interrogator、Qwen-VL 等）把图写成自然语言描述。适合写实照片与非 Danbooru 体系，产出是句子而非标签。" },
+  { term: "Danbooru 标签", en: "Danbooru Tags", cat: "基础", desc: "二次元模型训练所用的标签词汇体系（1girl、blonde_hair 等，下划线连写）。打标模型输出的正是这套词，所以反推结果能直接喂回模型。" },
 ];
 
 /* ---------- 主内容模块 ---------- */
@@ -511,7 +518,7 @@ const SECTIONS = [
     {
       heading: "二次元生成：主流工作流全景",
       paragraphs: [
-        "本章把前面二次元模型（NovelAI/WAI/Illustrious）的知识收拢成一张实战地图。2026 年二次元创作的『主流默认工作流』由三部分组成：<b>Illustrious 系底模 + Danbooru 标签体系 + 修脸/高清双后期</b>——几乎所有社区教程、LoRA 与工作流分享都围绕这条链路展开。",
+        "本章把前面二次元模型（NovelAI/WAI/Illustrious）的知识收拢成一张实战地图。2026 年二次元创作的『主流默认工作流』由三部分组成：<b>Illustrious 系底模 + Danbooru 标签体系 + 修脸/高清双后期</b>——几乎所有社区教程、LoRA 与工作流分享都围绕这条链路展开。这条链路其实还有个『第 0 步』：<b>反推</b>——从一张参考图自动取出成套标签（见「整合方案与工具」章节的<b>反推流</b>小节），这正是 Danbooru 标签体系能低成本复用的原因。",
         "<b>① 底模选型</b>：Illustrious 系三分天下——<b>WAI</b>（角色召回最强、开箱即用）、<b>NoobAI-XL</b>（Laxhar Dream Lab 基于 illu 继续训练完整 Danbooru+e621 数据集，画师 tag 召回最广）、<b>Illustrious 官方底模</b>（干净画布，训练 LoRA 用）。选型关键分支：<b>EPS 版</b>（ε-prediction，经典噪声预测）——与所有现有工具/工作流无缝兼容，新手从这里开始；<b>VPred 版</b>（v-prediction，v0.5/1.0 等版本）——对比度更高、色彩更浓、暗部更强，但必须专用参数：采样器 Euler 系、CFG 3–5、开启 Zero Terminal SNR（ZTSNR）、可选 CFG Rescale 0–0.6，且部分界面需配套 yaml/专用节点——用常规参数跑 VPred 必出灰图或过曝。",
         "<b>② 标签体系（四段式）</b>：画质词（masterpiece, best quality, very aesthetic）→ 分级词（general/sensitive/nsfw/explicit，控制内容尺度，见下一节）→ 角色与画师（character_name (series), artist_tag——NoobAI 的画师 tag 召回是它对 WAI 的核心优势）→ 通用 tag（1girl, 服饰, 动作, 构图, 光影）。反向外加 worst quality, bad anatomy, bad hands 兜底。",
         "<b>③ 标准管线（六步链）</b>：原生分辨率出图（1024×1344 等，Illustrious 系可 1280×1856）→ <b>Hires.fix 高清修复</b>（放大 1.5×、R-ESRGAN 4x+ Anime6B、降噪 0.35–0.5，二次元专用放大器）→ <b>ADetailer/FaceDetailer 修脸</b>（自动检测面部重绘，降噪 0.2–0.45，多人图可叠手部检测单元）→ 可选 ControlNet（OpenPose 定姿态/Lineart 保构图）→ 可选 LoRA 叠加（角色+画风，权重各 0.6–0.8）→ 出图。ComfyUI 侧对应 Impact Pack 的 FaceDetailer 节点与 Ultimate SD Upscale 流程。",
@@ -726,6 +733,80 @@ const SECTIONS = [
         ]
       },
       callout: { type: "key", title: "给新手的忠告", text: "不要收藏一百条工作流——吃透一条默认工作流的主干，胜过乱拖十条网红流程。工作流是『可执行的原理图』，每条线都对应「技术原理」章节里的一步。" }
+    },
+    {
+      heading: "反推流：把图变回提示词（图像打标）",
+      paragraphs: [
+        "<b>反推（Tagging / Reverse Prompting）</b>是让 AI『看图说话』：把一张参考图自动转换成一堆结构化标签或一段描述，直接当作提示词用。为什么需要它？因为主流二次元模型（Illustrious / NoobAI-XL / WAI / NAI）是在 Danbooru 图库的『图 + 标签』配对上训练的——模型真正听得懂的不是『一个穿红裙子的少女站在夕阳下』这类散文，而是 <code>1girl, red dress, sunset, standing</code> 这样的标签串。人写散文，模型吃标签，反推就是两者之间的翻译器。",
+        "<b>反推不是生成，而是分类</b>。打标模型本质是『多标签分类网络』：图像经骨干网络（ConvNeXt / EVA02 / SAM3 等）提取特征 → 每个标签一个独立 sigmoid 输出 0–1 的置信度 → 设定阈值（threshold）保留高于阈值的标签。它不会描述画面里看不到的东西，也不会创造新词，只会从固定词表（vocabulary）里挑。理解这一点，就理解了反推的两个天然局限：<b>词表外的概念认不出</b>（新番、新角色），以及<b>置信度高不等于判断正确</b>。",
+        "<b>三条技术路线</b>见下表：专用打标模型（标签化、快、与二次元模型同源）、视觉语言模型（自然语言 caption，擅长写实照片）、提示词扩写（LLM 把几个关键词补全成一整套标签）。实际工作流里三者常常串联：打标 → 清洗 → 扩写 → 出图。",
+        "<b>标签的六大类</b>（以 PixAI Tagger v1.0 的 30,877 词表为例）：<b>general</b>（可见内容：服饰、姿势、物件、构图）<b>character</b>（角色名）<b>style</b>（画风）<b>copyright</b>（作品/系列名，含 original）<b>meta</b>（媒介、来源、分辨率、状态——这类通常要剔除）<b>rating</b>（内容分级 g/s/q/e）。分类输出的价值在于：角色与系列标签要排在通用标签之前，模型才会优先服从它们。",
+        "<b>标准反推管线（六步）</b>：①选一张干净的参考图（别选带水印、拼图、文字的）→ ②打标并设阈值 → ③清洗（剔掉 meta 类与水印标签、黑名单过滤、去重、补上缺失的关键特征）→ ④按需扩写或翻译（TIPO / LLM）→ ⑤按目标模型的标签顺序重组（例：Anima 系要求『质量 → 美学 → 时代 → meta → 安全 → 人数 → 角色 → 系列 → 画师@ → 通用 + 一句空间构图』）→ ⑥加画质词与反向词出图。",
+        "<b>三大用途</b>：<b>复刻参考图</b>（看到喜欢的图，反推标签后换底模/换 LoRA 再生成，是最快的风格学习法）；<b>数据集打标</b>（训练 LoRA / DreamBooth 的第一步——几十张图手写标签会让人发疯，反推 + 人工校正效率十倍起）；<b>图库检索与整理</b>（让本地素材库可被标签搜索）。",
+        "<b>常见坑</b>：反推结果是『起点』而不是『答案』，务必人工校正（数量词、属性、画风标签最容易错）；标签顺序影响权重，越靠前影响力越大；角色名与系列名会把结果锁死在该 IP，想要『像但不一样』就删掉它们；<b>rating 分级标签</b>要按你所使用的平台规则保留或剔除；写实照片别用二次元 tagger（应换 Florence2 / CLIP Interrogator 之类自然语言路线）；最后——官方明确声明<b>不要单独依赖 tagger 做内容审核、法律判断或年龄判定</b>。"
+      ],
+      table: {
+        title: "反推的三条技术路线",
+        head: ["路线", "代表工具", "产出", "适合场景"],
+        rows: [
+          ["专用打标模型（多标签分类）", "WD14 Tagger、PixAI Tagger、Camie、JoyTag", "结构化 Danbooru 标签 + 置信度", "二次元图、喂标签系模型、数据集批量打标"],
+          ["视觉语言模型 VLM", "Florence2、CLIP Interrogator、Qwen-VL / CogVLM", "自然语言描述句子", "写实照片、跨语种、需要解释性描述"],
+          ["提示词扩写（LLM）", "TIPO / DanTagGen、通用聊天模型", "少量词 → 整套标签串或长提示词", "只有几个关键词，想补全细节与构图"]
+        ]
+      },
+      callout: { type: "key", title: "一句话理解", text: "反推 = 给模型做『听写』：它把图里看到的东西，用训练时学过的同一套词（Danbooru 标签）念出来——所以念出来的词天然对模型的胃口。" }
+    },
+    {
+      sub: true,
+      parentIdx: 9,
+      heading: "PixAI Tagger v1.0 vs WD14：打标模型怎么选（选读）",
+      paragraphs: [
+        "<b>PixAI Tagger v1.0</b>（PixAI Labs，Apache-2.0）是目前词表最大的开源动漫打标模型之一：<b>30,877 个标签</b>（v0.9 仅 13,461），骨干为微调的 SAM3，<b>486.3M 参数</b>，输入 <b>1008 × 1008</b>（保持宽高比缩放 + 补边，不拉伸），训练数据截止 2026 年 5 月。输出按六类分组，官方给出各类推荐阈值：<b>general 0.17 · character 0.27 · style 0.15 · copyright 0.24 · meta 0.17 · rating 0.41</b>——这是 macro-F1 意义上的起点值，调高 = 更少更准，调低 = 更多更全。",
+        "<b>精度</b>：官方在 50,416 张测试图上、按『共享词表』（general 8,407 / character 2,099）对比了 8 款打标器：general micro F1 <b>0.6660</b> 排名第一（领先第二名 AnimeTIMM CAFormer B36 的 0.6435 约 2.25 个点），character micro F1 <b>0.9242</b>（第二，仅次于 SigLIP Giant 的 0.9265），style <b>0.8143</b> 领先。相比自家的 v0.9：general 0.598 → 0.666、character 0.8198 → 0.9242。注意这是共享词表上的比较，官方也强调它不代表在所有场景下全面最优。",
+        "<b>速度</b>：H100 上 batch 16 为 48.3 张/秒（单张延迟 24.95 ms）——比七款对比模型都慢，是典型的『精度换吞吐』；但它只有 0.5B 参数、约 1.9GB 权重，本地消费级显卡完全跑得动（出图前跑一次反推通常不到 1 秒）。",
+        "<b>WD14 Tagger</b>（SmilingWolf 系列）是老牌事实标准：wd-eva02-large-tagger-v3 等 v3 模型约 1 万标签、448×448 输入、ONNX 分发 1.2GB。它的优势不在精度而在<b>生态最广</b>——WebUI / ComfyUI / 各类整合包全部内置支持，且速度快，是批量打标的省事之选。社区还有续训版 <b>wd-eva02-tagger-2026-canary</b>（16,473 标签、数据截止 2026-05-18、Apache-2.0），补上了 WD v3 停在 2024 年的标签缺口。",
+        "<b>其他选择</b>：Camie v2（70,527 标签，词表最大但精度偏低）、JoyTag、AnimeTIMM 系列（CAFormer B36 / EVA02 Large / SigLIP Giant 等，多由 dghs-imgutils 提供，精度接近 PixAI 且吞吐更高）。",
+        "<b>局限与红线</b>：只认词表内的东西（新番、新角色、新画风认不出）；主要为动漫插画训练，写实图效果官方未评估；高分不等于正确（官方提醒：数量、属性、画风类标签出错率明显更高）；<b>不要单独依赖 tagger 做安全审核、法律判断或年龄验证</b>。"
+      ],
+      table: {
+        title: "打标模型速查（2026 现状）",
+        head: ["模型", "词表规模", "输入尺寸", "特点与适用"],
+        rows: [
+          ["PixAI Tagger v1.0", "30,877", "1008²", "精度优先、六类分组、标签最全；权重约 1.9GB"],
+          ["PixAI Tagger v0.9", "13,461", "448²", "上一代，仍可用，速度更快"],
+          ["WD14 v3（eva02-large）", "10,861", "448²", "生态最广、插件默认、速度快"],
+          ["WD14 canary（2026 社区续训）", "16,473", "448²", "数据更新到 2026-05，补 WD v3 缺口"],
+          ["Camie v2", "70,527", "512²", "词表最大，但精度一般"],
+          ["AnimeTIMM 系列", "约 12,476", "384–560²", "精度接近 PixAI，吞吐更高"]
+        ]
+      },
+      callout: { type: "info", title: "怎么选", text: "要准、要全、给二次元图打标 → PixAI Tagger v1.0；要快、要塞进整合包批量跑 → WD14 v3；写实照片 → 别用 tagger，改走 Florence2 / CLIP Interrogator 的自然语言路线。" }
+    },
+    {
+      sub: true,
+      parentIdx: 9,
+      heading: "ComfyUI 反推流实战：插件、节点与一条完整链路（选读）",
+      paragraphs: [
+        "反推在任何 UI 里都只是『一个按钮 / 一个节点』的事，差别在配套生态。<b>WebUI / Forge</b>：装 WD14 Tagger 插件（toriato / pythongosssss 版）或 TIPO 扩展，在反推页签传图 → 得到标签 → 一键送入文生图。<b>ComfyUI</b>：节点化之后可以串成自动流水线，是本节重点。",
+        "<b>节点包</b>：<b>ComfyUI-WD14-Tagger</b>（pysssss，WD 系老牌节点，输出 tags 字符串）；<b>ComfyUI-Tagger</b>（sln77）——提供 PixAI Tagger v1.0 官方权重节点，另有 Camie、Taggerine，还带一个 <b>Tag Combiner</b>（把 2–4 路标签做合并或差集，很适合『参考图 A 有而 B 没有』这类精细控制）；<b>ComfyUI-TaggerPlus</b>（Zove-try）——针对原版两个老毛病的修复版：①原版节点每次执行都重建 ONNX 会话（每次重载 1.2GB 模型，固定吃掉 3–6 秒/张），TaggerPlus 缓存会话与词表；②CUDA 12 运行库缺失时原版静默退回 CPU 且不报错，TaggerPlus 直接把实际设备输出出来（<code>GPU · RTX 5060 Ti</code> 或 <code>CPU ⚠</code>）。此外它把 PixAI 模型改成下拉扫描 <code>models/pixai_tagger/</code>、支持 safetensors + timm 的社区模型（自动适配 NHWC / NCHW）、内置下载并自动切换 hf-mirror 镜像。实测（RTX 5060 Ti）：原版 16.5 秒/张 → 0.09–0.2 秒/张。",
+        "<b>一条典型反推流</b>：Load Image（参考图）→ Tagger 节点（选模型 + 设阈值）→ 字符串清洗（剔 meta / 水印标签、黑名单、去重，可用 KJNodes 的字符串工具）→ 【可选】TIPO 扩写 → 拼装提示词（画质词 + 按目标模型要求的顺序重组分类标签）→ CLIP Text Encode → KSampler → Save Image。画布整理交给 rgthree，一键管线可用 Easy-Use。",
+        "<b>TIPO / DanTagGen</b>：KohakuBlueleaf 的提示词『预采样』系统——把几个关键词或一句自然语言，扩写成按分类排好的完整标签串（也可输出自然语言描述）。z-tipo-extension 同时支持 WebUI / Forge / ComfyUI，ComfyUI 里节点位于 <code>utils/promptgen</code> 分类。可调项：<b>tag length</b>（very short 6–17 个 → very long 54–72 个，官方推荐 short 或 long）、<b>NL length</b>（自然语言长度）、<b>Ban tags</b>（黑名单，支持正则）、<b>Prompt Format</b>（用 <code>&lt;|special|&gt;</code> / <code>&lt;|characters|&gt;</code> / <code>&lt;|copyrights|&gt;</code> / <code>&lt;|artist|&gt;</code> / <code>&lt;|general|&gt;</code> / <code>&lt;|quality|&gt;</code> / <code>&lt;|rating|&gt;</code> 等占位符拼装最终串）、<b>Seed</b>、<b>Temperature</b>（越高越发散、越低越连贯）。",
+        "<b>模型放哪</b>：WD 系放 <code>ComfyUI/models/wd14_tagger/</code>（权重 + selected_tags.csv），PixAI 放 <code>ComfyUI/models/pixai_tagger/&lt;名字&gt;/</code>（model.safetensors + config.json）。国内下载走 hf-mirror.com 镜像即可，首次跑 PixAI v1.0 需下约 1.9GB。",
+        "<b>不想本地折腾</b>：云端工作流平台（RunningHub 等）可以直接加载别人搭好的反推工作流在线跑。但要注意——依赖自定义节点的工作流在云端未必上线，很多『本地简易反推流』仍要求本地 ComfyUI 且全部节点可用，下载前看清说明。",
+        "<b>提醒</b>：导入陌生工作流前先看一眼节点构成（节点包拥有本机 Python 执行权限）；反推结果里含 rating 分级标签，公开发布到平台前请按平台规则处理；不要把 tagger 当作审核工具。"
+      ],
+      table: {
+        title: "反推相关节点包速查",
+        head: ["节点包", "提供什么", "备注"],
+        rows: [
+          ["ComfyUI-WD14-Tagger (pysssss)", "WD 系打标节点", "生态默认，输出 tags 字符串"],
+          ["ComfyUI-Tagger (sln77)", "PixAI v1.0 / Camie / Taggerine + Tag Combiner", "PixAI 官方权重直出，模型路径手填"],
+          ["ComfyUI-TaggerPlus (Zove-try)", "WD14 + PixAI 修复版节点", "会话缓存、device 显示、模型下拉、社区模型、镜像下载"],
+          ["z-tipo-extension (KohakuBlueleaf)", "TIPO / DanTagGen 扩写节点", "utils/promptgen 分类，三端通用"],
+          ["KJNodes / rgthree / Easy-Use", "字符串处理、画布整理、一键管线", "反推流的辅助件"]
+        ]
+      },
+      callout: { type: "warn", title: "性能坑", text: "觉得『反推很慢』？先看 device 输出：显示 CPU ⚠ 说明 CUDA 12 运行库缺失，onnxruntime 静默降级，而原版节点不会报错。另外每张图重建 ONNX 会话会固定吃掉几秒——批量打标 100 张，就是几分钟的纯浪费。" }
     }
   ]
 },
@@ -1278,6 +1359,29 @@ const RESOURCES = [
     { name: "WD14 Tagger", role: "从参考图反推提示词的 WebUI 插件", links: [
       { label: "GitHub", url: "https://github.com/toriato/stable-diffusion-webui-wd14-tagger" }
     ]},
+    { name: "WD14 Tagger 权重（SmilingWolf）", role: "开源动漫打标模型本体，v3 系列约 1 万标签、ONNX 分发", links: [
+      { label: "Hugging Face (v3)", url: "https://huggingface.co/SmilingWolf/wd-eva02-large-tagger-v3" },
+      { label: "ComfyUI 节点", url: "https://github.com/pythongosssss/ComfyUI-WD14-Tagger" }
+    ]},
+    { name: "PixAI Tagger v1.0", role: "PixAI 开源动漫打标模型：30,877 标签、六类分组输出", links: [
+      { label: "Hugging Face", url: "https://huggingface.co/pixai-labs/pixai-tagger-v1.0" },
+      { label: "v0.9 版本页", url: "https://huggingface.co/pixai-labs/pixai-tagger-v0.9" }
+    ]},
+    { name: "ComfyUI-Tagger (sln77)", role: "PixAI v1.0 / Camie / Taggerine 打标节点（含 Tag Combiner）", links: [
+      { label: "GitHub", url: "https://github.com/sln77/ComfyUI-Tagger" }
+    ]},
+    { name: "ComfyUI-TaggerPlus", role: "WD14 / PixAI 打标节点修复版：会话缓存、设备显示、模型下拉", links: [
+      { label: "GitHub", url: "https://github.com/Zove-try/ComfyUI-TaggerPlus" }
+    ]},
+    { name: "TIPO / DanTagGen", role: "提示词扩写模型系统：少量关键词 → 完整分类标签串", links: [
+      { label: "z-tipo-extension (GitHub)", url: "https://github.com/KohakuBlueleaf/z-tipo-extension" },
+      { label: "DanTagGen 模型卡", url: "https://huggingface.co/KBlueLeaf/DanTagGen-beta" },
+      { label: "技术报告", url: "https://hackmd.io/@KBlueLeaf/BJULOQBR0" }
+    ]},
+    { name: "RunningHub（在线 ComfyUI 工作流）", role: "云端加载并运行社区 ComfyUI 工作流（含反推流）", links: [
+      { label: "Anima 本地简易反推流", url: "https://www.runninghub.cn/post/2106622360701980673/" },
+      { label: "国际站同一工作流", url: "https://www.runninghub.ai/zh-cn/post/2106629391815376898/" }
+    ]},
     { name: "ADetailer", role: "自动检测面部/手部并局部重绘修复", links: [
       { label: "GitHub", url: "https://github.com/Bing-su/adetailer" }
     ]},
@@ -1431,7 +1535,12 @@ const RESOURCE_MAP = [
   { names: ["Colab", "Google Colab"], resCat: "算力与部署", resName: "Google Colab", secId: "tools", blockIdx: 3 },
   { names: ["Liblib", "哩布哩布"], resCat: "社区与平台", resName: "Liblib 哩布哩布", secId: "community", blockIdx: 2 },
   { names: ["魔搭", "ModelScope"], resCat: "社区与平台", resName: "魔搭 ModelScope", secId: "community", blockIdx: 2 },
-  { names: ["OpenXLab", "浦源"], resCat: "社区与平台", resName: "OpenXLab 浦源", secId: "community", blockIdx: 2 }
+  { names: ["OpenXLab", "浦源"], resCat: "社区与平台", resName: "OpenXLab 浦源", secId: "community", blockIdx: 2 },
+  { names: ["反推", "打标", "图像反推", "Tagger", "WD14", "WD14 Tagger"], resCat: "工具与界面", resName: "WD14 Tagger", secId: "tools", blockIdx: 9 },
+  { names: ["PixAI Tagger", "pixai-tagger", "PixAI 反推"], resCat: "工具与界面", resName: "PixAI Tagger v1.0", secId: "tools", blockIdx: 9 },
+  { names: ["TIPO", "DanTagGen", "提示词扩写"], resCat: "工具与界面", resName: "TIPO / DanTagGen", secId: "tools", blockIdx: 9 },
+  { names: ["ComfyUI-TaggerPlus", "TaggerPlus", "sln77", "ComfyUI-Tagger"], resCat: "工具与界面", resName: "ComfyUI-TaggerPlus", secId: "tools", blockIdx: 9 },
+  { names: ["RunningHub", "在线工作流"], resCat: "工具与界面", resName: "RunningHub（在线 ComfyUI 工作流）", secId: "tools", blockIdx: 9 }
 ];
 
 /* ---------- 参考书↔配置教程 双向跳转映射 ----------
