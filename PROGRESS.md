@@ -1,8 +1,8 @@
 # PROGRESS — AI 生图知识图谱
 
-## 进度看板（10.10 01:47 更新 · 阶段 23 已合并发布）
-- 分支策略：`knowledge-expansion`（知识条目扩充专用）↔ `main`（发布线）——阶段 17–23 均已合并进 `main` 并推送 GitHub Pages（阶段 23 合并提交 `5db46f0`，Pages built）
-- 当前正在开发任务：无
+## 进度看板（10.10 02:12 更新 · 阶段 24 已完成）
+- 分支策略：`knowledge-expansion`（知识条目扩充专用）↔ `main`（发布线）——阶段 17–23 均已合并进 `main` 并推送 GitHub Pages；阶段 24 按用户指定直接在 `main` 完成（待推送发布）
+- 当前正在开发任务：无（阶段 24 内容已完成并校验，待推送由用户发起）
 - 下一阶段任务：待定（候选见 HANDOFF「下一步」）
 - 可提前进行的任务：投稿限流加固（RLS 每人 ≤5 条 pending）
 - 未完成的任务：3D 图谱 / 思维导图纳入阶段 16–21 新增条目（债务项，需评估性能）
@@ -34,6 +34,7 @@
 | 21 | 补充阅读栏内展开修正 | 面板改为栏内跟随各自按钮（[btn,panel] 交替） | ✅ |
 | 22 | 反推流知识扩充 | 反推原理/三条路线 + PixAI Tagger vs WD14 选型 + ComfyUI 反推流实战与节点包 | ✅ |
 | 23 | SD 家族与 Forge 深度扩充 | SDXL / SD3.5 / FLUX 三个专块 + Forge 两篇折叠选读（架构硬核/三条线实战），术语+10 资源卡+2 | ✅ |
+| 24 | 模型目录与文件家族扩充 | MiniMax H3 专块 + ComfyUI 模型目录选读 + ControlNet v1.1 全家族选读，术语+8 资源卡+4 | ✅ |
 
 ## 阶段 15
 
@@ -186,6 +187,25 @@
 - **风险**：FLUX.2/Kontext/BFL 融资等时效性强（建议半年复查）；"Neo 支持 Linux/macOS"与官方 Forge 冻结状态为 2026-10 快照，后续可能变动；SD3 与 Essential AI 合作一说按媒体通说表述（官方原文已不可直连）
 - **下一阶段入口**：其他重点章节拓展（采样器/调度器、ControlNet 专题）/ 3D 图谱与思维导图纳入 16–23 阶段新增条目（债务项）——阶段 23 已合回 main 并推送发布（10.10 01:47）
 - **本次文档更新时间**：10.10 01:47
+
+## 阶段 24 模型目录与文件家族扩充 [计划时间：10.10 01:45 BY Qoder][完成时间：10.10 02:12 BY Qoder]
+
+- **分支**：`main`（用户指定直改）
+- **素材来源**：用户 ComfyUI models 目录截图 4 张（vae / ControlNet / text_encoders / diffusion_models，含 minimax_h3 组件、control_v11p_sd15 全家桶 14 件、anything-v5-PrtRE、flux-ae）+ 4 个并发联网调研子任务（检索日期 2026-10-10，关键事实均带来源；存疑项如 "RE" 释义、s2 语义、H3 许可区域条款等一律未写入或按不确定表述）
+- **已完成**：
+  - **models 段追加 b20「MiniMax H3（海螺 · 全模态视频生成）」正式块**：33B 稠密单流全模态 Transformer、2026-08-03 开源、原生立体声、约 2K/15s；FL2VA（首尾帧）/Ref2VA（≤12 参考件）两变体；四文件组件拆解表（主干 int8_convrot 量化 / Qwen3-VL-32B 编码器 nvfp4_awq / video VAE / audio VAE=有声证据）；ComfyUI 官方模板与版本门槛、量化显存下探；vs Wan 2.2/Seedance/可灵定位（开源阵营第一、勿写全球第一）；Community License 提醒
+  - **tools 段追加 b14 sub（parentIdx:1 挂 ComfyUI 下）「ComfyUI 模型目录结构与文件摆放」**：0.3.x 更名 unet→diffusion_models / clip→text_encoders（架构无关化）、一体化 vs 分离式、根级 checkpoint 新版不可见坑、后缀语义（fp16/bf16/pruned/int8/nvfp4/awq/convrot/safetensors 安全性）、三代 VAE 互不通用（Flux 16 通道维度报错案例、flux-ae 正名）、extra_model_paths.yaml 与 Stability Matrix 共享池；目录职责速查表；Anything V5 档案 callout（v1→v3→v4.0→v5、Prt=pruned、推荐参数、genai-archive 托管）
+  - **fine-tuning 段追加 b9 sub（parentIdx:2 挂 ControlNet 下）「SD1.5 ControlNet v1.1 全家族名录与命名解读」**：官方恰好 14 成员（11 生产+3 实验）、SCNNR 命名规则（v11p/e/f1/f1e、sd15、fp16 重封装与 control_lora 轻量版）、按输入类型四拨记忆法、废弃旧名避坑（v11p_depth/v11u_tile）、"第 15 个成员"讹传澄清（unsharpmask/equ2lineart/fake_scribble 查无此权重）、strength/end_percent/阈值经验值、SD1.5 专属与 xinsir Union 后继；14 成员名录表
+  - **既有内容修订**：tools-b1 ComfyUI 定位段"三篇选读"→"四篇"；fine-tuning-b2 ControlNet 主块补选读导航段；models summary 纳入 MiniMax H3
+  - **GLOSSARY +8**（87 条）：MiniMax H3、全模态生成、Anything V5、ControlNet v1.1、ComfyUI 模型目录、safetensors、模型量化标记
+  - **RESOURCES +4 卡**：基础模型 +Anything V5、+MiniMax H3；微调与控制技术 +ControlNet v1.1 权重全家桶（nightly/HF/fp16 重封装/Annotators/Union）；工具与界面 +ComfyUI 模型目录与共享（模型概念/排障文档/folder_paths 源码/Stability Matrix）
+  - **RESOURCE_MAP +4**（共 50 条，0 错误）：MiniMax→models-b20、Anything→tools-b14、control_v11/预处理器→fine-tuning-b9、diffusion_models/flux-ae→tools-b14
+  - `index.html` data.js 版本号 → `20261010b`
+- **测试结果**：`node --check` 通过；结构校验 models=21、tools=15（b14 SUB→1）、fine-tuning=10（b9 SUB→2）、RESOURCE_MAP 50 条 0 错误、术语 87（重复仅既遗留"工作流"）、资源卡 69 无重名；浏览器实测（localhost:8010）：b20 标题/表格渲染正常、两新 sub 分别嵌套于 tools-b1 与 fine-tuning-b2 且点击独立展开、ComfyUI 栏 4 个选读按钮齐全、导航含 MiniMax H3 条目；console 无站点报错（仅浏览器扩展注入日志）。预览服务用毕已停
+- **改动文件**：`js/data.js`（models +1 块、tools +1 sub、fine-tuning +1 sub、3 处导航/summary 修订、术语 +8、资源卡 +4、映射 +4）、`index.html`（版本号）、`PROGRESS.md`/`HANDOFF.md`
+- **风险**：MiniMax H3 为 2026-08 新模型，参数上限（2K/15s）与显存门槛来自新闻/社区转述，官方 README 细节建议半年内复查；ControlNet 使用参数为社区经验值（正文已标注）；Anything V5 "RE" 缩写无权威释义（正文用"pruned 版"表述规避展开）
+- **下一阶段入口**：推送发布（待用户发起）/ 采样器与调度器专题 / 3D 图谱与思维导图纳入 16–24 阶段新增条目（债务项）
+- **本次文档更新时间**：10.10 02:12
 
 ## 当前风险与债务
 

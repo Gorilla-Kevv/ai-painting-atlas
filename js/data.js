@@ -85,6 +85,13 @@ const GLOSSARY = [
   { term: "FLUX.2", en: "FLUX.2", cat: "模型", desc: "BFL 2025-11 发布的 32B 新一代：4B flow-VAE、单个 Mistral-3 24B VLM 文本编码器、最多 10 张参考图、4MP 输出；[klein] 4B 蒸馏版 Apache 2.0 可商用、亚秒级推理。" },
   { term: "Kontext", en: "FLUX.1 Kontext", cat: "模型", desc: "BFL 2025-05 的上下文图像编辑模型：保住角色一致性只改指定内容（『换衣不换人』），dev 权重 7 月开源，是生图进入『编辑时代』的标志。" },
   { term: "Stability AI Community License", en: "Community License", cat: "基础", desc: "SD3/SD3.5 的权重许可：年收入低于 100 万美元免费商用，超出需购买授权。注意与代码仓库的 MIT 许可是两回事——『开源』不等于可商用。" },
+  { term: "MiniMax H3", en: "MiniMax H3", cat: "模型", desc: "稀宇科技 2026-08 开源的 33B 全模态视频生成模型：文本/图像/视频/音频单流统一管线，原生输出同步立体声，最高约 2K/15 秒；编码器复用 Qwen3-VL-32B，社区许可（非 Apache）。" },
+  { term: "全模态生成", en: "Omni-Modal Generation", cat: "原理", desc: "一个模型同时处理文本/图像/视频/音频的统一生成范式（MiniMax H3、FLUX.3 方向）：输出即成片带声，区别于『先画面后配音』的拼接方案。" },
+  { term: "Anything V5", en: "anything-v5-PrtRE", cat: "模型", desc: "SD1.5 系二次元常青底模（v1→v3→v4.0→v5，OpenRAIL-M）。PrtRE 即 pruned 修剪版：剔除训练状态+fp16，约 2GB；推荐 Euler a、20–30 步、CFG≈7、CLIP skip 2。" },
+  { term: "ControlNet v1.1", en: "control_v11p_sd15_*", cat: "微调", desc: "SD1.5 官方 ControlNet 全家族恰好 14 个成员（11 生产级+3 实验级）。命名 v11p/e/f1e=版本迭代、sd15=仅适配 SD1.5；unsharpmask 等『第 15 个成员』均为讹传。" },
+  { term: "ComfyUI 模型目录", en: "models/ folder structure", cat: "工具", desc: "0.3.x 起 unet→diffusion_models、clip→text_encoders（架构无关化）。checkpoint 放 checkpoints/、分离式主干/编码器/VAE 分放各目录；根级 checkpoint 新版不可见；extra_model_paths.yaml 可共享模型库。" },
+  { term: "safetensors", en: "safetensors", cat: "资源", desc: "当前模型权重的标准格式：张量按纯数据序列化，加载不执行任意代码（老 .ckpt 的 pickle 可携带恶意载荷），且支持惰性读取、加载更快、跨语言。" },
+  { term: "模型量化标记", en: "fp16 / int8 / nvfp4 / awq", cat: "基础", desc: "文件名里的精度暗号：fp32 全精度、fp16/bf16 半精度（体积减半）、int8/nvfp4/awq 为低比特量化（越省显存越吃卡的新指令集）、pruned=剔除训练状态、convrot=旋转矩阵消离群值量化。" },
 ];
 
 /* ---------- 主内容模块 ---------- */
@@ -272,7 +279,7 @@ const SECTIONS = [
   en: "Models",
   icon: "◆",
   color: "#ff2e88",
-  summary: "盘点 Stable Diffusion、DALL·E、Midjourney、NovelAI、Banana AI，以及 SDXL、SD3.5、FLUX 三大 SD 家族节点与 WAI、Anima、Krea 2、Wan 2.2、Z-Image、Seedream、GPT-Image 等新老主流模型的特点与定位。",
+  summary: "盘点 Stable Diffusion、DALL·E、Midjourney、NovelAI、Banana AI，SDXL、SD3.5、FLUX 三大 SD 家族节点，MiniMax H3 等视频模型，以及 WAI、Anima、Krea 2、Wan 2.2、Z-Image、Seedream、GPT-Image 等新老主流模型的特点与定位。",
   sections: [
     {
       heading: "Stable Diffusion（SD）",
@@ -636,6 +643,29 @@ const SECTIONS = [
         ]
       },
       callout: { type: "info", title: "Flux vs SD3：一场家族内斗", text: "两者同用 MMDiT + Rectified Flow，而 BFL 团队正是当年在 Stability 训出 SD 的原班人马。社区普遍把 Flux 视为『SD3 路线的正确打开方式』——同样的架构骨架，更扎实的训调与审美。看懂这对表亲，就看懂了 2024 之后开源生图的主线叙事。" }
+    },
+    {
+      heading: "MiniMax H3（海螺 · 全模态视频生成）",
+      paragraphs: [
+        "MiniMax H3 是稀宇科技（海螺 AI/Hailuo 背后的公司）的<b>全模态视频生成基础模型</b>，2026-07-31 API 先行、<b>2026-08-03 开放权重</b>，是 Hailuo 2.3 之后的新一代。社区格局一句话：<b>H3 负责全模态开源，Hailuo 线负责线上产品</b>。它是目前开源视频阵营里少数『音画一体』的原生生成者——对白、拟音、配乐、环境音与画面同一次生成，而非后期配音。",
+        "<b>架构（硬核）</b>：33B 参数的<b>稠密单流 Transformer</b>（H3-Omni-Transformer），文本/图像/视频/音频统一进一条管线处理；输出最高约 2K 分辨率、单段最长约 15 秒。文本/多模态编码器直接复用<b>阿里 Qwen3-VL-32B</b> 的完整预训练权重（官方选型而非自训）——延续『站在开源巨人肩上』的路线（Z-Image 用 Qwen3-4B 同理）。",
+        "<b>两个生成变体</b>：<b>FL2VA</b>（First-and-Last-Frame to Video+Audio）——喂首帧/尾帧两张图，模型补出中间的音画同步视频（0～2 张输入，兼作文生/图生视频）；<b>Ref2VA</b>——全参考模式，最多 9 图 + 3 视频 + 3 音频共 12 个参考件，锁定角色、风格、运镜与音色。",
+        "<b>拆开看权重（对应 ComfyUI 目录）</b>：主模型 minimax_h3_<b>fl2va</b>_pruned_int8_convrot ＝ 首尾帧版 33B 主干的剪枝+INT8（ConvRot 旋转量化）压缩版；qwen3vl_32b_…_nvfp4_awq ＝ 编码器的双重低比特量化版；video_vae（fp16）＝ 视频时空编解码器；<b>audio_vae（fp32）＝ 独立左右声道的音频编解码器</b>——它的存在就是『原生有声视频』的架构证据。",
+        "<b>ComfyUI 实战</b>：官方模板库内置 T2V/I2V（首尾帧）/R2V（多参考）模板，一键自动下载权重（基础模板需 ≥0.30.0，多参考 ≥0.34.0，后续版本持续做显存优化）。BF16 全量单卡 32GB 级可跑；int8_convrot 量化版显著下探，社区极限方案 8GB 显存+大内存卸载可出 480×864 短片段（属第三方玩法，非官方配置）。默认约 20 步，Turbo/FastH3 适配可到 8 步。",
+        "<b>竞品定位</b>：对比 Wan 2.2（Apache-2.0、MoE）——H3 赢在音画一体与多参考编辑（曾登顶 Artificial Analysis 视频编辑榜、lma.ai Arena 开源图生视频第一），输在许可证更严、参数更大更吃显存；对比 Seedance/可灵——它们仍以闭源 API 为主，H3 是同效果梯队里少数开放权重者。注意它是<b>开源阵营</b>第一，与 Veo 等闭源 SOTA 仍有差距。",
+        "<b>许可提醒</b>：权重虽公开，但采用 MiniMax H3 Community License（非 Apache 类宽松证）：训练数据与方法未公开、高级编排能力仅走 API、含内容自动审核条款，商用前务必读许可原文。"
+      ],
+      table: {
+        title: "H3 组件与文件对照",
+        head: ["文件（ComfyUI 目录）", "角色"],
+        rows: [
+          ["diffusion_models/…fl2va_pruned_int8_convrot", "33B 生成主干（首尾帧版，剪枝+INT8 量化）"],
+          ["text_encoders/qwen3vl_32b_…_nvfp4_awq", "Qwen3-VL-32B 多模态编码器（NVFP4+AWQ 量化）"],
+          ["vae/…video_vae_fp16", "视频时空 VAE（压缩/重建画面）"],
+          ["vae/…audio_vae_fp32", "音频 VAE（独立双声道，原生有声证据）"]
+        ]
+      },
+      callout: { type: "key", title: "为什么值得记名字", text: "H3 代表的『全模态单流』是视频生成的下一站：一个 Transformer 同时吃文本、图像、视频、音频，输出即成片带声。它与 Wan 2.2（MoE 分工）构成开源视频的两条路线——看懂 H3 的文件命名（fl2va/convrot/nvfp4），也就看懂了新一代开源模型『拆分分发+层层量化』的生存方式。" }
     }
   ]
 },
@@ -671,7 +701,7 @@ const SECTIONS = [
         "ComfyUI 是基于节点（Node）的 SD 工作流工具。它把生图过程拆解为一个个节点：加载模型 → CLIP 编码提示词 → 空Latent → KSampler 采样 → VAE 解码 → 保存图像，节点之间用线连接，组成完整流程。",
         "优点：极度灵活，任意拼装复杂流程（多 LoRA 叠加、ControlNet 组合、图生图+局部重绘+放大一条龙）；显存占用低（按需加载）；工作流可保存为 JSON 分享复用；新模型/新功能往往先在 ComfyUI 出现。",
         "缺点：学习曲线陡，新手面对一堆节点易劝退；调试复杂。但一旦入门，效率远超 WebUI。好消息是官方已推出 App 模式（工作流简化视图）与桌面客户端（Manager 内置、一键安装），上手门槛大幅降低。",
-        "定位：进阶/专业用户、需要复用工作流、想玩最新特性的人。SD3、Flux 等新模型在 ComfyUI 上支持最好。它是目前最主流、社区最庞大的节点式工作流：官方 Registry 收录数万个节点包，社区工作流以千计——本节下方附三篇展开阅读：<b>官方生态 → 必装扩展 → 工作流资源与学习路径</b>。",
+        "定位：进阶/专业用户、需要复用工作流、想玩最新特性的人。SD3、Flux 等新模型在 ComfyUI 上支持最好。它是目前最主流、社区最庞大的节点式工作流：官方 Registry 收录数万个节点包，社区工作流以千计——本节下方附四篇展开阅读：<b>官方生态 → 必装扩展 → 工作流资源与学习路径 → 模型目录结构与文件摆放</b>。",
       ],
       callout: { type: "key", title: "WebUI vs ComfyUI", text: "新手从 WebUI 起步，能稳定出图后再学 ComfyUI。两者不冲突，可共存于同一台机器，共享模型文件。如今 ComfyUI Desktop 的 App 模式也适合直接零基础入门。" }
     },
@@ -922,6 +952,31 @@ const SECTIONS = [
         ]
       },
       callout: { type: "info", title: "找仓库认准正主", text: "GitHub 上『forge』重名仓库不少——正统 lineage 只有两个地址：lllyasviel/stable-diffusion-webui-forge（原版）与 Haoming02/sd-webui-forge-classic（neo/classic 两分支同仓）。网传的其他『forge-classic』仓库多为仿冒或空档。" }
+    },
+    {
+      sub: true,
+      parentIdx: 1,
+      heading: "ComfyUI 模型目录结构与文件摆放（选读）",
+      paragraphs: [
+        "打开 ComfyUI 的 models 文件夹，你看到的不是『一堆目录』，而是一套有来历的规范。0.3.x 时期（2024 年中）起官方重构了目录命名：<b>unet/ 改名 diffusion_models/、clip/ 改名 text_encoders/</b>（源码 folder_paths.py 里保留 legacy 映射，旧文件夹仍可用）。改名理由是架构无关化——FLUX 与视频模型的主干是 DiT/MMDiT 而非 UNet，文本编码器除了 CLIP 还有 T5、Qwen 这类大语言模型，旧名已经『名不副实』。",
+        "<b>一体化 vs 分离式</b>：SD1.5/SDXL 时代的 checkpoint（如经典的二次元底模 Anything V5）把 UNet+文本编码器+VAE 打包成一个文件，放 <b>checkpoints/</b>；新世代模型普遍拆开分发——主干（DiT）放 diffusion_models/、大编码器放 text_encoders/、VAE 放 vae/，由工作流里的 UNETLoader / CLIPLoader / VAELoader 分别加载（MiniMax H3、Flux fp8/GGUF 拆分版都是这种）。注意：<b>新版加载器只认注册目录</b>，checkpoint 丢在 models/ 根级大概率在下拉里找不到——老整合包时代 ComfyUI 会直接扫根目录，如今这是最常见的『模型失踪』原因，移进 checkpoints/ 即可。",
+        "<b>文件后缀是说明书</b>：fp32 全精度 / fp16 半精度（体积减半、画质几乎无损）/ bf16（动态范围同 fp32）；<b>pruned</b>＝剔除训练状态等非推理权重（Anything V5 的 PrtRE 版即 pruned+fp16，约 2GB 级 vs 未修剪 4GB 级）；int8 / nvfp4（Blackwell 原生 4-bit 浮点）/ awq（4bit 仅权重量化）/ convrot（用旋转矩阵消除离群值的量化法）等量化标记，意味着这是为省显存重打包的版本。格式上如今统一 <b>safetensors</b>——张量以纯数据序列化，加载不执行任意代码（老 .ckpt/.pth 的 pickle 可携带恶意载荷），且支持惰性读取、加载更快。",
+        "<b>VAE 三代互不通用</b>——目录里单放一个 VAE 常有原因：SD1.5 与 SDXL 的 VAE 同为 4 通道潜空间但缩放系数不同（0.182 vs 0.13025）且不通用；<b>FLUX 是 16 通道</b>，必须用官方 ae.safetensors（约 335MB，从 FLUX.1-schnell 仓库下载，社区常重命名为 flux-ae 放 vae/）——拿 sdxl_vae 或 taesd 配 Flux 会直接报维度错误（expected 4 channels, but got 16）。",
+        "<b>多 UI 共享模型</b>：不必每个软件各拷一份 20GB。ComfyUI 根目录把 extra_model_paths.yaml.example 复制改名为 extra_model_paths.yaml，填上 base_path 就能挂载其他安装（文件里自带 A1111 映射示例：models/Stable-diffusion→checkpoints、models/VAE→vae 等）；改完重启生效。更工程化的做法是 <b>Stability Matrix</b> 的共享模型池（多安装符号链接指向同一目录），Forge Neo 的 --forge-ref-* 参数也是同一思路。"
+      ],
+      table: {
+        title: "常用目录职责速查",
+        head: ["目录", "放什么", "例子（截图即有）"],
+        rows: [
+          ["checkpoints/", "一体化大模型（UNet+编码器+VAE）", "anything-v5-PrtRE.safetensors（应移入此目录）"],
+          ["diffusion_models/", "分离式主干（DiT/UNet-only 权重）", "minimax_h3_fl2va_pruned_int8_convrot"],
+          ["text_encoders/", "CLIP / T5 / Qwen 类文本编码器", "qwen3vl_32b_…_nvfp4_awq"],
+          ["vae/", "图像/视频/音频编解码器", "flux-ae、minimax_h3_video/audio_vae"],
+          ["controlnet/", "ControlNet 条件权重", "control_v11p_sd15_* 全家桶"],
+          ["loras/ · upscale_models/ · clip_vision/ · vae_approx/", "LoRA · 放大器 · 视觉编码器 · 近似解码", "按需"]
+        ]
+      },
+      callout: { type: "info", title: "Anything V5 一句话档案", text: "SD1.5 系二次元常青底模（v1→v3→v4.0→v5，OpenRAIL-M），v3 是 WebUI 时代入门神模型、v5 是其正牌继任；推荐 Euler a、20–30 步、CFG≈7、CLIP skip 2，负向词宜用场景化短句而非通用大负向。原版 HF 仓库现由 genai-archive 组织托管。" }
     }
   ]
 },
@@ -968,7 +1023,8 @@ const SECTIONS = [
       paragraphs: [
         "ControlNet 是 2023 年初发布的革命性扩展，让 SD 从『只能描述要什么』进化到『能精确控制怎么画』。它通过额外输入条件（线稿、深度图、法线图、姿态骨架、涂色块等）引导生成，使输出严格遵循指定结构。",
         "典型用法：①Canny/线稿——保持构图轮廓；②OpenPose——控制人物姿态/手势；③Depth——按深度层次构图；④Segmentation——按色块分区；⑤Scribble/T2I-Adapter——手绘草图变成品。",
-        "意义：解决了 SD 长期被诟病的『不可控』问题。配合 LoRA，你可以『用指定角色 + 指定姿态 + 指定构图』出图，从随机盲抽走向精准创作。"
+        "意义：解决了 SD 长期被诟病的『不可控』问题。配合 LoRA，你可以『用指定角色 + 指定姿态 + 指定构图』出图，从随机盲抽走向精准创作。",
+        "权重从哪来、怎么认？SD1.5 时代的官方家族恰好 14 个成员（canny/depth/openpose/lineart/tile/shuffle……），文件名自带上代、任务与精度信息——本块下方附一篇展开阅读：<b>SD1.5 ControlNet v1.1 全家族名录与命名解读</b>。"
       ]
     },
     {
@@ -1068,6 +1124,29 @@ const SECTIONS = [
         ]
       },
       callout: { type: "info", title: "延伸阅读", text: "原论文 LoRA: Low-Rank Adaptation of Large Language Models（arXiv:2106.09685）；稳定扩散场景的工程实践以 kohya-ss/sd-scripts 为事实标准——本站配置教程页有 LoRA 训练实操指引。" }
+    },
+    {
+      sub: true,
+      parentIdx: 2,
+      heading: "SD1.5 ControlNet v1.1 全家族名录与命名解读（选读）",
+      paragraphs: [
+        "很多人的 controlnet 文件夹里躺着整套 <b>control_v11p_sd15_*</b> 却只用过两三个——其实官方 v1.1 家族恰好就是 <b>14 个成员</b>（11 个生产级 + 3 个实验级，官方仓库原话），没有更多也不缺。看懂文件名就能认全他们：control_<b>v11</b><b>p/e/f1/f1e</b>_<b>sd15</b>{s2}_<b>任务名</b>——v11 即 1.1 版；p=production-ready 生产可用、e=experimental 实验、f1=bugfix 迭代（depth 用的就是 f1p）、f1e 即修复过的实验版（tile）；sd15 表明<b>只适配 SD1.5</b>；fp16 后缀是半精度重打包（1.44GB→722MB，画质无实质差异），同仓库还有 136MB 的 control_lora 轻量版。",
+        "<b>按输入类型分四拨记</b>：①吃<b>线/边</b>的——canny（硬边缘）、lineart（精细线稿，可吃手绘）、lineart_anime（动漫线稿专供，配长提示词更好）、scribble（涂鸦/草图）、softedge（柔和边缘）、mlsd（直线建筑）；②吃<b>空间</b>的——depth（深度图）、normalbae（法线图）；③吃<b>语义</b>的——openpose（人体骨架）、seg（色块分区图）；④吃<b>整图</b>的实验三兄弟——shuffle（把原图结构打乱重排，防抄图式生成）、tile（细节重绘/瓦片放大，注意它<b>不是超分模型</b>）、inpaint（灰图+mask 补绘）、ip2p（图像翻译，吃『指令提示词』）。",
+        "<b>下载避坑两条</b>：①网上仍流传两个<b>官方已废弃的旧名</b>——control_v11p_sd15_depth（误传中间版，官方撤回，depth 请下 v11f1p）与 control_v11u_sd15_tile（未完成版，后改名 v11f1e），HF 独立仓库页还在，别下错；②fp16 safetensors 重封装版在 comfyanonymous/ControlNet-v1-1_fp16_safetensors（注意不在 Comfy-Org 组织名下），预处理器（aux/annotator）权重在 lllyasviel/Annotators。",
+        "<b>使用经验值</b>（社区惯例，非官方规格）：strength/control_weight 常用 0.5–1.0；end_percent 0.4–0.8——让控制只在前期生效、后段放开，防止结构僵化；canny/MLSD 有高低双阈值（如 100/200）控制线条多少。各模型必须配<b>同款预处理器</b>出图（Canny 图喂 canny 模型），ComfyUI 用 ControlNet Auxiliary Preprocessors 节点包、WebUI 插件内置对应 preprocess 模式。",
+        "<b>时代定位</b>：这套家族全部是 SD1.5 专属，与 SDXL 的 U-Net 结构不匹配、不可混用（官方从未出过 SDXL 版 v1.1）。SDXL/新架构请找后继者：xinsir/controlnet-union-sdxl-1.0（10 合一、Apache-2.0）、InstantX 系、Flux 的 Union 版等。官方仓库 2024 年中后已停更，但 v1.1 至今仍是 SD1.5 工作流的事实标配——你目录里那 14 个文件，正是开源可控生成『大爆炸』时代的完整化石。"
+      ],
+      table: {
+        title: "14 成员名录（控制类型 × 文件名）",
+        head: ["控制什么", "权重文件（均 sd15/fp16）"],
+        rows: [
+          ["硬边缘 / 线稿 / 涂鸦", "v11p_canny · v11p_lineart · v11p_scribble · v11p_softedge · v11p_s2_lineart_anime"],
+          ["深度 / 法线 / 直线", "v11f1p_depth · v11p_normalbae · v11p_mlsd"],
+          ["人体姿态 / 语义分区", "v11p_openpose · v11p_seg"],
+          ["整图重混 / 放大重绘 / 修补 / 翻译", "v11e_shuffle · v11f1e_tile · v11p_inpaint · v11e_ip2p（实验级）"]
+        ]
+      },
+      callout: { type: "warn", title: "别找不存在的成员", text: "unsharpmask、equ2lineart、fake_scribble 等名字在官方仓库与 HF 全站均查无此权重——属整合包/自媒体讹传（fake_scribble 只是 1.0 时代的演示脚本名）。全家桶就是 14 个，多出来的都是社区仿制。" }
     }
   ]
 },
@@ -1376,6 +1455,17 @@ const RESOURCES = [
       { label: "架构论文（Rectified Flow）", url: "https://arxiv.org/abs/2403.03206" },
       { label: "官方公告", url: "https://stability.ai/news-updates/stable-diffusion-3" }
     ]},
+    { name: "Anything V5", role: "SD1.5 系二次元常青底模（PrtRE 修剪版），v3 入门神模型的正牌继任", links: [
+      { label: "HF 仓库（genai-archive 托管）", url: "https://huggingface.co/genai-archive/anything-v5" },
+      { label: "Anything v4.0（HF）", url: "https://huggingface.co/andite/anything-v4.0" },
+      { label: "Civitai 站内搜索", url: "https://civitai.com/search/models?query=anything%20v5" }
+    ]},
+    { name: "MiniMax H3", role: "33B 全模态开源视频模型，音画一体原生生成", links: [
+      { label: "GitHub", url: "https://github.com/MiniMax-AI/MiniMax-H3" },
+      { label: "HF 权重", url: "https://huggingface.co/MiniMaxAI/MiniMax-H3" },
+      { label: "ComfyUI 官方模板教程", url: "https://docs.comfy.org/tutorials/video/minimax/minimax-h3" },
+      { label: "ComfyUI 量化权重（Comfy-Org）", url: "https://huggingface.co/Comfy-Org/MiniMax-H3" }
+    ]},
     { name: "DALL·E 3", role: "OpenAI 文生图，与 ChatGPT 集成，理解力强", links: [
       { label: "官网", url: "https://openai.com/dall-e-3" },
       { label: "API 文档", url: "https://platform.openai.com/docs/guides/images" }
@@ -1471,6 +1561,12 @@ const RESOURCES = [
       { label: "官方文档", url: "https://docs.comfy.org/" },
       { label: "官网/工作流市场", url: "https://comfy.org/" }
     ]},
+    { name: "ComfyUI 模型目录与共享", role: "models/ 目录规范、extra_model_paths 共享与模型排障文档", links: [
+      { label: "模型概念（中文文档）", url: "https://docs.comfy.org/zh/basic-concepts/models" },
+      { label: "模型问题排障（中文）", url: "https://docs.comfy.org/zh/troubleshooting/model-issues" },
+      { label: "目录注册源码 folder_paths.py", url: "https://github.com/comfyanonymous/ComfyUI/blob/master/folder_paths.py" },
+      { label: "Stability Matrix（共享模型池）", url: "https://github.com/LykosAI/StabilityMatrix" }
+    ]},
     { name: "ComfyUI-Manager", role: "ComfyUI 必装管理器，节点/模型安装与更新中枢", links: [
       { label: "GitHub", url: "https://github.com/Comfy-Org/ComfyUI-Manager" },
       { label: "Comfy Registry", url: "https://registry.comfy.org/" }
@@ -1535,6 +1631,13 @@ const RESOURCES = [
     { name: "ControlNet", role: "用线稿/姿态/深度等精确控制构图", links: [
       { label: "论文", url: "https://arxiv.org/abs/2302.05543" },
       { label: "GitHub", url: "https://github.com/lllyasviel/ControlNet" }
+    ]},
+    { name: "ControlNet v1.1 权重全家桶", role: "SD1.5 官方 14 成员权重与 fp16 重封装、预处理器", links: [
+      { label: "1.1 官方发布仓库", url: "https://github.com/lllyasviel/ControlNet-v1-1-nightly" },
+      { label: "HF 全家桶（fp32 pth）", url: "https://huggingface.co/lllyasviel/ControlNet-v1-1" },
+      { label: "HF fp16 safetensors 重封装", url: "https://huggingface.co/comfyanonymous/ControlNet-v1-1_fp16_safetensors" },
+      { label: "预处理器 Annotators", url: "https://huggingface.co/lllyasviel/Annotators" },
+      { label: "SDXL 后继（Union 10合1）", url: "https://huggingface.co/xinsir/controlnet-union-sdxl-1.0" }
     ]},
     { name: "DreamBooth", role: "把特定主体训练进模型，深度记忆", links: [
       { label: "论文", url: "https://arxiv.org/abs/2208.12242" }
@@ -1673,7 +1776,11 @@ const RESOURCE_MAP = [
   { names: ["PixAI Tagger", "pixai-tagger", "PixAI 反推"], resCat: "工具与界面", resName: "PixAI Tagger v1.0", secId: "tools", blockIdx: 9 },
   { names: ["TIPO", "DanTagGen", "提示词扩写"], resCat: "工具与界面", resName: "TIPO / DanTagGen", secId: "tools", blockIdx: 9 },
   { names: ["ComfyUI-TaggerPlus", "TaggerPlus", "sln77", "ComfyUI-Tagger"], resCat: "工具与界面", resName: "ComfyUI-TaggerPlus", secId: "tools", blockIdx: 9 },
-  { names: ["RunningHub", "在线工作流"], resCat: "工具与界面", resName: "RunningHub（在线 ComfyUI 工作流）", secId: "tools", blockIdx: 9 }
+  { names: ["RunningHub", "在线工作流"], resCat: "工具与界面", resName: "RunningHub（在线 ComfyUI 工作流）", secId: "tools", blockIdx: 9 },
+  { names: ["MiniMax", "H3", "MiniMax H3", "海螺", "FL2VA", "Ref2VA"], resCat: "基础模型", resName: "MiniMax H3", secId: "models", blockIdx: 20 },
+  { names: ["Anything", "Anything V5", "anything-v5", "PrtRE"], resCat: "基础模型", resName: "Anything V5", secId: "tools", blockIdx: 14 },
+  { names: ["control_v11", "ControlNet v1.1", "ControlNet 权重", "Annotators", "预处理器"], resCat: "微调与控制技术", resName: "ControlNet v1.1 权重全家桶", secId: "fine-tuning", blockIdx: 9 },
+  { names: ["diffusion_models", "text_encoders", "extra_model_paths", "flux-ae", "ae.safetensors", "模型目录"], resCat: "工具与界面", resName: "ComfyUI 模型目录与共享", secId: "tools", blockIdx: 14 }
 ];
 
 /* ---------- 参考书↔配置教程 双向跳转映射 ----------
