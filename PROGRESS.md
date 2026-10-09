@@ -1,8 +1,8 @@
 # PROGRESS — AI 生图知识图谱
 
-## 进度看板（10.10 02:12 更新 · 阶段 24 已完成）
-- 分支策略：`knowledge-expansion`（知识条目扩充专用）↔ `main`（发布线）——阶段 17–23 均已合并进 `main` 并推送 GitHub Pages；阶段 24 按用户指定直接在 `main` 完成（待推送发布）
-- 当前正在开发任务：无（阶段 24 内容已完成并校验，待推送由用户发起）
+## 进度看板（10.10 02:40 更新 · 阶段 25 已完成）
+- 分支策略：`knowledge-expansion`（知识条目扩充专用）↔ `main`（发布线）——阶段 24/25 按用户指定直接在 `main` 进行；P0 修复（阶段 25 内）已推送上线（`6c19330`），阶段 25 数据部分待推送
+- 当前正在开发任务：无（阶段 25 已完成并校验）
 - 下一阶段任务：待定（候选见 HANDOFF「下一步」）
 - 可提前进行的任务：投稿限流加固（RLS 每人 ≤5 条 pending）
 - 未完成的任务：3D 图谱 / 思维导图纳入阶段 16–21 新增条目（债务项，需评估性能）
@@ -35,6 +35,7 @@
 | 22 | 反推流知识扩充 | 反推原理/三条路线 + PixAI Tagger vs WD14 选型 + ComfyUI 反推流实战与节点包 | ✅ |
 | 23 | SD 家族与 Forge 深度扩充 | SDXL / SD3.5 / FLUX 三个专块 + Forge 两篇折叠选读（架构硬核/三条线实战），术语+10 资源卡+2 | ✅ |
 | 24 | 模型目录与文件家族扩充 | MiniMax H3 专块 + ComfyUI 模型目录选读 + ControlNet v1.1 全家族选读，术语+8 资源卡+4 | ✅ |
+| 25 | Nano Banana/GPT-Image + 模型时间标注 | NB 专块、GPT Image 2 时间线修正、18 模型块 📅/🔄/现役徽章、DALL·E 3 与 Banana.dev 退役标注；含 P0 修复（IO threshold） | ✅ |
 
 ## 阶段 15
 
@@ -206,6 +207,27 @@
 - **风险**：MiniMax H3 为 2026-08 新模型，参数上限（2K/15s）与显存门槛来自新闻/社区转述，官方 README 细节建议半年内复查；ControlNet 使用参数为社区经验值（正文已标注）；Anything V5 "RE" 缩写无权威释义（正文用"pruned 版"表述规避展开）
 - **下一阶段入口**：推送发布（待用户发起）/ 采样器与调度器专题 / 3D 图谱与思维导图纳入 16–24 阶段新增条目（债务项）
 - **本次文档更新时间**：10.10 02:12
+
+## 阶段 25 Nano Banana / GPT-Image 更新 + 模型时间标注 [计划时间：10.10 02:13 BY Qoder][完成时间：10.10 02:40 BY Qoder]
+
+- **分支**：`main`（用户指定直改）
+- **本阶段含一项 P0 修复**（用户报障『主流模型经常显示不出』）：根因 IntersectionObserver threshold 0.08 对 14595px 高的 models 章节永不触发（视口占比上限 ~6%）→ 整节 opacity:0。改 threshold:0 修复，已单独提交并推送上线（`6c19330`，Pages built，公网实测正常显示），沉淀 HANDOFF 坑 #11
+- **素材来源**：3 个并发联网核实子任务（检索日期 2026-10-10）：Nano Banana 全时间线 / GPT-Image 产品线命名澄清 / 13 项模型首发-更新-现状清单；存疑项（MJ V1 精确日、WAI v1.0 月份、Banana 关停公告日等）按模糊口径或标注处理
+- **已完成**：
+  - **models 追加 b21「Nano Banana（Google Gemini 图像）」专块**：2025-08-26 首发（Gemini 2.5 Flash Image 双品牌）→ Pro 2025-11-20（=Gemini 3 Pro Image）→ 2026-01 升格全生态品牌（命名趣闻 Naina Banana+Nano）→ NB2 2026-02-26 → NB2 Lite 2026-06-30 → **2.1 2026-10-06**（原生 4K）；对话式改图/角色一致性/与 GPT-Image 竞争叙事；**Imagen 全线 2026-08-17 被其取代**；接入与价格带；「别和 banana.dev 搞混」callout
+  - **GPT-Image 块（b13）时间线修正**：补 **GPT Image 2（2026-04-21，ChatGPT Images 2.0）** 一代（原文从 1.5 直接跳到 2.5）；澄清 Flare/Sunburst 系官方 API 档位名而非泄露代号；补 16 参考图/4K/5 档 quality；DALL·E 3 交棒节点写入
+  - **模型时间标注体系（用户核心需求）**：app.js 新增 `metaChips()` 渲染 `blk.meta={released,updated,status,note}`，style.css 加徽章样式（📅发布/🔄更新 + 现役·经典老将·已偏旧三色，note 悬停提示）；**models 段 18 个模型块全部配 meta**（b5 混合盘点/b6 手册/b15/b16 话题块有意不加）；models summary 写入图例
+  - **老旧模型明确化（联网核实后落笔）**：DALL·E 3 已退役（2026-05-12 API 停用、08-30 撤出 ChatGPT）——块内现状段+legacy 徽章+术语/资源卡同步；Banana.dev 已停运（2026-10 官网日落核实）——块内现状提醒+FAQ 同步+资源卡 role 改写；SD 系标 classic（官方线止于 SD3.5、不存在 SD4）；SDXL/SD3.5/Illustrious 标 classic 并在 note 说明生态仍活跃/官方转向
+  - **版本事实刷新**：MJ V8.2（2026-07）、NAI V5（2026-08，正文补 2 倍规模/32 通道 VAE/整页漫画）、Wan 2.6 已开源/3.0、Seedream 5.0 Preview（2026-02）、Anima Base 1.0（2026-05）/Aesthetic（2026-07）、Krea 2 开源细节（2026-06-22，自定义许可）、WAI v17（2026-04+）
+  - **GLOSSARY +1**（88 条）：Nano Banana；修订 DALL·E（已退役）、Banana AI（已停运+防撞名）两条
+  - **RESOURCES +1 卡**（Nano Banana：DeepMind 产品页/NB Pro 发布/Gemini API 文档/Imagen 迁移公告）；DALL·E 3、Banana.dev 两卡 role 更新
+  - **RESOURCE_MAP +1**（共 51 条，0 错误）：Nano Banana/纳米香蕉/NB2/Gemini Image → models-b21
+  - `index.html` data.js → `20261010c`；style.css → `20261010a`（四页同步）；app.js → `20261010a`（P0 提交内）
+- **测试结果**：`node --check` 全过；结构校验 models=22（18 块带 meta）、51 条映射 0 错误、术语 88（重复仅既遗留"工作流"）、资源卡 70 无重名；浏览器实测（localhost:8010）：49 枚徽章渲染正确（SD=经典老将、DALL·E=已偏旧、NB=现役）、b21 标题正常、点击导航滚动到位后 models 章节 opacity 1（P0 修复回归验证）、console 无站点报错；P0 修复已另行公网验证。预览服务用毕已停
+- **改动文件**：`js/data.js`、`js/app.js`、`css/style.css`、`index.html`、`docs.html`、`admin.html`、`network.html`、`PROGRESS.md`、`HANDOFF.md`
+- **风险**：MJ V1 公测日（2022-07）与 WAI v1.0 首发月为通说未精核；NB 免费额度、Pro 分辨率上限（2K/4K 两说）等存疑项已按保守表述；2026 模型月更节奏下 meta 数据建议每季度复查
+- **下一阶段入口**：推送发布（待用户发起）/ 采样器与调度器专题 / 3D 图谱与思维导图纳入 16–25 阶段新增条目（债务项）
+- **本次文档更新时间**：10.10 02:40
 
 ## 当前风险与债务
 

@@ -26,10 +26,10 @@ const GLOSSARY = [
   { term: "U-Net", en: "U-Net", cat: "原理", desc: "编码-解码 + 跳跃连接的网络结构，是 SD 等扩散模型去噪的核心。" },
   { term: "CLIP", en: "Contrastive Language-Image Pretraining", cat: "原理", desc: "OpenAI 提出的图文对比学习模型，让模型理解文字与图像的对应关系，SD 用它编码提示词。" },
   { term: "Stable Diffusion", en: "SD", cat: "模型", desc: "Stability AI 于 2022 年开源的潜扩散模型，开源生态的核心，催生了 WebUI/ComfyUI 等工具链。" },
-  { term: "DALL·E", en: "DALL·E", cat: "模型", desc: "OpenAI 的文生图系列，DALL·E 3 与 ChatGPT 深度集成，理解力强、闭源。" },
+  { term: "DALL·E", en: "DALL·E", cat: "模型", desc: "OpenAI 的文生图系列，DALL·E 3 与 ChatGPT 深度集成。已退役：2026-05 API 停用、2026-08 撤出 ChatGPT，继任者为 GPT-Image 系列。" },
   { term: "Midjourney", en: "MJ", cat: "模型", desc: "闭源商业模型，以艺术风格出众著称，通过 Discord/网页使用，付费订阅制。" },
   { term: "NovelAI", en: "NAI", cat: "模型", desc: "面向二次元文生图/写作的付费平台，基于 SD 衍生模型训练，动漫风格突出。" },
-  { term: "Banana AI", en: "Banana", cat: "模型", desc: "面向开发者的无服务器 GPU 平台，可一键部署 SD 等 ML 模型为 API，也被用于生图算力托管。" },
+  { term: "Banana AI", en: "Banana", cat: "模型", desc: "已停运的无服务器 GPU 平台（banana.dev，2026 年日落），曾可把 SD 等模型一键部署为 API——现仅作『云算力托管』架构的历史案例。注意与 Google 的 Nano Banana 图像模型无关。" },
   { term: "WAI", en: "WAI-illustrious-SDXL", cat: "模型", desc: "社区最热开源动漫模型，基于 Illustrious XL 微调，角色知识丰富、多 LoRA 兼容，长期霸榜 Civitai/Tensor.Art。" },
   { term: "Anima", en: "Anima", cat: "模型", desc: "CircleStone Labs 与 Comfy Org 合作的 2B 开源动漫文生图模型，含 Base/Aesthetic/Turbo 三版，轻量可本地运行。" },
   { term: "Krea 2", en: "Krea 2", cat: "模型", desc: "Krea AI 首个从零训练的图像基础模型，美学优先，主打风格参考、情绪板与创意控制滑杆。" },
@@ -92,6 +92,7 @@ const GLOSSARY = [
   { term: "ComfyUI 模型目录", en: "models/ folder structure", cat: "工具", desc: "0.3.x 起 unet→diffusion_models、clip→text_encoders（架构无关化）。checkpoint 放 checkpoints/、分离式主干/编码器/VAE 分放各目录；根级 checkpoint 新版不可见；extra_model_paths.yaml 可共享模型库。" },
   { term: "safetensors", en: "safetensors", cat: "资源", desc: "当前模型权重的标准格式：张量按纯数据序列化，加载不执行任意代码（老 .ckpt 的 pickle 可携带恶意载荷），且支持惰性读取、加载更快、跨语言。" },
   { term: "模型量化标记", en: "fp16 / int8 / nvfp4 / awq", cat: "基础", desc: "文件名里的精度暗号：fp32 全精度、fp16/bf16 半精度（体积减半）、int8/nvfp4/awq 为低比特量化（越省显存越吃卡的新指令集）、pruned=剔除训练状态、convrot=旋转矩阵消离群值量化。" },
+  { term: "Nano Banana", en: "Nano Banana / Gemini Image", cat: "模型", desc: "Google 图像模型品牌（闭源）：NB＝Gemini 2.5 Flash Image（2025-08）→ Pro＝Gemini 3 Pro Image（2025-11）→ NB2（2026-02）→ 2.1（2026-10，原生4K）。主打对话式改图与角色一致性，已取代 Imagen 全线。与 banana.dev 云平台无关。" },
 ];
 
 /* ---------- 主内容模块 ---------- */
@@ -279,10 +280,11 @@ const SECTIONS = [
   en: "Models",
   icon: "◆",
   color: "#ff2e88",
-  summary: "盘点 Stable Diffusion、DALL·E、Midjourney、NovelAI、Banana AI，SDXL、SD3.5、FLUX 三大 SD 家族节点，MiniMax H3 等视频模型，以及 WAI、Anima、Krea 2、Wan 2.2、Z-Image、Seedream、GPT-Image 等新老主流模型的特点与定位。",
+  summary: "盘点 Stable Diffusion、DALL·E、Midjourney、NovelAI，SDXL、SD3.5、FLUX 三大 SD 家族节点，Nano Banana 与 GPT-Image 双雄，MiniMax H3 等视频模型，以及 WAI、Anima、Krea 2、Wan 2.2、Z-Image、Seedream、GPT-Image 等新老主流模型。每个模型标注 📅 首发 / 🔄 最近更新，并以徽章区分 现役·经典老将·已偏旧。",
   sections: [
     {
       heading: "Stable Diffusion（SD）",
+      meta: { released: "2022-08 开源", updated: "官方线止于 SD3.5（2024-10）", status: "classic", note: "至今不存在 SD4；SD1.5/SDXL 靠 Pony/Illustrious/WAI 等社区衍生维持活力" },
       paragraphs: [
         "Stable Diffusion 由 Stability AI 于 2022 年 8 月开源，是 AI 生图开源生态的基石。它基于潜扩散模型（LDM），可在 4GB 显存的消费级显卡上运行，让普通用户也能本地出图，这是它引爆热潮的根本原因。",
         "版本演进：SD 1.4（初代）/1.5（最经典、生态最丰富）→ SD 2.x（版权清理、画风偏写实）→ SDXL（1024 分辨率、质量大幅提升）→ SD3（引入多模态 Transformer、文本理解强）→ SD3.5；BFL 的 FLUX 则是同代架构的接棒者。社区衍生模型（如 AnythingV3、DreamShaper、二次元/写实向各种 CP）多基于 1.5 或 SDXL 微调。SDXL、SD3/SD3.5、FLUX 在本节末尾各有专块展开。",
@@ -297,14 +299,16 @@ const SECTIONS = [
     },
     {
       heading: "DALL·E 系列（OpenAI）",
+      meta: { released: "2023-10（DALL·E 3 进 ChatGPT）", updated: "2026-05 API 停用 · 2026-08 撤出 ChatGPT", status: "legacy", note: "已被 GPT-Image 系列全面取代（见本节 GPT-Image 块），此处作为历史脉络保留" },
       paragraphs: [
         "DALL·E 是 OpenAI 的文生图系列，DALL·E 3 于 2023 年发布，最大特点是和 ChatGPT 深度集成——你用大白话说『画一只戴墨镜的柴犬在冲浪』，ChatGPT 会自动帮你扩写成专业提示词再调用模型，大幅降低提示词门槛。",
         "优点：理解力强、出图稳定、文字渲染较好、内容安全合规。缺点：闭源、付费（需 ChatGPT Plus 或 API）、风格偏『干净插画感』、可控性不如 SD + ControlNet、不可本地运行。",
-        "定位：适合非技术用户、需要快速出概念图、对合规性要求高的商业场景。"
+        "定位：适合非技术用户、需要快速出概念图、对合规性要求高的商业场景。<b>现状（2026）</b>：DALL·E 3 已退役——API 于 2026-05-12 停用、ChatGPT 内插件 2026-08-30 下线，继任者是下文『GPT-Image』专块所述的 gpt-image 系列。"
       ]
     },
     {
       heading: "Midjourney",
+      meta: { released: "2022-07 公测", updated: "V8.2（2026-07）", status: "active", note: "V7 2025-04、V8 2026-03、V8.1 2026-06 起为默认版本" },
       paragraphs: [
         "Midjourney 是闭源商业模型，以艺术质感出众著称，尤其擅长摄影、电影感、概念艺术风格。早期通过 Discord 机器人使用，现已推出网页版。",
         "优点：开箱即用、默认美学极高、风格化强、社区活跃。缺点：闭源、付费订阅（10–60 美元/月起）、参数可控性弱于 SD、不可本地、内容审核较严。",
@@ -314,8 +318,9 @@ const SECTIONS = [
     },
     {
       heading: "NovelAI（NAI）",
+      meta: { released: "NAI Diffusion V3 · 2023-11", updated: "4.5（2025-05）→ V5（2026-08）", status: "active", note: "V5：2 倍规模、32 通道 VAE、整页漫画生成" },
       paragraphs: [
-        "NovelAI 是面向二次元的付费平台，提供文生图与 AI 写作。其图像模型基于 SD 架构二次训练（早期基于 SD 1.5 衍生，后推出基于 SDXL 的 NAI Diffusion V3，4.5 为自研闭源版本），在动漫风格、角色一致性、构图理解上表现突出。",
+        "NovelAI 是面向二次元的付费平台，提供文生图与 AI 写作。其图像模型基于 SD 架构二次训练（早期基于 SD 1.5 衍生，后推出基于 SDXL 的 NAI Diffusion V3，4.5 为自研闭源版本；2026-08 的 V5 达 2 倍规模、32 通道 VAE，支持整页漫画生成），在动漫风格、角色一致性、构图理解上表现突出。",
         "核心特色：内置大量动漫角色 LoRA（可通过角色标签触发特定画风/人物）、对二次元提示词语义理解深入、支持『定向编辑』与无限制内容（在合规框架内）。",
         "定位：二次元爱好者、同人创作、需要稳定动漫角色出图的用户。与 SD 二次元微调模型（如 AnythingV3、OrangeMix）形成竞争与互补。",
         "<b>技术栈溯源（硬核）</b>：NovelAI Diffusion 的本质仍是潜扩散模型（Latent Diffusion）——图像先由 VAE 编码压缩到潜空间，U-Net 在潜空间内以文本条件为指导迭代预测并去除噪声，最后由 VAE 解码回像素。它与 SD 共享这一骨架，差异在于：训练数据以 Danbooru 等插画社区的高质量动漫图为主、文本侧使用深度定制的标签编码器。因此它并非『换了画风的 SD』，而是把条件分布重新建模在动漫 tag 空间上的专用扩散模型。",
@@ -326,12 +331,13 @@ const SECTIONS = [
     },
     {
       heading: "Banana AI（Banana.dev）",
+      meta: { status: "legacy", note: "banana.dev 已日落（sunset）——2026-10 官网入口全部跳转关停通知。本块作为『云算力托管』架构的历史案例保留，勿再按『现在可用』参考" },
       paragraphs: [
         "需要区分两个概念：Banana.dev 是面向开发者的『无服务器 GPU』平台，可把 SD 等 ML 模型一键打包成 API 部署，常被用来托管 AI 生图算力——你不必自己买显卡，按调用量付费即可。这是『云算力 + 模型部署』服务，而非一个独立的生图模型。",
         "在 AI 生图语境里，提到『Banana』通常指：开发者用 Banana 这类平台把 SD 部署成后端 API，再套一个网页/小程序前端给用户用。许多国内『即时生图』『在线 AI 画图』站点背后都是这种架构。",
-        "定位：想自己搭在线生图服务但不想买卡的极客/小团队；普通用户更多是间接受益者，直接用前端产品即可。同类平台还有 Replicate、RunPod、Modal 等。"
+        "定位：想自己搭在线生图服务但不想买卡的极客/小团队；普通用户更多是间接受益者，直接用前端产品即可。同类平台还有 Replicate、RunPod、Modal 等。<b>现状提醒（2026-10 核实）</b>：banana.dev 已日落停运，官网入口全部跳转关停通知——本块保留为『云算力托管』架构的历史案例，现役替代看 Replicate/RunPod/Modal。"
       ],
-      callout: { type: "warn", title: "概念辨析", text: "『Banana AI』不是某个画图模型，而是部署/算力服务。别和 NovelAI（二次元画图平台）搞混。" }
+      callout: { type: "warn", title: "概念辨析", text: "『Banana AI』不是某个画图模型，而是（已停运的）部署/算力服务；也别和 Google 的图像模型品牌 Nano Banana 搞混——两者毫无关系，名字撞车纯属巧合。" }
     },
     {
       heading: "其他重要模型",
@@ -408,6 +414,7 @@ const SECTIONS = [
     },
     {
       heading: "WAI（WAI-illustrious 系列）",
+      meta: { released: "2025（v1.0）", updated: "v17（2026-04+）", status: "active", note: "迭代极快，月更级；另有 WAI-NSFW 分支" },
       paragraphs: [
         "WAI（全称 WAI-illustrious-SDXL，作者 WAI0731）是当今社区最热门的开源动漫大模型之一，基于 OnomaAI 的 Illustrious XL 底座深度微调，长期霸榜 Civitai 与 Tensor.Art 动漫模型评分（Tensor.Art 星标数以万计）。它走的是『免费开放权重 + 社区持续迭代』路线，与闭源付费的 NovelAI 形成鲜明对照。",
         "版本演进（约每月一更）：2024 年 10 月发布 v1.0 → v13（新增训练数据、增强自然语言支持）→ v14（更换基座，作者实测后坚持采用 Illustrious 1.0 而非 2.0）→ v15（完善多 LoRA 叠加）→ v16（更柔和干净的角色精度）→ v17（修复背景色彩一致性、增强高清修复对手脚的自动修正）。有审查/无审查双版本分发，另有 GGUF 量化版适配低显存。",
@@ -419,6 +426,7 @@ const SECTIONS = [
     },
     {
       heading: "Anima（CircleStone Labs / Comfy Org）",
+      meta: { released: "2026-01 预览", updated: "Base v1.0（2026-05）→ Aesthetic（2026-07）", status: "active" },
       paragraphs: [
         "Anima 是由 CircleStone Labs（ComfyUI 背后的受资实体）与 Comfy Org 合作推出的开源动漫文生图模型，仅 20 亿（2B）参数，专精动漫与非照片级插画——角色设计、场景绘制、概念艺术，不擅长写实。它被视为开源社区对抗闭源二次元服务的『本地化答案』：模型文件仅约 4.2GB，8GB 显存的消费级显卡即可流畅运行。",
         "时间线：2026 年 1 月发布预览版（此后按月迭代）→ 2026 年 5 月 15 日 Anima Base v1.0 稳定版发布。技术上它衍生于 NVIDIA Cosmos-Predict2-2B-Text2Image 架构，文本侧采用 Qwen3-0.6B 编码器、图像侧复用 Qwen-Image VAE，ComfyUI 原生支持（标准 UNETLoader/CLIPLoader/VAELoader 加载）。",
@@ -429,6 +437,7 @@ const SECTIONS = [
     },
     {
       heading: "Krea 2（Krea AI）",
+      meta: { released: "2026-06 开放权重", status: "active", note: "自定义许可：年营收<100万美元且<50席位免费商用；发布 48 小时登顶美学榜" },
       paragraphs: [
         "Krea 2 是创意套件公司 Krea AI 于 2026 年 5 月发布的首个『完全从零训练』的图像基础模型（5 月 12 日官宣，5 月 27 日通过 Fal、Comfy、Runware 等 API 伙伴上线）。闭源商业服务，网页端 krea.ai 直接可用。",
         "设计哲学是<b>『美学优先』（aesthetic-first）</b>：多数模型擅长理解『画什么』，Krea 2 则聚焦『看起来怎么样』——构图、光影和谐、色彩平衡与风格一致性。核心功能：①<b>风格参考迁移</b>——丢入参考图即可提取并迁移其风格，可多图组合、单独调强度；②<b>Moodboard 情绪板</b>——把一组图打包成『品味档案』（风格关键词 + 禁忌项），整批生成都自动沿用该方向；③<b>创意控制滑杆</b>——从 raw（严格贴提示词）到 high（自由再创作）；④<b>批量一致性</b>——控制同批图像的 variation 幅度，适合成套视觉输出。",
@@ -447,6 +456,7 @@ const SECTIONS = [
     },
     {
       heading: "Wan 2.2（通义万相 · 阿里）",
+      meta: { released: "2025-07 开源", updated: "2.6 已开源（2025-12）· 3.0（2026）", status: "active", note: "版本推进极快；2.5 起加音画同步（以闭源 API 为主）" },
       paragraphs: [
         "Wan 2.2（万相 2.2）是阿里通义万相 Wan 系列的开源视频生成基础模型，2025 年 7 月 28 日发布，是业界首个引入 MoE（专家混合）架构的开源视频大模型，采用 Apache 2.0 许可完全开源可商用。对生图用户的意义：它是『静态图 → 动态视频』的主力开源引擎——你用任何生图模型产出的海报/插画/角色立绘，都能通过它的图生视频（I2V）能力一键动起来。",
         "模型矩阵：<b>T2V-A14B</b>（文生视频 MoE）、<b>I2V-A14B</b>（图生视频 MoE）、<b>TI2V-5B</b>（文/图生视频统一稠密模型）、<b>S2V-14B</b>（语音生视频），均支持 480P 与 720P。",
@@ -467,6 +477,7 @@ const SECTIONS = [
     },
     {
       heading: "Z-Image 造相（阿里 Tongyi-MAI）",
+      meta: { released: "2025-11（Turbo 开源）", updated: "标准可微调基座（2026-01）", status: "active", note: "2025-12 登顶开源图像榜；2026 年被列为取代 SD 系的国产首选之一" },
       paragraphs: [
         "Z-Image（中文名『造相』）是阿里通义实验室 Tongyi-MAI 于 2025 年 11 月开源的高效图像生成基础模型，仅 60 亿（6B）参数，却打出旗舰级画质，是对『规模至上（scale-at-all-costs）』路线的一次正面回击——同期开源竞品（Qwen-Image、HunyuanImage-3.0、FLUX.2）普遍在 20B–80B 量级。全流程训练仅耗 31.4 万 H800 GPU 时。Apache 2.0 许可，完全开源可商用。",
         "架构（硬核）：采用 <b>S3-DiT</b>（Scalable Single-Stream Diffusion Transformer，可扩展单流扩散 Transformer）——把文本 token（来自改造的 Qwen3-4B 编码器）、视觉语义 token、图像 VAE token 在序列层拼接为统一输入流。相比 FLUX 的双流设计，单流消除了模态间的参数冗余，6B 的每个参数同时服务文本理解与图像生成，这正是它以小博大的关键。",
@@ -486,6 +497,7 @@ const SECTIONS = [
     },
     {
       heading: "Seedream（字节跳动 Seed）",
+      meta: { released: "3.0（2025-02）", updated: "4.0（2025-09）→ 4.5（2025-12）→ 5.0 Preview（2026-02）", status: "active" },
       paragraphs: [
         "Seedream 是字节跳动 Seed 团队的图像创作模型系列，主线版本 4.0 于 2025 年 9 月 9 日发布，把此前分线的 Seedream 3.0（生成）与 SeedEdit 3.0（编辑）合并为同一套统一架构——一套模型同时搞定文生图、图生图、图像编辑、多图编辑与组图生成。闭源商业模型，经由即梦、豆包 App 与火山方舟 API（doubao-seedream-4-0，0.2 元/张）提供服务，火山引擎持续推出增强快照（如 2026 年 4 月版显著强化人像与美感）。",
         "核心能力：①<b>多图输入 + 组图生成</b>——原生支持文本/单图/多图组合输入，一次最多连续输出 15 张内容关联的图（漫画分镜、多角度产品图、故事组图）；②<b>知识生图与推理</b>——融合世界知识，能画科普插画、图表、时间轴、公式演算这类『需要先想明白再画』的内容；③<b>参考一致性</b>——从参考图中抽取人物身份/风格/结构，在全新场景再创造（角色手办化、风格穿梭 30+ 种不丢脸）；④<b>原生视觉信号控制</b>——草图、涂鸦、Canny、Depth 等控制信号无需 ControlNet，模型原生消化；⑤<b>4K 输出</b>——分辨率上限从 2K 扩展至 4K，并可按提示词自动适配最佳比例。",
@@ -503,16 +515,18 @@ const SECTIONS = [
     },
     {
       heading: "GPT-Image（OpenAI）",
+      meta: { released: "gpt-image-1 · 2025-04", updated: "GPT Image 2（2026-04）→ Images 2.5（2026-09）", status: "active", note: "DALL·E 3 已被本系列全面取代（2026-05 API 停用）" },
       paragraphs: [
-        "GPT-Image 是 OpenAI 的图像生成模型家族，技术路线与扩散派不同：依托 GPT-4o 的原生多模态能力<b>自回归地『写出』图像</b>，因此天然继承了大语言模型的指令遵循、世界知识与对话能力。发展脉络：2025 年 3 月 GPT-4o 原生生图登陆 ChatGPT（一度把 GPU『熔断』）→ 2025 年 4 月以 gpt-image-1 名义开放 API → 2025 年 12 月 GPT Image 1.5（精准编辑、生成提速 4 倍）→ 2026 年 9 月 8 日 ChatGPT Images 2.5（当前旗舰）。",
+        "GPT-Image 是 OpenAI 的图像生成模型家族，技术路线与扩散派不同：依托 GPT-4o 的原生多模态能力<b>自回归地『写出』图像</b>，因此天然继承了大语言模型的指令遵循、世界知识与对话能力。发展脉络：2025-03 GPT-4o 原生生图登陆 ChatGPT（一度把 GPU『熔断』）→ 2025-04 以 gpt-image-1 名义开放 API（11 月加低价档 -mini）→ 2025-12 GPT Image 1.5（精准编辑、提速 4 倍）→ <b>2026-04-21 GPT Image 2（ChatGPT Images 2.0）</b>→ 2026-09-08 ChatGPT Images 2.5（当前旗舰）。同期 DALL·E 3 于 2026-05-12 API 停用、2026-08-30 撤出 ChatGPT——一个时代正式交棒。",
         "强项：①<b>对话式多轮编辑</b>——『只改这一处』级别的精准编辑，跨多轮修改保持人物与光线一致；②<b>图内文字渲染</b>——海报、UI mockup、信息图里的密集小字也能写对，长期是同类天花板；③<b>世界知识</b>——理解历史、科学、品牌等常识型指令，『画得对』而不只是『画得美』；④<b>创意变换</b>——风格滤镜、概念化转绘、草图（Sketch）起稿。",
-        "Images 2.5 世代：创作过程的图像保真度提升、多轮编辑一致性增强、延迟较 2.0 降低最多 50%。API 提供两个模型：<b>GPT-Image-2.5 Flare</b>——默认选择，质量高于 GPT-Image-2 且延迟减半，适合绝大多数应用；<b>GPT-Image-2.5 Sunburst</b>——面向高端精修工作流，跨编辑轮次的控制更精细。当前每周经 ChatGPT Images 与 GPT-Image API 生成的图像超 30 亿张。",
+        "Images 2.5 世代：创作过程的图像保真度提升、多轮编辑一致性增强、延迟较 2.0 降低最多 50%；edit 端点最多支持 <b>16 张参考图</b>，分辨率至 1K/2K/4K（最长边 3840px）、质量 5 档。API 提供两个模型：<b>GPT-Image-2.5 Flare</b>——默认选择，质量高于 GPT-Image-2 且延迟减半，适合绝大多数应用；<b>GPT-Image-2.5 Sunburst</b>——面向高端精修工作流，跨编辑轮次的控制更精细（注意：Flare/Sunburst 是官方 API 档位名，不是泄露代号）。当前每周经 ChatGPT Images 与 GPT-Image API 生成的图像超 30 亿张。",
         "局限与定位：闭源、API 按量计费（输出按 token 计价）、内容审核严格（含图像安全元数据），不可本地部署，二次元/写实人像的『美学上限』不及 MJ/NAI 阵营。适合：非技术用户零门槛创作、需要文字精准的海报与原型图、对话式迭代修改、对合规要求高的商业场景——与 DALL·E 3 一脉相承，但能力全面上位。"
       ],
       callout: { type: "info", title: "两条技术路线的分野", text: "扩散模型（SD/Flux/WAI/Z-Image）：从噪声逐步去噪，可控性强、生态开放；自回归多模态（GPT-Image）：把图像当 token 逐段生成，语言理解与知识推理强。两条路线正在互相融合——看懂这一点，就看清了整个生图版图。" }
     },
     {
       heading: "Illustrious XL（illu · OnomaAI）",
+      meta: { released: "2024-06（v0）", updated: "v1.0（2024-09）→ v3.5 VPred（2025）→ 官方转 Lumina", status: "classic", note: "SDXL 系到顶；官方重心已移 Illustrious LU（Lumina 架构），但 IL 生态仍活跃（Civitai 19万+ LoRA）" },
       paragraphs: [
         "Illustrious XL（社区简称 illu / ILXL）是韩国 OnomaAI Research 于 2024 年中开源的 SDXL 动漫底模，与 Pony 并列为本世代动漫模型生态的两大底座。它的定位是『刻意不调优的干净画布』——不以特定美学为卖点，专为社区微调与 LoRA 训练而生。WAI、NoobAI-XL、Hassaku XL 等头部动漫模型都基于它（详见 WAI 章节）。",
         "三大差异化设计：①<b>原生 1536×1536</b>——标准 SDXL 训练在 1024px，Illustrious 自 v1.0 起直接在 1536px 训练，高分辨率细节原生锐利而非靠放大器脑补，1248×1824 等非标比例也能稳定出图不复制主体；②<b>混合提示系统</b>——自然语言与 Danbooru 标签约五五开兼收，既可以写句子也可以甩 tag；③<b>文本编码器参与微调</b>——不同于常规冻结文本编码器的做法，OnomaAI 实现了稳定微调，概念理解更深、多角色提示串扰更少。",
@@ -577,6 +591,7 @@ const SECTIONS = [
     },
     {
       heading: "SDXL（Stable Diffusion XL）",
+      meta: { released: "2023-07-26", updated: "官方线止于 SDXL Turbo（2023-11）", status: "classic", note: "官方不再迭代，但社区微调生态至今最活跃——Pony/Illustrious/NoobAI 均为其衍生" },
       paragraphs: [
         "SDXL 是 Stability AI 于 2023-07-26 正式发布的第二代 SD 底模：画布从 SD1.5 的 512 提到<b>原生 1024</b>，U-Net 扩容到 <b>2.6B 参数</b>（约为 SD1.x/2.x 的 3 倍；含双文本编码器与 refiner 的整体口径常被报为约 6.6B）。版本线：0.5 预览（2023-05，仅 API）→ 0.9（6 月底，换上第二文本编码器）→ 1.0（以更新的美学与水印过滤策略、真实+合成数据混合重训）。许可为 CreativeML OpenRAIL++-M，权重开源可商用——此后它成了<b>史上最大微调生态的底座</b>。",
         "<b>双文本编码器</b>：在 CLIP ViT-L/14 之外引入 OpenCLIP ViT-bigG，两者的特征按通道拼接后作为条件。注意每个编码器仍各自截断在 77 token——提示词的『长度上限』并没有翻倍，提升的是语义丰富度与贴合度。",
@@ -601,6 +616,7 @@ const SECTIONS = [
     },
     {
       heading: "SD3 / SD3.5（Stable Diffusion 3 系）",
+      meta: { released: "2024-06（Medium）/ 2024-10（3.5）", status: "classic", note: "Stability 最后一代开源图像底模，官方已转向音频/娱乐方向" },
       paragraphs: [
         "SD3 是 Stability AI 2024 年的第三代架构：彻底抛弃 U-Net，改用 <b>MMDiT + Rectified Flow</b>（论文《Scaling Rectified Flow Transformers for High-Resolution Image Synthesis》，arXiv 2403.03206，ICML 2024）。发布前还玩过花活——2024-03 用交互式文章《You Draw It》（中文媒体译『益起猜』）众包人机配文来改进模型（原文页现已下线）；多家媒体报道其基础模型与 Essential AI 合作预训练。",
         "<b>MMDiT</b>：图像与文本各有一路独立权重的 token 流，但在同一联合注意力里<b>双向</b>交换信息——对比 SDXL『图像为主、文本只是交叉注意力条件』的单向模式，长句指令与空间关系的遵循能力从架构上被打开。<b>Rectified Flow（流匹配）</b>：学习从噪声到图像的直线概率路径，训练 scaling 更可预测，所需去噪步数显著少于传统扩散。<b>三个文本编码器</b>：CLIP-L + OpenCLIP-bigG + T5-XXL（4.7B）——T5 的引入是提示词理解与图内文字渲染飞跃的直接来源；关掉 T5 显存大降、画质仅轻微受损，消费级玩法常这么省。",
@@ -624,6 +640,7 @@ const SECTIONS = [
     },
     {
       heading: "FLUX（Black Forest Labs）",
+      meta: { released: "2024-08（FLUX.1）", updated: "FLUX.2（2025-11）→ FLUX.3（2026-07 研究版）", status: "active" },
       paragraphs: [
         "Black Forest Labs（BFL，2024 年成立于德国弗莱堡）由 Latent Diffusion（SD 的源论文）第一作者 <b>Robin Rombach</b> 与 Patrick Esser、Andreas Blattmann 等前 Stability 核心研究员创立——中文社区俗称『黑森林』。资本路径极快：2024-08 种子轮约 3100 万美元、一个月后 1 亿美元（估值十亿）；2025-12 完成 3 亿美元 B 轮（Salesforce 领投，a16z/NVIDIA/淡马锡等参投，估值 32.5 亿美元），合作方案里躺着 Adobe、ElevenLabs、fal。",
         "<b>FLUX.1（2024-08）</b>：12B 参数的 Rectified Flow Transformer——接住 SD3 的架构并做精：MMDiT 双流 block + 单流 block、位置编码换 RoPE、文本编码 CLIP-L + T5-XXL（4.7B）。发布时以<b>文字渲染与手部/肢体结构</b>的突破公认『SD3 路线的正确打开方式』。三档：<b>[pro]</b> 仅 API 闭源；<b>[dev]</b> 开放权重、非商用许可（权重不可商用，但官方模型卡写明<b>生成物可自由商用</b>）；<b>[schnell]</b>（德语『快』）Apache 2.0 全开源，经潜空间对抗蒸馏 1–4 步出图。",
@@ -646,6 +663,7 @@ const SECTIONS = [
     },
     {
       heading: "MiniMax H3（海螺 · 全模态视频生成）",
+      meta: { released: "2026-08-03 开源", status: "active" },
       paragraphs: [
         "MiniMax H3 是稀宇科技（海螺 AI/Hailuo 背后的公司）的<b>全模态视频生成基础模型</b>，2026-07-31 API 先行、<b>2026-08-03 开放权重</b>，是 Hailuo 2.3 之后的新一代。社区格局一句话：<b>H3 负责全模态开源，Hailuo 线负责线上产品</b>。它是目前开源视频阵营里少数『音画一体』的原生生成者——对白、拟音、配乐、环境音与画面同一次生成，而非后期配音。",
         "<b>架构（硬核）</b>：33B 参数的<b>稠密单流 Transformer</b>（H3-Omni-Transformer），文本/图像/视频/音频统一进一条管线处理；输出最高约 2K 分辨率、单段最长约 15 秒。文本/多模态编码器直接复用<b>阿里 Qwen3-VL-32B</b> 的完整预训练权重（官方选型而非自训）——延续『站在开源巨人肩上』的路线（Z-Image 用 Qwen3-4B 同理）。",
@@ -666,6 +684,18 @@ const SECTIONS = [
         ]
       },
       callout: { type: "key", title: "为什么值得记名字", text: "H3 代表的『全模态单流』是视频生成的下一站：一个 Transformer 同时吃文本、图像、视频、音频，输出即成片带声。它与 Wan 2.2（MoE 分工）构成开源视频的两条路线——看懂 H3 的文件命名（fl2va/convrot/nvfp4），也就看懂了新一代开源模型『拆分分发+层层量化』的生存方式。" }
+    },
+    {
+      heading: "Nano Banana（Google Gemini 图像）",
+      meta: { released: "2025-08-26", updated: "Nano Banana 2.1（2026-10-06）", status: "active", note: "代号最初匿名混入盲测榜，公开即病毒式出圈" },
+      paragraphs: [
+        "Nano Banana（中文社区简称『纳米香蕉』或直接叫『香蕉』）是 Google 图像生成产品线的品牌名，本体是 <b>Gemini 系列的图像能力</b>：2025-08-26 以 Gemini 2.5 Flash Image 之名双品牌发布，靠『一句话改图』的对话式编辑病毒式出圈，一度霸榜 LMArena、宣布累计生成 50 亿张图。名字来源相当随性——产品经理 Naina Raisinghani 的绰号『Naina Banana』加上『Nano』合体，2026-01 起升级为全生态品牌（连 Gemini App 图标都换成了黄色香蕉）。",
+        "<b>版本谱系（品牌名 = 模型名双轨制）</b>：Nano Banana（2025-08，Gemini 2.5 Flash Image）→ <b>Nano Banana Pro</b>（2025-11-20，Gemini 3 Pro Image，最高 2K、5 角色一致性、对象保真至 14 个）→ <b>Nano Banana 2</b>（2026-02-26，Gemini 3.1 Flash Image，原生 2K/最高 4K）→ NB2 Lite（2026-06-30，Flash-Lite Image，约 4 秒出图的最低价档）→ <b>Nano Banana 2.1</b>（2026-10-06，主打设计/蒙版编辑/多人物一致性，原生 4K）。看文章记不住代号时记住一句话：<b>NB 系列＝Gemini Image 的艺名，数字越大越新</b>。",
+        "<b>能力画像</b>：核心卖点是<b>对话式连续编辑</b>——『把外套换成红色、其他都别动』这种多轮指令是它的原生场景；角色一致性初代即宣称 95%+；多图参考融合、图内文字渲染/信息图逐代增强（2.1 的小字号密集文字仍可能发糊）。与 OpenAI 的 GPT-Image 是同一赛道的直接对手：2026 年 GPT Image 系列在竞技场榜暂时反超，Google 以『半价+速度』应战（2.1 单图约 $0.034–0.076，Batch 半价）。",
+        "<b>产品线整合</b>：Nano Banana 已<b>取代 Google 自家的 Imagen</b>——官方 Firebase 文档发布迁移指南，全部 Imagen 变体于 2026-08-17 关停。接入：Gemini App（NB2 为免费默认档）、Gemini API、AI Studio、视频工具 Flow。闭源，不可本地部署。",
+        "定位：与 GPT-Image 并列的『对话式改图』双雄，代表闭源阵营的另一极——强在生态入口（Google 全家桶）与性价比；想要本地可控与微调自由，仍看开源阵营（Flux/Z-Image/WAI 系）。"
+      ],
+      callout: { type: "warn", title: "别和 Banana.dev 搞混", text: "『Nano Banana』是 Google 的图像模型品牌；『Banana.dev』是一家已停运的云 GPU 平台（见本节 Banana AI 块，纯历史案例）。两者毫无关系，名字撞车纯属巧合。" }
     }
   ]
 },
@@ -1406,7 +1436,7 @@ const SECTIONS = [
       paragraphs: [],
       faq: [
         { q: "NovelAI 和 Stable Diffusion 啥关系？", a: "NovelAI 的图像模型基于 SD 架构二次训练/微调，专注二次元，是 SD 生态的衍生分支。但 NovelAI 是闭源付费平台，不公开其训练后的权重，你下载不到『NovelAI 官方模型』，社区有模仿其画风的衍生模型（如 AnythingV3）。" },
-        { q: "Banana AI 是画图模型吗？", a: "不是。Banana.dev 是把 ML 模型（如 SD）部署成 API 的云算力平台。提到『Banana』在生图语境通常指用它托管 SD 的后端服务，而非一个独立模型。" },
+        { q: "Banana AI 是画图模型吗？", a: "不是。Banana.dev 曾是『把 ML 模型部署成 API』的云算力平台（2026 年已停运，作历史案例保留）；另外注意别和 Google 的图像模型品牌 Nano Banana 搞混——两者毫无关系。" },
         { q: "WebUI 和 ComfyUI 是同一个东西吗？", a: "不是。WebUI（A1111）是传统表单式界面，上手快；ComfyUI 是节点式，灵活但难入门。两者都是 SD 的图形前端，可共存共享模型文件。新手从 WebUI 起步，进阶学 ComfyUI。" },
         { q: "LoRA、CheckPoint、VAE 有什么区别？", a: "CheckPoint 是完整基础模型（几 GB，定整体画风）；LoRA 是小补丁（几十~几百 MB，定角色/画风/物件，叠加在 CP 上）；VAE 是解码器（影响色彩细节，可独立加载）。三者层次：CP 主宰 → LoRA 微调 → VAE 调色。" }
       ]
@@ -1466,7 +1496,13 @@ const RESOURCES = [
       { label: "ComfyUI 官方模板教程", url: "https://docs.comfy.org/tutorials/video/minimax/minimax-h3" },
       { label: "ComfyUI 量化权重（Comfy-Org）", url: "https://huggingface.co/Comfy-Org/MiniMax-H3" }
     ]},
-    { name: "DALL·E 3", role: "OpenAI 文生图，与 ChatGPT 集成，理解力强", links: [
+    { name: "Nano Banana", role: "Google Gemini 图像模型品牌（对话式改图，已取代 Imagen）", links: [
+      { label: "DeepMind 产品线页", url: "https://deepmind.google/models/gemini-image/" },
+      { label: "Nano Banana Pro 官方发布", url: "https://blog.google/innovation-and-ai/products/nano-banana-pro/" },
+      { label: "Gemini API 图像文档", url: "https://ai.google.dev/gemini-api/docs/image-generation" },
+      { label: "Imagen 迁移公告（中文）", url: "https://firebase.google.cn/docs/ai-logic/imagen-models-migration?hl=zh-cn" }
+    ]},
+    { name: "DALL·E 3", role: "OpenAI 文生图（已退役：2026-05 API 停用，由 GPT-Image 取代）", links: [
       { label: "官网", url: "https://openai.com/dall-e-3" },
       { label: "API 文档", url: "https://platform.openai.com/docs/guides/images" }
     ]},
@@ -1677,7 +1713,7 @@ const RESOURCES = [
   ]},
 
   { cat: "算力与部署", color: "#00ffc8", items: [
-    { name: "Banana.dev", role: "无服务器 GPU，把 SD 等模型部署为 API", links: [
+    { name: "Banana.dev", role: "无服务器 GPU 平台（已停运 2026，历史案例）", links: [
       { label: "官网", url: "https://www.banana.dev" }
     ]},
     { name: "Replicate", role: "云端运行开源模型，按次付费，API 友好", links: [
@@ -1780,7 +1816,8 @@ const RESOURCE_MAP = [
   { names: ["MiniMax", "H3", "MiniMax H3", "海螺", "FL2VA", "Ref2VA"], resCat: "基础模型", resName: "MiniMax H3", secId: "models", blockIdx: 20 },
   { names: ["Anything", "Anything V5", "anything-v5", "PrtRE"], resCat: "基础模型", resName: "Anything V5", secId: "tools", blockIdx: 14 },
   { names: ["control_v11", "ControlNet v1.1", "ControlNet 权重", "Annotators", "预处理器"], resCat: "微调与控制技术", resName: "ControlNet v1.1 权重全家桶", secId: "fine-tuning", blockIdx: 9 },
-  { names: ["diffusion_models", "text_encoders", "extra_model_paths", "flux-ae", "ae.safetensors", "模型目录"], resCat: "工具与界面", resName: "ComfyUI 模型目录与共享", secId: "tools", blockIdx: 14 }
+  { names: ["diffusion_models", "text_encoders", "extra_model_paths", "flux-ae", "ae.safetensors", "模型目录"], resCat: "工具与界面", resName: "ComfyUI 模型目录与共享", secId: "tools", blockIdx: 14 },
+  { names: ["Nano Banana", "纳米香蕉", "Gemini Image", "NB2", "Gemini 2.5 Flash Image", "Gemini 3 Pro Image"], resCat: "基础模型", resName: "Nano Banana", secId: "models", blockIdx: 21 }
 ];
 
 /* ---------- 参考书↔配置教程 双向跳转映射 ----------
