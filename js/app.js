@@ -90,6 +90,19 @@
   };
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
+  // 模型时间标注徽章：blk.meta = { released, updated, status: active|classic|legacy, note }
+  const STATUS_LABEL = { active: "现役", classic: "经典老将", legacy: "已偏旧" };
+  const metaChips = (blk) => {
+    const m = blk.meta;
+    if (!m) return "";
+    const chips = [];
+    if (m.released) chips.push(`<span class="chip chip-date">📅 发布 ${esc(m.released)}</span>`);
+    if (m.updated) chips.push(`<span class="chip chip-date">🔄 更新 ${esc(m.updated)}</span>`);
+    if (m.status && STATUS_LABEL[m.status])
+      chips.push(`<span class="chip chip-${m.status}"${m.note ? ` title="${esc(m.note)}"` : ""}>${STATUS_LABEL[m.status]}${m.note ? " ⓘ" : ""}</span>`);
+    return `<span class="meta-chips">${chips.join("")}</span>`;
+  };
+
   /* ---------- 1. 渲染侧边栏（支持展开/收起子标题） ---------- */
   function renderNav() {
     SECTIONS.forEach((sec, i) => {
@@ -404,7 +417,8 @@
         bh.innerHTML = `
           <span class="glyph" style="background:${sec.color}">${sec.icon}</span>
           ${isSub ? '<span class="sub-badge">补充阅读</span>' : ""}
-          <h3>${esc(blk.heading)}</h3>`;
+          <h3>${esc(blk.heading)}</h3>
+          ${metaChips(blk)}`;
         block.appendChild(bh);
 
         // 段落
@@ -578,7 +592,7 @@
           }
         });
       },
-      { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
+      { threshold: 0, rootMargin: "0px 0px -40px 0px" }
     );
     document.querySelectorAll(".fade-in").forEach((e) => io.observe(e));
   }
