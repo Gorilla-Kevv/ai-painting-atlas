@@ -1,8 +1,8 @@
 # PROGRESS — AI 生图知识图谱
 
-## 进度看板（10.10 01:38 更新 · 阶段 23 已完成）
-- 分支策略：`knowledge-expansion`（知识条目扩充专用）↔ `main`（发布线）——阶段 17–21 已合并进 `main` 并推送 GitHub Pages；阶段 22 直接在 `main` 上完成并已提交（`0945aed`）；阶段 23 在 `knowledge-expansion` 完成（已快进对齐 `main`，待合回发布）
-- 当前正在开发任务：无（阶段 23 已完成并校验，待合回 main/推送由用户发起）
+## 进度看板（10.10 01:47 更新 · 阶段 23 已合并发布）
+- 分支策略：`knowledge-expansion`（知识条目扩充专用）↔ `main`（发布线）——阶段 17–23 均已合并进 `main` 并推送 GitHub Pages（阶段 23 合并提交 `5db46f0`，Pages built）
+- 当前正在开发任务：无
 - 下一阶段任务：待定（候选见 HANDOFF「下一步」）
 - 可提前进行的任务：投稿限流加固（RLS 每人 ≤5 条 pending）
 - 未完成的任务：3D 图谱 / 思维导图纳入阶段 16–21 新增条目（债务项，需评估性能）
@@ -184,8 +184,8 @@
 - **测试结果**：`node --check js/data.js` 通过；结构校验 models=20（b17-19 正式块）、tools=14（b12/b13 SUB→4，parentIdx 指向非 sub 块）、RESOURCE_MAP 46 条全部解析有效、术语 80（重复仅既遗留"工作流"1 条，非本次引入）、资源卡 65 无重名；浏览器实测：三新块锚点/标题/表格/.callout 渲染正常、导航含 SDXL/FLUX 等新条目、Forge 主块栏内 [btn,panel] 交替展开独立（两面板互不影响且嵌套于 tools-b4）、正文→资源卡双向跳转正确（Flux 卡→models-b19、Forge Neo→tools-b5）；console 仅既有 supabase ERR_ABORTED（与本改动无关）
 - **改动文件**：`js/data.js`（models +3 块、tools +2 sub、5 处既有正文修订、术语 +10、资源卡 +2/增强 3、映射 +3/修订 2）、`index.html`（版本号）、`PROGRESS.md`/`HANDOFF.md`
 - **风险**：FLUX.2/Kontext/BFL 融资等时效性强（建议半年复查）；"Neo 支持 Linux/macOS"与官方 Forge 冻结状态为 2026-10 快照，后续可能变动；SD3 与 Essential AI 合作一说按媒体通说表述（官方原文已不可直连）
-- **下一阶段入口**：knowledge-expansion 合回 main 并推送发布（待用户发起）/ 采样器与调度器专题 / ControlNet 专题 / 3D 图谱与思维导图纳入 16–23 阶段新增条目（债务项）
-- **本次文档更新时间**：10.10 01:36
+- **下一阶段入口**：其他重点章节拓展（采样器/调度器、ControlNet 专题）/ 3D 图谱与思维导图纳入 16–23 阶段新增条目（债务项）——阶段 23 已合回 main 并推送发布（10.10 01:47）
+- **本次文档更新时间**：10.10 01:47
 
 ## 当前风险与债务
 
