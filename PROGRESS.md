@@ -1,8 +1,8 @@
 # PROGRESS — AI 生图知识图谱
 
-## 进度看板（10.7 15:40 更新 · 阶段 22 反推流扩充已完成）
-- 分支策略：`knowledge-expansion`（知识条目扩充专用）↔ `main`（发布线）——阶段 17–21 已合并进 `main` 并推送 GitHub Pages；阶段 22 直接在 `main` 上完成（待提交发布）
-- 当前正在开发任务：无（阶段 22 内容已完成、已校验，待提交/推送）
+## 进度看板（10.10 01:38 更新 · 阶段 23 已完成）
+- 分支策略：`knowledge-expansion`（知识条目扩充专用）↔ `main`（发布线）——阶段 17–21 已合并进 `main` 并推送 GitHub Pages；阶段 22 直接在 `main` 上完成并已提交（`0945aed`）；阶段 23 在 `knowledge-expansion` 完成（已快进对齐 `main`，待合回发布）
+- 当前正在开发任务：无（阶段 23 已完成并校验，待合回 main/推送由用户发起）
 - 下一阶段任务：待定（候选见 HANDOFF「下一步」）
 - 可提前进行的任务：投稿限流加固（RLS 每人 ≤5 条 pending）
 - 未完成的任务：3D 图谱 / 思维导图纳入阶段 16–21 新增条目（债务项，需评估性能）
@@ -33,6 +33,7 @@
 | 20 | 二次元工作流 + 审查分层 | 主流工作流全景（EPS/VPred、六步链）+ 审查机制四层结构与合规边界 | ✅ |
 | 21 | 补充阅读栏内展开修正 | 面板改为栏内跟随各自按钮（[btn,panel] 交替） | ✅ |
 | 22 | 反推流知识扩充 | 反推原理/三条路线 + PixAI Tagger vs WD14 选型 + ComfyUI 反推流实战与节点包 | ✅ |
+| 23 | SD 家族与 Forge 深度扩充 | SDXL / SD3.5 / FLUX 三个专块 + Forge 两篇折叠选读（架构硬核/三条线实战），术语+10 资源卡+2 | ✅ |
 
 ## 阶段 15
 
@@ -162,6 +163,29 @@
 - **风险**：PixAI Tagger benchmark 与版本号时效性强（半年内建议复查）；TaggerPlus/sln77 为社区小众插件（star 数低），信息以仓库 README 为准，后续可能变动；RunningHub 工作流页可能下架
 - **下一阶段入口**：推送发布 / 采样器与调度器专题 / ControlNet 专题 / 3D 图谱与思维导图纳入 16–22 阶段新增条目（债务项）
 - **本次文档更新时间**：10.7 15:40
+
+## 阶段 23 SD 家族与 Forge 深度扩充 [计划时间：10.10 01:15 BY Qoder][完成时间：10.10 01:36 BY Qoder]
+
+- **分支**：`knowledge-expansion`（自 main@0945aed 快进对齐后开工）
+- **素材来源**：4 个并发联网调研子任务（Forge/SDXL/SD3.5/FLUX，检索日期 2026-10-10），全部关键事实带来源 URL；存疑项（expertise classifier 阈值、SD3 泄露传闻、GAIA 成员说）一律未写入
+- **已完成**：
+  - **models 段尾追加 3 个正式块（严格追加，映射零破坏）**：
+    - b17「SDXL（Stable Diffusion XL）」——0.5/0.9/1.0 版本史、2.6B U-Net、双 CLIP 编码器（77 token 各自截断的辨析）、base+refiner 专家集合与社区弃用 refiner 的现实、微条件化（接站内 1024 尺寸表）、OpenRAIL++-M 许可、2025-26 生态地位（Pony/Illustrious/NoobAI 皆其衍生）；SD1.5 vs SDXL 对照表
+    - b18「SD3 / SD3.5」——MMDiT+Rectified Flow（arXiv 2403.03206）、三文本编码器与 T5 可关、You Draw It 众包发布、SD3 Medium 翻车与 Civitai 下架→2024-07-05 改 Community License、SD3.5 Large 8.1B/Medium 三档与 9.9GB 口径、Stability 公司剧情线（Mostaque 辞任→2026-08 $76M B 轮，未破产、转向音频娱乐）、SDXL vs SD3.5 架构对照表、"代码 MIT≠权重 Apache"误区警示
+    - b19「FLUX（Black Forest Labs）」——BFL 创立与融资线（2025-12 $300M B 轮/估值 $3.25B）、FLUX.1 12B 三档与 guidance distillation（无 CFG 之因）、家族树（Tools/1.1 Pro/Kontext/Krea）、FLUX.2（32B+4B flow-VAE+单 Mistral-3 24B VLM、10 参考图、4MP；klein 4B Apache 2.0 亚秒级）、FLUX.3 多模态现状一句、量化梯度（FP16 24GB/FP8 12GB/GGUF 6-8GB）与采样参数、三档速查表
+  - **tools 段尾追加 2 个 sub 块（parentIdx:4 挂 Forge 主块下，复用阶段 19 模式）**：
+    - b12「Forge 架构硬核：UNet Patcher 与显存管理」——声明式补丁 vs monkey-patch（model_hijack.layers 废除→扩展失效根因）、Unet Storage/Swap Method/Swap Location/GPU Weight 实控项、--cuda-stream 等三实验开关、Flux NF4/FP8/GGUF 量化路径与"勿 NF4 套 fp8"、特供采样器实名勘正（DPM++ 2M Turbo 系，非 B-turbo/B-lcm）
+    - b13「Forge 系三条线与安装迁移实战」——官方冻结时间线（lllyasviel 末次提交 2024-11-01）、Classic/Neo/reForge 现状（reForge 2025-04 停更、Neo 月更 v2.30）、**Neo 平台支持纠正（Linux/macOS 官方 Wiki，'仅 Win+N'口径过时）**、git 分支式迁移与 --forge-ref-* 挂库、注意力后端固定优先级、四条线速查表
+  - **既有内容修正**：tools-b5 Forge Neo 段"仅 Windows+NVIDIA"过时口径；b4 Forge 定位段补两篇选读导航与 reForge 停更信息；models-b0 版本演进与 b5「其他重要模型」Flux 条目加专块交叉引用；models summary 更新
+  - **GLOSSARY +10**（80 条）：SDXL、Refiner（两阶段精炼）、MMDiT、Rectified Flow、T5-XXL、Guidance Distillation、FLUX.1、FLUX.2、Kontext、Stability AI Community License；并修订「Forge Neo」术语旧口径
+  - **RESOURCES**：基础模型 +SDXL 1.0、+SD3.5 两卡；Flux 卡 +FLUX.2 博客/ComfyUI 中文教程链接；Forge 卡 +官方 Flux 教程/扩展替代索引链接
+  - **RESOURCE_MAP**：+3 条（SDXL→b17、SD3.5→b18、UNet Patcher/NF4/GGUF→tools-b4）；Flux 条重指向新专块 b19 并扩别名（Kontext/BFL/黑森林）；Forge Neo 条 +reForge 别名
+  - `index.html` data.js 版本号 → `20261010a`
+- **测试结果**：`node --check js/data.js` 通过；结构校验 models=20（b17-19 正式块）、tools=14（b12/b13 SUB→4，parentIdx 指向非 sub 块）、RESOURCE_MAP 46 条全部解析有效、术语 80（重复仅既遗留"工作流"1 条，非本次引入）、资源卡 65 无重名；浏览器实测：三新块锚点/标题/表格/.callout 渲染正常、导航含 SDXL/FLUX 等新条目、Forge 主块栏内 [btn,panel] 交替展开独立（两面板互不影响且嵌套于 tools-b4）、正文→资源卡双向跳转正确（Flux 卡→models-b19、Forge Neo→tools-b5）；console 仅既有 supabase ERR_ABORTED（与本改动无关）
+- **改动文件**：`js/data.js`（models +3 块、tools +2 sub、5 处既有正文修订、术语 +10、资源卡 +2/增强 3、映射 +3/修订 2）、`index.html`（版本号）、`PROGRESS.md`/`HANDOFF.md`
+- **风险**：FLUX.2/Kontext/BFL 融资等时效性强（建议半年复查）；"Neo 支持 Linux/macOS"与官方 Forge 冻结状态为 2026-10 快照，后续可能变动；SD3 与 Essential AI 合作一说按媒体通说表述（官方原文已不可直连）
+- **下一阶段入口**：knowledge-expansion 合回 main 并推送发布（待用户发起）/ 采样器与调度器专题 / ControlNet 专题 / 3D 图谱与思维导图纳入 16–23 阶段新增条目（债务项）
+- **本次文档更新时间**：10.10 01:36
 
 ## 当前风险与债务
 

@@ -39,7 +39,7 @@ const GLOSSARY = [
   { term: "GPT-Image", en: "GPT-Image", cat: "模型", desc: "OpenAI 自回归多模态图像模型家族，对话式精准编辑、图内文字与世界知识见长，经 ChatGPT 与 API 提供。" },
   { term: "Illustrious XL", en: "illu / ILXL", cat: "模型", desc: "OnomaAI 的开源 SDXL 动漫底模：原生 1536px、自然语言与 Danbooru 混合提示、刻意不调优的干净画布，WAI/NoobAI 皆源于此。" },
   { term: "Forge", en: "SD WebUI Forge", cat: "工具", desc: "lllyasviel 的 A1111 高性能分支：UNet Patcher + 动态显存卸载，4GB 跑 SDXL，原生支持 Flux/SD3.5，界面与插件近乎无缝迁移。" },
-  { term: "Forge Neo", en: "Forge Neo", cat: "工具", desc: "Forge 停滞后由 Haoming02 接手的社区分支（sd-webui-forge-classic 的 neo 线）：支持 Z-Image/Anima/Krea 2/Wan 2.2 等新模型，SageAttention 自动适配，仅 Windows+NVIDIA。" },
+  { term: "Forge Neo", en: "Forge Neo", cat: "工具", desc: "Forge 停滞后由 Haoming02 接手的活跃主线（sd-webui-forge-classic 的 neo 分支）：支持 Z-Image/Anima/Krea 2/Wan 2.2/Flux.2-Klein 等新模型，SageAttention 自动适配，月度发版，Linux/macOS 亦有官方指南。" },
   { term: "加速 LoRA", en: "Acceleration LoRA", cat: "微调", desc: "学『少步去噪行为』而非新概念的低秩适配（Lightning/Hyper-SD/LCM），可把 20–40 步压到 4–8 步；须配套 CFG=0 或低 CFG 与 trailing 调度器。" },
   { term: "原生分辨率", en: "Native Resolution", cat: "基础", desc: "模型训练时的画布尺寸（SD1.5≈512²、SDXL≈1024²、Illustrious 1536²）。出图越贴近原生越稳，超界会重复主体/构图崩坏，超高请走高清修复而非硬拉宽高。" },
   { term: "工作流", en: "Workflow", cat: "基础", desc: "ComfyUI 中由节点与连线组成的完整生成流程，可存为 JSON 或嵌入 PNG 分享，他人导入即可复现——『可执行的原理图』。" },
@@ -75,6 +75,16 @@ const GLOSSARY = [
   { term: "TIPO", en: "Text to Image with text Presampling for Prompt Optimization", cat: "工具", desc: "KohakuBlueleaf 的提示词扩写模型系统（含 DanTagGen）：把少量关键词或一句自然语言，扩写成按分类排好的完整标签串；ComfyUI 节点在 utils/promptgen 分类下。" },
   { term: "VLM 打标", en: "VLM Captioning / CLIP Interrogator", cat: "原理", desc: "用视觉语言模型（Florence2、CLIP Interrogator、Qwen-VL 等）把图写成自然语言描述。适合写实照片与非 Danbooru 体系，产出是句子而非标签。" },
   { term: "Danbooru 标签", en: "Danbooru Tags", cat: "基础", desc: "二次元模型训练所用的标签词汇体系（1girl、blonde_hair 等，下划线连写）。打标模型输出的正是这套词，所以反推结果能直接喂回模型。" },
+  { term: "SDXL", en: "Stable Diffusion XL", cat: "模型", desc: "Stability AI 2023-07 发布的第二代 SD 底模：原生 1024、2.6B U-Net、双 CLIP 文本编码器、尺寸/裁剪微条件化。Pony/Illustrious/NoobAI 等当代社区大模型皆为其衍生，是史上最大微调生态的底座。" },
+  { term: "Refiner（两阶段精炼）", en: "SDXL Refiner", cat: "模型", desc: "SDXL 1.0 官方的『专家集合』：refiner 以 img2img 接收 base 潜变量做高噪声末段二次精炼。社区实际很少使用，动漫衍生模型清一色只训 base。" },
+  { term: "MMDiT", en: "Multimodal Diffusion Transformer", cat: "原理", desc: "SD3/Flux 的去噪架构：图/文 token 各走独立权重流、在同一联合注意力中双向交换信息，取代 SDXL 的 U-Net+单向交叉注意力，是提示词理解飞跃的架构根源。" },
+  { term: "Rectified Flow", en: "流匹配", cat: "原理", desc: "学习『噪声→图像』直线概率路径的训练方式（SD3/Flux 采用）。相比传统扩散步数更少、scaling 更可预测，出自 ICML 2024 的 SD3 论文。" },
+  { term: "T5-XXL", en: "T5-XXL", cat: "原理", desc: "约 4.7B 参数的语言模型文本编码器，SD3/FLUX.1 用它大幅提升长句理解与图内文字渲染；关闭它可省大量显存、画质仅轻微下降。" },
+  { term: "Guidance Distillation", en: "引导蒸馏", cat: "原理", desc: "把 CFG 引导的效果蒸馏进模型权重（FLUX.1 dev/schnell 的做法）——因此没有传统 CFG 旋钮，改用 guidance 值（dev 常用 3.5）调节遵循强度。" },
+  { term: "FLUX.1", en: "FLUX.1", cat: "模型", desc: "Black Forest Labs 2024-08 发布的 12B MMDiT+流匹配模型：文字渲染与手部结构突破。三档 pro（API）/dev（开放权重非商用、产出物可商用）/schnell（Apache 2.0、1–4 步）。" },
+  { term: "FLUX.2", en: "FLUX.2", cat: "模型", desc: "BFL 2025-11 发布的 32B 新一代：4B flow-VAE、单个 Mistral-3 24B VLM 文本编码器、最多 10 张参考图、4MP 输出；[klein] 4B 蒸馏版 Apache 2.0 可商用、亚秒级推理。" },
+  { term: "Kontext", en: "FLUX.1 Kontext", cat: "模型", desc: "BFL 2025-05 的上下文图像编辑模型：保住角色一致性只改指定内容（『换衣不换人』），dev 权重 7 月开源，是生图进入『编辑时代』的标志。" },
+  { term: "Stability AI Community License", en: "Community License", cat: "基础", desc: "SD3/SD3.5 的权重许可：年收入低于 100 万美元免费商用，超出需购买授权。注意与代码仓库的 MIT 许可是两回事——『开源』不等于可商用。" },
 ];
 
 /* ---------- 主内容模块 ---------- */
@@ -262,13 +272,13 @@ const SECTIONS = [
   en: "Models",
   icon: "◆",
   color: "#ff2e88",
-  summary: "盘点 Stable Diffusion、DALL·E、Midjourney、NovelAI、Banana AI、Flux，以及 WAI、Anima、Krea 2、Wan 2.2、Z-Image、Seedream、GPT-Image 等新老主流模型的特点与定位。",
+  summary: "盘点 Stable Diffusion、DALL·E、Midjourney、NovelAI、Banana AI，以及 SDXL、SD3.5、FLUX 三大 SD 家族节点与 WAI、Anima、Krea 2、Wan 2.2、Z-Image、Seedream、GPT-Image 等新老主流模型的特点与定位。",
   sections: [
     {
       heading: "Stable Diffusion（SD）",
       paragraphs: [
         "Stable Diffusion 由 Stability AI 于 2022 年 8 月开源，是 AI 生图开源生态的基石。它基于潜扩散模型（LDM），可在 4GB 显存的消费级显卡上运行，让普通用户也能本地出图，这是它引爆热潮的根本原因。",
-        "版本演进：SD 1.4（初代）/1.5（最经典、生态最丰富）→ SD 2.x（版权清理、画风偏写实）→ SDXL（1024 分辨率、质量大幅提升）→ SD3（引入多模态 Transformer、文本理解强）→ SD3.5。社区衍生模型（如 AnythingV3、DreamShaper、二次元/写实向各种 CP）多基于 1.5 或 SDXL 微调。",
+        "版本演进：SD 1.4（初代）/1.5（最经典、生态最丰富）→ SD 2.x（版权清理、画风偏写实）→ SDXL（1024 分辨率、质量大幅提升）→ SD3（引入多模态 Transformer、文本理解强）→ SD3.5；BFL 的 FLUX 则是同代架构的接棒者。社区衍生模型（如 AnythingV3、DreamShaper、二次元/写实向各种 CP）多基于 1.5 或 SDXL 微调。SDXL、SD3/SD3.5、FLUX 在本节末尾各有专块展开。",
         "SD 的最大价值是『开源 + 可本地 + 插件生态』。LoRA、ControlNet、WebUI、ComfyUI 几乎都围绕 SD 构建。缺点：默认画风偏『塑料感』，需调参与微调；提示词门槛较高。"
       ],
       list: { title: "SD 适合谁", items: [
@@ -320,7 +330,7 @@ const SECTIONS = [
       heading: "其他重要模型",
       paragraphs: [
         "Imagen（Google）：闭源，文字理解强，研究中知名，商业产品融入 Gemini/Vertex AI。",
-        "Flux（Black Forest Labs，2024）：由原 SD 团队创办，新一代开源/半开源模型，文本理解与生成质量极强，被认为是 SD3 之后的新标杆。",
+        "Flux（Black Forest Labs，2024）：由原 SD 团队创办，新一代开源/半开源模型，文本理解与生成质量极强，被认为是 SD3 之后的新标杆——详见本节『FLUX』专块。",
         "Stable Cascade / Kandinsky / PixArt / HunyuanDiT：各具特色的开源模型，丰富生态。",
         "国产模型：百度文心一格、阿里通义万相、腾讯混元生图、字节豆包/即梦等，中文理解好、合规、适合国内用户与商用。"
       ],
@@ -557,6 +567,75 @@ const SECTIONS = [
         ]
       },
       callout: { type: "warn", title: "红线清单（零容忍）", text: "①未成年人性化内容——刑事犯罪，AI 生成同样追责；②真人肖像未经同意；③非自愿性内容；④违反模型许可证的商用与分发。『本地无审核』意味着责任主体是你自己，而非平台替你把关。" }
+    },
+    {
+      heading: "SDXL（Stable Diffusion XL）",
+      paragraphs: [
+        "SDXL 是 Stability AI 于 2023-07-26 正式发布的第二代 SD 底模：画布从 SD1.5 的 512 提到<b>原生 1024</b>，U-Net 扩容到 <b>2.6B 参数</b>（约为 SD1.x/2.x 的 3 倍；含双文本编码器与 refiner 的整体口径常被报为约 6.6B）。版本线：0.5 预览（2023-05，仅 API）→ 0.9（6 月底，换上第二文本编码器）→ 1.0（以更新的美学与水印过滤策略、真实+合成数据混合重训）。许可为 CreativeML OpenRAIL++-M，权重开源可商用——此后它成了<b>史上最大微调生态的底座</b>。",
+        "<b>双文本编码器</b>：在 CLIP ViT-L/14 之外引入 OpenCLIP ViT-bigG，两者的特征按通道拼接后作为条件。注意每个编码器仍各自截断在 77 token——提示词的『长度上限』并没有翻倍，提升的是语义丰富度与贴合度。",
+        "<b>base + refiner『专家集合』</b>：SDXL 1.0 官方是双模型系统——refiner 是高噪声末段的补充分支，以 img2img 方式接收 base 的潜变量做二次精炼（diffusers 官方示例按 80/20 步数切分；社区常用 base 约 6 步 + refiner 去噪强度 0.2–0.3）。实践中动漫社区几乎不用 refiner（收益小、显存与耗时翻倍），所以 Pony、Illustrious 等社区衍生清一色只训 base——官方两阶段管线如今更像一次『历史实验』。",
+        "<b>条件化（硬核）</b>：训练采用多长宽比分桶（64px 步长、固定总像素），并做<b>微条件化（micro-conditioning）</b>——原始尺寸、目标尺寸、裁剪坐标经 Fourier 编码注入时间步信号，模型因此『知道』画布形状与构图占满度。本文件『SDXL 推荐出图尺寸表』正出自这套机制；推理时正确传参（各 UI 已打包成选项）是免费的提质。另有训练期的专业能力分类器（expertise classifier）用于筛选高质量图文对。",
+        "<b>生态地位（2025–2026）</b>：官方迭代在 SDXL Turbo（2023-11，ADD 对抗蒸馏 1–4 步、最佳 512）之后基本止步，字节 SDXL-Lightning 与 Hyper-SD 见『加速 LoRA』一节。但社区端它仍是压制 SD3/Flux 的存在：写实系 RealVisXL、Juggernaut XL，动漫系 Pony Diffusion V6 XL、Illustrious、NoobAI 全部是 SDXL 架构——1024 尺寸表、LoRA 格式、ControlNet 在这一整代模型里通用。显存门槛 fp16 约 8GB 舒适，经 Forge 可压到 4GB。",
+        "定位：SD1.5 之后开源生态的第二座底座；今天你用的绝大多数社区大模型，往回数两代都是它。"
+      ],
+      table: {
+        title: "SD1.5 vs SDXL 速查",
+        head: ["维度", "SD1.5", "SDXL 1.0"],
+        rows: [
+          ["原生分辨率", "512×512", "1024×1024"],
+          ["U-Net 参数", "约 0.87B", "2.6B（3 倍）"],
+          ["文本编码器", "CLIP-L 单路", "CLIP-L + OpenCLIP-bigG 双路"],
+          ["尺寸/构图感知", "无", "微条件化（size & crop）"],
+          ["LoRA 互认", "SDXL LoRA 与其不通用（条件输入不同）", "—"],
+          ["权重许可", "CreativeML OpenRAIL-M", "CreativeML OpenRAIL++-M"]
+        ]
+      },
+      callout: { type: "key", title: "和衍生模型的关系", text: "选 Pony / Illustrious / WAI 时，你选的其实是『SDXL 架构的社区衍生』——尺寸表、LoRA 生态、训练工具链一脉相承。看懂 SDXL，就看懂了这代二次元与写实模型的一半底层逻辑。" }
+    },
+    {
+      heading: "SD3 / SD3.5（Stable Diffusion 3 系）",
+      paragraphs: [
+        "SD3 是 Stability AI 2024 年的第三代架构：彻底抛弃 U-Net，改用 <b>MMDiT + Rectified Flow</b>（论文《Scaling Rectified Flow Transformers for High-Resolution Image Synthesis》，arXiv 2403.03206，ICML 2024）。发布前还玩过花活——2024-03 用交互式文章《You Draw It》（中文媒体译『益起猜』）众包人机配文来改进模型（原文页现已下线）；多家媒体报道其基础模型与 Essential AI 合作预训练。",
+        "<b>MMDiT</b>：图像与文本各有一路独立权重的 token 流，但在同一联合注意力里<b>双向</b>交换信息——对比 SDXL『图像为主、文本只是交叉注意力条件』的单向模式，长句指令与空间关系的遵循能力从架构上被打开。<b>Rectified Flow（流匹配）</b>：学习从噪声到图像的直线概率路径，训练 scaling 更可预测，所需去噪步数显著少于传统扩散。<b>三个文本编码器</b>：CLIP-L + OpenCLIP-bigG + T5-XXL（4.7B）——T5 的引入是提示词理解与图内文字渲染飞跃的直接来源；关掉 T5 显存大降、画质仅轻微受损，消费级玩法常这么省。",
+        "<b>SD3 Medium 的翻车（2024-06）</b>：2B 的 Medium 率先开源，却因人体解剖（手部/肢体）与人脸多样性问题被社区差评；最初的『不可商用』许可更导致 Civitai 全面下架 SD3 相关模型与 LoRA。Stability 于 2024-07-05 改发 <b>Stability AI Community License</b>（年收入 < 100 万美元免费商用）才止住风波。Pro 走 API 闭源；发布会上承诺的 Ultra 始终未发布。",
+        "<b>SD3.5（2024-10-22）</b>：Large（8.1B）与蒸馏版 Large Turbo 先发，Medium（官方标称 2.5B、HF 仓库口径约 2B）10-29 补上。改进集中在提示词遵循、构图光影、人群多样性与文字渲染。权重均按 Community License 发布（GitHub 代码仓库是 MIT——代码与权重许可是两回事，别混）。Medium 关闭 T5 时官方称 <b>9.9GB 显存</b>可跑、NF4 量化适配消费卡，发布即获 ComfyUI 支持，Forge/Forge Neo 随后兼容。",
+        "<b>公司剧情线</b>：SD3 系列命途多舛的背景是 Stability 自身——2024-03 创始 CEO Emad Mostaque 辞职、Prem Akkaraju 接任，2024 年中被曝资金链紧张、探索出售；随后获 WPP 投资（2025-03），2026-08 完成 7600 万美元 B 轮（EA、索尼音乐、环球、华纳、AMD Ventures 参投，累计融资 2.32 亿美元）——没有破产，但战略重心转向音乐/游戏/娱乐创作者（Stable Audio 3.0），而 SD3.5 就此成为 Stability 最后一代主流开源图像底模。",
+        "定位与技术遗产：开源社区热情很快流向同架构的 Flux，SD3.5 采纳度相对弱势；但 Medium 凭低显存门槛与较宽松商用许可仍有稳定的 LoRA/ControlNet 生态。它的真正遗产是<b>架构范式</b>——MMDiT + Rectified Flow 被 Flux 接棒证明是正确路线，也催生了 Qwen-Image、Z-Image 等国产同族设计。"
+      ],
+      table: {
+        title: "SDXL vs SD3.5 架构对照",
+        head: ["维度", "SDXL 1.0", "SD3.5"],
+        rows: [
+          ["去噪网络", "U-Net 2.6B", "MMDiT Transformer（Large 8.1B）"],
+          ["训练目标", "ε-prediction 扩散", "Rectified Flow（流匹配）"],
+          ["文本编码器", "双 CLIP（拼接）", "CLIP-L + bigG + T5-XXL（T5 可关）"],
+          ["分辨率", "原生 1024", "1024 级（Medium 渐进 256→1440）"],
+          ["权重许可", "OpenRAIL++-M（可商用）", "Community License（<$1M 营收免费商用）"]
+        ]
+      },
+      callout: { type: "warn", title: "常见误区", text: "①SD3.5 权重<b>不是</b> Apache 2.0——『代码 MIT、权重 Community License』双许可，营收超 100 万美元需向 Stability 购买商用授权；②Ultra 从未发布；③SD3 初代的『下架风波』是许可问题，不是技术问题。" }
+    },
+    {
+      heading: "FLUX（Black Forest Labs）",
+      paragraphs: [
+        "Black Forest Labs（BFL，2024 年成立于德国弗莱堡）由 Latent Diffusion（SD 的源论文）第一作者 <b>Robin Rombach</b> 与 Patrick Esser、Andreas Blattmann 等前 Stability 核心研究员创立——中文社区俗称『黑森林』。资本路径极快：2024-08 种子轮约 3100 万美元、一个月后 1 亿美元（估值十亿）；2025-12 完成 3 亿美元 B 轮（Salesforce 领投，a16z/NVIDIA/淡马锡等参投，估值 32.5 亿美元），合作方案里躺着 Adobe、ElevenLabs、fal。",
+        "<b>FLUX.1（2024-08）</b>：12B 参数的 Rectified Flow Transformer——接住 SD3 的架构并做精：MMDiT 双流 block + 单流 block、位置编码换 RoPE、文本编码 CLIP-L + T5-XXL（4.7B）。发布时以<b>文字渲染与手部/肢体结构</b>的突破公认『SD3 路线的正确打开方式』。三档：<b>[pro]</b> 仅 API 闭源；<b>[dev]</b> 开放权重、非商用许可（权重不可商用，但官方模型卡写明<b>生成物可自由商用</b>）；<b>[schnell]</b>（德语『快』）Apache 2.0 全开源，经潜空间对抗蒸馏 1–4 步出图。",
+        "<b>Guidance Distillation（引导蒸馏）</b>：dev/schnell 没有传统 CFG 旋钮——CFG 的效果已被蒸馏进权重，改用 guidance 值调节遵循强度（dev 常用 3.5 附近）。这就是『CFG=7 的老经验在 Flux 上失灵』的原因。",
+        "<b>家族树</b>：2024-11 FLUX.1 Tools（Fill 补图/扩图、Depth/Canny 控制、Redux 风格混合）；2025-05 FLUX.1.1 Pro（API，约 2 倍速提质）与 <b>Kontext</b>——上下文图像编辑，『换衣不换人』式保角色一致性改图（dev 权重 7 月初开放），是生图进『编辑时代』的标志性产品；2025-07 Krea [dev]（与 Krea 联调的美学/写实向微调）。",
+        "<b>FLUX.2（2025-11-25）</b>：32B Transformer + 4B <b>flow-VAE</b>（VAE 本体 Apache 2.0）；最大架构变化是文本编码器抛弃 CLIP/T5 组合，改挂<b>单个 Mistral-3 24B 视觉语言模型</b>。支持<b>最多 10 张参考图</b>、最高 4MP 输出，写实感与文字渲染再上一档。档位：pro/flex（API）、[dev]（开放权重、非商用）、<b>[klein]</b>（2026 年初开源）——4B 蒸馏版做到亚秒级推理且 <b>Apache 2.0 可商用</b>（另有 9B base 非商用），把 Flux 拉进消费级显卡与工业部署的射程。2026-07 起 FLUX.3 研究版进一步把图像/视频/音频统一进多模态 flow 框架。",
+        "<b>本地怎么跑</b>：dev（12B）FP16 约需 24GB、FP8 约 12GB，GGUF/NF4 量化压到 6–8GB 显存，Nunchaku 4-bit 加速已被 Forge Neo/ComfyUI 支持（详见 Forge 章节）。社区参数：dev 20–50 步、guidance 3.5；schnell 1–4 步、guidance 1.0；klein 4B 4 步即可。写实方向它是当前社区 LoRA 与微调的第一选择，代价是 LoRA 训练显存门槛高于 SDXL。",
+        "定位：SD 血统的『正规军续作』——开源画质标杆、文字渲染与结构正确性的代名词；许可上 dev 免费但商用要分清『权重』与『产出物』。"
+      ],
+      table: {
+        title: "FLUX.1 三档速查",
+        head: ["档位", "许可", "出图步数", "获取方式"],
+        rows: [
+          ["[pro]", "闭源商用", "—", "仅 API（BFL/fal/Replicate 等）"],
+          ["[dev]", "开放权重·非商用（产出物可商用）", "20–50", "Hugging Face 下载"],
+          ["[schnell]", "Apache 2.0", "1–4", "Hugging Face 下载"]
+        ]
+      },
+      callout: { type: "info", title: "Flux vs SD3：一场家族内斗", text: "两者同用 MMDiT + Rectified Flow，而 BFL 团队正是当年在 Stability 训出 SD 的原班人马。社区普遍把 Flux 视为『SD3 路线的正确打开方式』——同样的架构骨架，更扎实的训调与审美。看懂这对表亲，就看懂了 2024 之后开源生图的主线叙事。" }
     }
   ]
 },
@@ -632,7 +711,7 @@ const SECTIONS = [
         "Forge 是 ControlNet 作者 lllyasviel 于 2024 年推出的 A1111 高性能分支（stable-diffusion-webui-forge）。口号是『更好用的 WebUI』：界面、提示词语法、插件接口与 A1111 几乎一致，教程和肌肉记忆直接迁移，但底层重写了模型加载器、采样调度与显存管理。",
         "核心是 <b>UNet Patcher + 动态显存卸载</b>技术：模型权重在 CPU/GPU 间按需分页，不再像原版 WebUI 那样一次性塞爆显存。效果（SDXL 1024 出图）：8GB 显存提速 30–45%、6GB 提速 60–75%、4GB 可跑 SDXL / 2GB 可跑 SD1.5；显存越大收益越小（4090 仅 3–6%）。ControlNet 组合场景再快 30–45%，最大可用分辨率与批次数提升 2–6 倍。",
         "其他能力：原生支持 Flux Dev/Schnell、SD3.5（无需 ComfyUI 也能玩新架构）；预装 ControlNet、FreeU、PhotoMaker、SVD、Z123、AnimateDiff；内置 DDPM、DPM++ 2M Turbo、Euler a Turbo 等蒸馏友好采样器；Flux 支持 NF4/FP8/GGUF 量化——6GB 显存即可跑 Flux NF4。许可 AGPL-3.0。",
-        "定位：想保留 A1111 操作习惯、显存 6–8GB 又想玩 SDXL/Flux 的用户，以及从 A1111 无痛迁移的用户（指向原 models 目录即可）。社区还有 Panchovix 维护的 reForge 分支（更激进合并 A1111 新特性）。"
+        "定位：想保留 A1111 操作习惯、显存 6–8GB 又想玩 SDXL/Flux 的用户，以及从 A1111 无痛迁移的用户（指向原 models 目录即可）。社区还有 Panchovix 维护的 reForge 分支（已于 2025-04 停更）。本节下方附两篇展开阅读：<b>架构硬核（UNet Patcher 与显存管理）→ Forge 系三条线与安装迁移实战</b>。"
       ],
       table: {
         title: "Forge 显存—能力速查（SDXL 1024）",
@@ -652,7 +731,7 @@ const SECTIONS = [
         "lllyasviel 因繁忙导致 Forge 更新停滞后，社区开发者 Haoming02 在 sd-webui-forge-classic 仓库接手维护，分出两条分支：<b>Forge Neo</b>（活跃开发线）与 <b>Forge Classic</b>（冻结的稳定存档，专精 SD1.5/SDXL、兼容旧扩展）。",
         "Forge Neo 的最大卖点是<b>新模型广度</b>：Flux（含 Nunchaku 量化加速）、Flux Kontext、Flux.2-Klein、Qwen-Image/-Edit、Z-Image、Wan 2.2、Anima、Krea 2、Chroma1-HD、Lumina-Image 等一众 2025–2026 新模型都能用熟悉的 A1111 式表单界面驱动——『想用 Anima/Krea2 但不想学 ComfyUI 节点』的人群的最佳归宿（WAI 作者也推荐它作为主力 UI）。",
         "工程改进：SageAttention / FlashAttention / xformers 按卡自动选择（RTX 50 系必须走 Sage/FlashAttention，xformers 已不兼容）；uv 包管理使安装体积从数 GB 降到数百 MB；UI Presets（如选 Flux 预设）自动适配不同模型的界面与参数组。",
-        "注意：仅 Windows + NVIDIA GPU（AMD/Intel 不支持，Mac 无官方方案）；VRAM 门槛 SD1.5 约 4GB、SDXL 约 6GB、Flux 系建议 16GB；更新非常频繁且偶有破坏性变更——稳定版本能不更就不更，更新前务必备份；部分 A1111 扩展不兼容（Regional Prompter 等头部插件自 2026 年 9 月起已适配）。"
+        "注意：Neo 现已提供 Linux/macOS 官方安装指南、AMD 卡有社区指南（主战场仍是 Windows+NVIDIA）；VRAM 门槛 SD1.5 约 4GB、SDXL 约 6GB、Flux 系建议 16GB；更新非常频繁且偶有破坏性变更——稳定版本能不更就不更，更新前务必备份；部分 A1111 扩展不兼容（Regional Prompter 等头部插件自 2026 年 9 月起已适配）。"
       ],
       callout: { type: "key", title: "怎么选", text: "老机器+旧工作流求稳 → Forge Classic 或原版 Forge；追新模型（Anima/Z-Image/Wan 2.2/Qwen-Image）+ A1111 界面习惯 → Forge Neo；复杂多模型工作流 → 还是 ComfyUI。安装推荐经 Stability Matrix 包管理器，便于多 UI 共享模型目录。" }
     },
@@ -807,6 +886,42 @@ const SECTIONS = [
         ]
       },
       callout: { type: "warn", title: "性能坑", text: "觉得『反推很慢』？先看 device 输出：显示 CPU ⚠ 说明 CUDA 12 运行库缺失，onnxruntime 静默降级，而原版节点不会报错。另外每张图重建 ONNX 会话会固定吃掉几秒——批量打标 100 张，就是几分钟的纯浪费。" }
+    },
+    {
+      sub: true,
+      parentIdx: 4,
+      heading: "Forge 架构硬核：UNet Patcher 与显存管理（选读）",
+      paragraphs: [
+        "<b>补丁方式的换代</b>：A1111 靠运行时 monkey-patch（model_hijack.layers API）魔改模型；Forge 改为声明式的 <b>UNet Patcher</b>——每种架构有独立的补丁模块（backend/diffusion_engine 下 sd15/sdxl/sd35/flux 各一档），新特性接进来只要百来行代码（README 演示 FreeU V2 的全部逻辑一个单文件搞定）。代价是 <b>model_hijack.layers 被废除</b>——依赖它的 A1111 扩展在 Forge 上直接失效，官方专门发布了替代扩展索引（仓库 Discussions 置顶 #1754）。",
+        "<b>显存管理不是 flag，是 UI</b>：A1111 那一套 --medvram/--lowvram/--precision 参数在 Forge <b>全部失效</b>（后端重写，不需要——无 flag 即可 SDXL@4GB、SD1.5@2GB）。真正的控制项在设置里：<b>Unet Storage</b>（Automatic / bnb-nf4 / float8-e4m3fn / float8-e5m2 / bnb-fp4，各带 fp16-LoRA 兼容变体——决定权重以什么精度驻留）；<b>Swap Method</b>（Queue 串行 / Async 双 worker，Async 约 +30%）；<b>Swap Location</b>（CPU / Shared 共享显存，Shared 快约 15% 但共享显存 OOM 会直接崩进程）；<b>GPU Weight 滑条</b>（允许 UNet 常驻显存的上限——官方明确警告『调太高反而是 OOM 与降速的主因』）。",
+        "<b>三个实验开关</b>：--always-offload-from-vram（更慢但最安全）；--cuda-stream（权重搬运独立流，6GB 卡跑 SDXL 可再 +15–25%，但 2060 等部分老卡有 NaN 风险）；--pin-shared-memory（约 +20%）。默认全关即可，低显存卡再逐个试。",
+        "<b>Flux 低显存路径</b>（官方教程 Discussions #981/#1050）：dev 全量约 11–12GB；<b>NF4</b>（bitsandbytes 4-bit，RTX30/40 系 + CUDA 11.7+）显著快于 FP8——别在 NF4 上再套 fp8 存储量化（纯浪费）；GTX10/20 系走不了 NF4、只能 fp8；<b>GGUF</b> Q8_0/Q5/Q4 原生加载，且 NF4/FP8/GGUF 都支持叠 LoRA。",
+        "<b>特供采样器的真名</b>：Forge 为蒸馏加速模型内置 <b>DPM++ 2M Turbo / DPM++ 2M SDE Turbo / Euler a Turbo / LCM Karras / DDPM / SGMUniform 系</b>（社区流传的 B-turbo/B-lcm 叫法并非实际名称）；Forge Neo 又追加 CFG++ 三采样器、Flux Realistic、Restart 等。"
+      ],
+      callout: { type: "key", title: "调优顺序（官方建议）", text: "默认 Automatic 够用 → 显存吃紧先动 Unet Storage（Flux 用 NF4/GGUF）→ 最后才微调 GPU Weight。反过来先把 GPU Weight 拉满，是新手 OOM 的头号原因。" }
+    },
+    {
+      sub: true,
+      parentIdx: 4,
+      heading: "Forge 系三条线与安装迁移实战（选读）",
+      paragraphs: [
+        "<b>官方 Forge 已事实冻结</b>：lllyasviel 最后一次个人提交是 2024-11-01，此后仅剩社区 PR（2025 全年约 34 次，止于 6 月）；仓库未归档（约 1.3 万 star、1100+ open issues），也从没按版本号发过 release——只有 latest（2024-02）与 previous（2024-07）两个一键包。今天装『官方 Forge』拿到的是一套冻结在 2024 年的 SD1.5/SDXL + 早期 Flux 体验。",
+        "<b>三条社区线（2026-10 现状）</b>：<b>Forge Classic</b>（Haoming02/sd-webui-forge-classic 的存档分支）——Gradio 3.41 时代的 previous 版 UI，专精 SD1.5/SDXL 与旧扩展，自述『只修关键 bug，建议转 Neo』；<b>Forge Neo</b>（同仓库默认分支）——唯一活跃主线，月度发版（2026-06 的 2.26 → 2026-10-08 的 2.30）；<b>reForge</b>（Panchovix）——2025-04-12 官宣停更（个人与健康原因），作者建议用户回原版 Forge 或 Classic，社区维护到 2026-04 为止，不建议新装。",
+        "<b>平台支持更新（纠正旧口径）</b>：『仅 Windows+NVIDIA』已过时——Forge Neo 官方 Wiki 已提供 Linux/macOS 安装指南，AMD 显卡也有社区指南（2026-10 核实现状）。",
+        "<b>安装与共存</b>：官方一键包内置 git+python（推荐 CUDA12.1+torch2.3.1 组合；CUDA12.4+torch2.4 最快但 xformers 易装坏）。从 A1111 无痛迁移：把 A1111 目录的 .git 指向 Forge 仓库当分支装，models/extensions 原样复用。Neo 走 uv 包管理（建议 Python 3.13），--model-ref 指中心模型目录，还有 --forge-ref-a1111-home / --forge-ref-comfy-home 直接挂 A1111/ComfyUI 的模型库；--uv-symlink 可把安装体积从约 7GB 压到约 100MB。多 UI 共存推荐配 Stability Matrix 统一管理。",
+        "<b>扩展的边界</b>：Neo 明确『第三方扩展问题一律不受理，扩展须自行适配 UI』，并移除了 SD2/SD3 支持、Hypernetwork、TI 训练与 CLIP/DeepBooru 反推；换来的是重写的 ControlNet UI（删掉误导性多输入，支持 LLLite、xinsir Union、Region 模式）与 LoRA 时段权重调度语法 &lt;lora:名称:[0.8@0,0.2@0.6]&gt;。注意力后端按固定顺序自动选择：SageAttention &gt; FlashAttention &gt; xformers &gt; PyTorch SDPA &gt; Basic（--sage/--flash/--xformers 只负责安装、不负责启用）。"
+      ],
+      table: {
+        title: "Forge 系四条线速查",
+        head: ["分支", "维护者", "现状（2026-10）", "适合"],
+        rows: [
+          ["官方 Forge", "lllyasviel", "事实冻结（仅社区 PR）", "想要原版『latest』体验"],
+          ["Forge Classic", "Haoming02", "只修关键 bug", "SD1.5/SDXL 旧工作流求稳"],
+          ["Forge Neo", "Haoming02", "月更活跃（v2.30）", "追新模型：Flux.2-Klein/Qwen-Image/Wan 2.2"],
+          ["reForge", "Panchovix→社区", "2025-04 官宣停更", "不建议新装"]
+        ]
+      },
+      callout: { type: "info", title: "找仓库认准正主", text: "GitHub 上『forge』重名仓库不少——正统 lineage 只有两个地址：lllyasviel/stable-diffusion-webui-forge（原版）与 Haoming02/sd-webui-forge-classic（neo/classic 两分支同仓）。网传的其他『forge-classic』仓库多为仿冒或空档。" }
     }
   ]
 },
@@ -1250,6 +1365,17 @@ const RESOURCES = [
       { label: "模型库 HF", url: "https://huggingface.co/stabilityai" },
       { label: "论文 Latent Diffusion", url: "https://arxiv.org/abs/2112.10752" }
     ]},
+    { name: "SDXL 1.0", role: "第二代 SD 底模（原生 1024，双编码器），当代社区微调生态的底座", links: [
+      { label: "Base 模型卡 HF", url: "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0" },
+      { label: "Refiner 模型卡 HF", url: "https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0" },
+      { label: "SDXL 论文", url: "https://arxiv.org/abs/2307.01952" }
+    ]},
+    { name: "SD3.5", role: "Stability 第三代（MMDiT+流匹配），Large 8B / Medium 2.5B，Community License", links: [
+      { label: "Large 模型卡 HF", url: "https://huggingface.co/stabilityai/stable-diffusion-3.5-large" },
+      { label: "Medium 模型卡 HF", url: "https://huggingface.co/stabilityai/stable-diffusion-3.5-medium" },
+      { label: "架构论文（Rectified Flow）", url: "https://arxiv.org/abs/2403.03206" },
+      { label: "官方公告", url: "https://stability.ai/news-updates/stable-diffusion-3" }
+    ]},
     { name: "DALL·E 3", role: "OpenAI 文生图，与 ChatGPT 集成，理解力强", links: [
       { label: "官网", url: "https://openai.com/dall-e-3" },
       { label: "API 文档", url: "https://platform.openai.com/docs/guides/images" }
@@ -1264,7 +1390,9 @@ const RESOURCES = [
     ]},
     { name: "Flux", role: "新一代高质量开源/半开源模型，原 SD 团队创办", links: [
       { label: "官网 Black Forest Labs", url: "https://blackforestlabs.ai/" },
-      { label: "模型库 HF", url: "https://huggingface.co/black-forest-labs" }
+      { label: "模型库 HF", url: "https://huggingface.co/black-forest-labs" },
+      { label: "FLUX.2 发布博客", url: "https://bfl.ai/blog/flux-2" },
+      { label: "ComfyUI Flux 中文教程", url: "https://docs.comfy.org/zh/tutorials/flux/flux-1-text-to-image" }
     ]},
     { name: "WAI-illustrious", role: "社区最热开源动漫模型，Illustrious XL 系微调，角色召回强", links: [
       { label: "Civitai 模型页", url: "https://civitai.com/models/827184/wai-illustrious-sdxl" },
@@ -1330,7 +1458,9 @@ const RESOURCES = [
       { label: "Wiki 文档", url: "https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki" }
     ]},
     { name: "Forge (SD WebUI Forge)", role: "lllyasviel 的 A1111 高性能分支，低显存优化", links: [
-      { label: "GitHub", url: "https://github.com/lllyasviel/stable-diffusion-webui-forge" }
+      { label: "GitHub", url: "https://github.com/lllyasviel/stable-diffusion-webui-forge" },
+      { label: "官方 Flux 教程 1（量化/显存）", url: "https://github.com/lllyasviel/stable-diffusion-webui-forge/discussions/981" },
+      { label: "扩展兼容性替代索引", url: "https://github.com/lllyasviel/stable-diffusion-webui-forge/discussions/1754" }
     ]},
     { name: "Forge Neo", role: "社区接手的 Forge 活跃分支，支持 Z-Image/Anima/Krea 2 等新模型", links: [
       { label: "GitHub (neo 分支)", url: "https://github.com/Haoming02/sd-webui-forge-classic/tree/neo" },
@@ -1503,7 +1633,9 @@ const RESOURCE_MAP = [
   { names: ["Midjourney", "MJ"], resCat: "基础模型", resName: "Midjourney", secId: "models", blockIdx: 2 },
   { names: ["NovelAI", "NAI"], resCat: "基础模型", resName: "NovelAI", secId: "models", blockIdx: 3 },
   { names: ["Banana AI", "Banana", "Banana.dev"], resCat: "算力与部署", resName: "Banana.dev", secId: "models", blockIdx: 4 },
-  { names: ["Flux", "FLUX"], resCat: "基础模型", resName: "Flux", secId: "models", blockIdx: 5 },
+  { names: ["Flux", "FLUX", "FLUX.1", "FLUX.2", "Kontext", "Black Forest Labs", "BFL", "黑森林"], resCat: "基础模型", resName: "Flux", secId: "models", blockIdx: 19 },
+  { names: ["SDXL", "Stable Diffusion XL", "SDXL 1.0", "SDXL Turbo", "Refiner"], resCat: "基础模型", resName: "SDXL 1.0", secId: "models", blockIdx: 17 },
+  { names: ["SD3", "SD3.5", "Stable Diffusion 3", "MMDiT", "Rectified Flow"], resCat: "基础模型", resName: "SD3.5", secId: "models", blockIdx: 18 },
   { names: ["WAI", "WAI-illustrious", "WAI Illustrious"], resCat: "基础模型", resName: "WAI-illustrious", secId: "models", blockIdx: 7 },
   { names: ["Anima", "Anima Base", "CircleStone"], resCat: "基础模型", resName: "Anima", secId: "models", blockIdx: 8 },
   { names: ["Krea 2", "Krea"], resCat: "基础模型", resName: "Krea 2", secId: "models", blockIdx: 9 },
@@ -1513,7 +1645,8 @@ const RESOURCE_MAP = [
   { names: ["GPT-Image", "GPT Image", "gpt-image", "ChatGPT Images"], resCat: "基础模型", resName: "GPT-Image", secId: "models", blockIdx: 13 },
   { names: ["Illustrious", "Illustrious XL", "illu", "ILXL", "OnomaAI"], resCat: "基础模型", resName: "Illustrious XL", secId: "models", blockIdx: 14 },
   { names: ["Forge", "SD WebUI Forge", "WebUI Forge"], resCat: "工具与界面", resName: "Forge (SD WebUI Forge)", secId: "tools", blockIdx: 4 },
-  { names: ["Forge Neo", "forge-neo", "Forge Classic", "sd-webui-forge-classic"], resCat: "工具与界面", resName: "Forge Neo", secId: "tools", blockIdx: 5 },
+  { names: ["Forge Neo", "forge-neo", "Forge Classic", "sd-webui-forge-classic", "reForge"], resCat: "工具与界面", resName: "Forge Neo", secId: "tools", blockIdx: 5 },
+  { names: ["UNet Patcher", "GPU Weight", "NF4", "GGUF", "Nunchaku"], resCat: "工具与界面", resName: "Forge (SD WebUI Forge)", secId: "tools", blockIdx: 4 },
   { names: ["加速LoRA", "加速 LoRA", "Lightning", "SDXL Lightning", "Hyper-SD", "LCM", "Turbo", "蒸馏"], resCat: "微调与控制技术", resName: "加速 LoRA (Lightning/Hyper-SD)", secId: "fine-tuning", blockIdx: 5 },
   { names: ["ComfyUI"], resCat: "工具与界面", resName: "ComfyUI", secId: "tools", blockIdx: 1 },
   { names: ["WebUI", "AUTOMATIC1111", "A1111", "SD WebUI"], resCat: "工具与界面", resName: "AUTOMATIC1111 WebUI", secId: "tools", blockIdx: 0 },
