@@ -381,8 +381,9 @@ ul { list-style: none; }
   scroll-margin-top: 24px;
 }
 .block-head {
-  display: flex; align-items: center; gap: 12px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
   margin-bottom: 18px;
+  padding-right: 150px; /* 避让 .kb-block-actions（absolute top:16 right:0，坑#10） */
 }
 .block-head .glyph {
   font-family: var(--font-display);
@@ -1463,10 +1464,11 @@ textarea.kb-input { resize: vertical; min-height: 60px; line-height: 1.6; }
   color: var(--c-amber); border: 1px solid rgba(255,184,0,.35); background: rgba(255,184,0,.08);
 }
 /* 模型时间标注徽章（阶段25） */
-.meta-chips { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0; flex-wrap: wrap; }
+.meta-chips { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0; flex-wrap: wrap; }
 .meta-chips .chip {
-  font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; letter-spacing: .04em;
-  padding: 2px 9px; border-radius: 100px; white-space: nowrap;
+  font-family: inherit; font-size: 12px; font-weight: 600; letter-spacing: .02em;
+  padding: 3px 11px; border-radius: 100px; white-space: nowrap;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
 }
 .chip-date { color: var(--text-1, #c7cdd9); border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.05); }
 .chip-active { color: #35d49a; border: 1px solid rgba(53,212,154,.4); background: rgba(53,212,154,.08); }

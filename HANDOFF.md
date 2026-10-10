@@ -64,7 +64,7 @@ assets/             mascot.png、favicon-32/64/180.png
 7. **`network.html` 中边与流光必须挂在 `nodeGroup` 下**（与节点同步旋转），否则旋转时连线与节点脱节。
 8. **LineBasicMaterial 线宽在 WebGL 无效**，粗连线须用 `TubeGeometry`。
 9. **折叠补充阅读子章节（阶段 17 建、阶段 21 修正）**：block 加 `sub: true, parentIdx: N` 即渲染为同 section 第 N 块内的折叠面板。锚点 id 不变（仍 `-bN`、数组索引不变），但 **DOM 已嵌套进父块**——任何按 `.block` DOM 顺序索引的查询都会错位，必须按锚点 id 查找（`scrollToBlock` 已改造）。**面板展开位置：在 `.sub-toggles` 栏内紧跟自己的按钮（insertAdjacentElement 'afterend'，DOM 为 [btn,panel] 交替）——这是用户钦定设计，勿改回面板堆叠式**。`sub` 与 `comm` 同设时 comm 优先。
-10. **`.kb-block-actions`（社区悬浮按钮）opacity:0 时仍拦截点击**（z-index:5, absolute right:0）——凡在 block 右上角新增可点控件，z-index 须 >5，或像 `.block.sub-block .kb-block-actions { top:-14px }` 一样错位。
+10. **`.kb-block-actions`（社区悬浮按钮）opacity:0 时仍拦截点击**（z-index:5, absolute right:0）——凡在 block 右上角新增可点控件，z-index 须 >5，或像 `.block.sub-block .kb-block-actions { top:-14px }` 一样错位。**`.block-head` 已统一 `padding-right:150px` 为其让位（meta 时间徽章依赖此避让，勿删）**；徽章字体须 ≥12px 非等宽（10.5px mono 在暗底上发虚，用户已点名）。
 11. **fade-in 入场动画的 IO threshold 与超高章节冲突（阶段25 P0 修复）**：`.fade-in` 初始 opacity:0，靠 IntersectionObserver 加 `.visible`。threshold 必须为 **0**（进入视口即触发）——曾用 0.08，导致高度 >12 倍视口的章节（如 models 14595px）**永远不可见**（视口占比最大仅 ~6%），即用户所见『主流模型经常显示不出』。以后再加章节只会更高，切勿把 threshold 调回非 0。
 
 ### 社区共建相关（阶段 15 新增）
