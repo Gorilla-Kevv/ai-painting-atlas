@@ -1,8 +1,8 @@
 # PROGRESS — AI 生图知识图谱
 
-## 进度看板（10.10 02:40 更新 · 阶段 25 已完成）
-- 分支策略：`knowledge-expansion`（知识条目扩充专用）↔ `main`（发布线）——阶段 24/25 按用户指定直接在 `main` 进行；P0 修复（阶段 25 内）已推送上线（`6c19330`），阶段 25 数据部分待推送
-- 当前正在开发任务：无（阶段 25 已完成并校验）
+## 进度看板（10.10 12:55 更新 · 阶段 26 已完成）
+- 分支策略：`knowledge-expansion`（知识条目扩充专用）↔ `main`（发布线）——阶段 23–25 已推送上线（含 P0 与两轮 UI 热修）；阶段 26 按用户指定直接在 `main` 完成（待推送）
+- 当前正在开发任务：无（阶段 26 已完成并校验）
 - 下一阶段任务：待定（候选见 HANDOFF「下一步」）
 - 可提前进行的任务：投稿限流加固（RLS 每人 ≤5 条 pending）
 - 未完成的任务：3D 图谱 / 思维导图纳入阶段 16–21 新增条目（债务项，需评估性能）
@@ -36,6 +36,7 @@
 | 23 | SD 家族与 Forge 深度扩充 | SDXL / SD3.5 / FLUX 三个专块 + Forge 两篇折叠选读（架构硬核/三条线实战），术语+10 资源卡+2 | ✅ |
 | 24 | 模型目录与文件家族扩充 | MiniMax H3 专块 + ComfyUI 模型目录选读 + ControlNet v1.1 全家族选读，术语+8 资源卡+4 | ✅ |
 | 25 | Nano Banana/GPT-Image + 模型时间标注 | NB 专块、GPT Image 2 时间线修正、18 模型块 📅/🔄/现役徽章、DALL·E 3 与 Banana.dev 退役标注；含 P0 修复（IO threshold） | ✅ |
+| 26 | Kontext/Newbie/Chenkin + 谱系重排 | 新增 Kontext/CKXL/NewBie 三块、models 25 块按谱系重排+映射重算、NB 2.1 近况、承接句 5 处 | ✅ |
 
 ## 阶段 15
 
@@ -229,6 +230,26 @@
 - **下一阶段入口**：推送发布（待用户发起）/ 采样器与调度器专题 / 3D 图谱与思维导图纳入 16–25 阶段新增条目（债务项）
 - **UI 热修（用户报障，随本阶段收尾）**：①meta 徽章与「✚补充/✎编辑」悬浮按钮右上角重叠 → `.block-head` 统一 `padding-right:150px` 避让 + `flex-wrap`；②徽章 10.5px 等宽小字发虚 → 改 12px Manrope 加字体平滑；③按钮与徽章行不水平对齐 → `.kb-block-actions` top 16px→1px（按头部行 29px/按钮 28px 量算，实测中心差 0.6px）。截图目验通过；style.css → `20261010c`（四页）；坑#10 已扩充
 - **本次文档更新时间**：10.10 03:20
+
+## 阶段 26 Kontext/Newbie/Chenkin 扩充 + 模型章节谱系重排 [计划时间：10.10 12:35 BY Qoder][完成时间：10.10 12:53 BY Qoder]
+
+- **分支**：`main`（用户指定直改）
+- **素材来源**：用户点名 3 项（FLUX Kontext、NewBie-AI、ChenkinLab）+ Nano Banana 2.1 近况；4 个并发联网子任务核实（检索日期 2026-10-10；CSDN 内容农场评测一律不采信；gated/v1.0 传闻等存疑项未写死）
+- **已完成**：
+  - **models 新增 3 块**：b4「FLUX.1 Kontext（指令改图）」（2025-05 pro/06-27 dev 权重、arXiv:2506.15767、无蒙版多轮编辑、guidance 2.5、fp8/GGUF/Nunchaku 显存梯度、dev 非商用但产出可商用、与 NB/GPT-Image 并称改图三强）；b7「ChenkinNoob-XL（CKXL）」（NoobAI-XL 1.1 微调、Laxhar 原厂顾问、V0.1→V0.5 版本线、217 万游戏原画数据、fair-ai 许可、与 WAI 选型 callout）；b11「NewBie-image Exp0.1」（中文社区自研 3.5B Next-DiT/Lumina 家族、Gemma3-4B+Jina CLIP+FLUX 16ch VAE、XML 结构化提示词、Newbie-NC-1.0 非商用、ComfyUI 官方教程收录）
+  - **章节顺序审查与谱系重排（本阶段核心手术）**：models 段 22→25 块按谱系重排——开源主干（SD→SDXL→SD3.5→FLUX→Kontext）、二次元链（Illustrious→WAI→CKXL→NAI(+手册)→Anima→NewBie→工作流全景→审查）、闭源对话编辑（NB→GPT-Image→DALL·E→MJ）、国产开源（Seedream→Krea2→Z-Image）、视频（Wan→MiniMax）、平台杂项（Banana.dev→其他）；SD 保持 b0（TUT_MAP 锚点不破）
+  - **重排手术方法（一次性脚本，用毕已删）**：字符串感知大括号解析拆块→按 heading 定位重排→NAI 手册 parentIdx 3→8→RESOURCE_MAP 18 条 models 条目 blockIdx 重算→mindmap-ui.js REF_MAP 与 network-data.js detailRef 的 models-bN 全量重映射（0/8/16/17/23/24）
+  - **上下文承接**：SDXL/Illustrious/WAI/Anima/GPT-Image 等块首段新增「谱系」承接句（上游/下游指向相邻块）；Kontext/NewBie/CKXL 新块自带
+  - **Nano Banana 2.1 近况补写**：10-06 正式商用（changelog、$0.034/1K、旧预览 10-29 计划停用）、10-07 进 AI Studio/Gemini App/OpenRouter/fal、10-09 模型卡+AA 两榜第 4（masked-edit 反超 GPT Image 2.5 Pro）；社区首周实测（中文渲染改善、一致性 +62、长编辑链劣化）
+  - **GLOSSARY +2**（90 条）：ChenkinNoob-XL、NewBie-image；Kontext 术语描述精修（日期/参数/许可纠偏）
+  - **RESOURCES +3 卡**（73 张）：FLUX.1 Kontext dev、ChenkinNoob-XL、NewBie-image（含镜像/训练器/UniControl 链接）
+  - **RESOURCE_MAP +3**（54 条，0 错误）：Kontext→b4、CKXL→b7、NewBie→b11
+  - 版本号：data.js `20261010d`、mindmap-ui.js `20261010a`、network-data.js `20261010a`
+- **测试结果**：`node --check` 三文件全过；结构校验 models=25、sub parentIdx 有效、RESOURCE_MAP 54/TUT_MAP 全解析 0 错误、术语 90、资源卡 73；浏览器实测（localhost:8012）：新顺序渲染正确（b4 Kontext/b7 CKXL/b11 NewBie/b14 NB/b23 Banana.dev）、NAI 折叠手册正确嵌套于 b8 且可展开、Kontext 徽章正常、console 无站点报错。预览服务用毕已停
+- **改动文件**：`js/data.js`（+3 块、重排、5 处承接句、NB 近况、术语+2、卡+3、映射+3）、`js/mindmap-ui.js`（REF_MAP 重映射）、`js/network-data.js`（detailRef 重映射）、`index.html`/`network.html`（版本号）、`PROGRESS.md`/`HANDOFF.md`
+- **风险**：**重排改变了 models-bN 锚点**——外部已分享的旧链接（如 #models-b6 指旧 NAI 手册、#models-b5 指旧『其他模型』）会落到新含义的块（手册现为 b9、其他为 b24）；社区外链目前仅站内与思维导图/3D 图引用，均已重映射，风险限于用户自己收藏的旧链接。CKXL/NewBie 属小众/新发布模型，热度与版本线半年内复查
+- **下一阶段入口**：推送发布（待用户发起）/ 采样器与调度器专题 / 3D 图谱与思维导图纳入 16–26 阶段新增条目（债务项）
+- **本次文档更新时间**：10.10 12:53
 
 ## 当前风险与债务
 

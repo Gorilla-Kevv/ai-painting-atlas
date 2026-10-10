@@ -27,11 +27,11 @@ window.NETWORK_DATA = {
 
     /* ---- 主流模型 M ---- */
     { id: "m-sd", label: "Stable Diffusion", cat: "M", blurb: "开源潜扩散模型，生态核心，可在消费级显卡运行。", detailRef: "index.html#models-b0", tut: "docs.html#sd" },
-    { id: "m-dalle", label: "DALL·E 3", cat: "M", blurb: "OpenAI 文生图，与 ChatGPT 集成，理解力强。", detailRef: "index.html#models-b1" },
-    { id: "m-mj", label: "Midjourney", cat: "M", blurb: "闭源商业模型，艺术质感出众，付费订阅。", detailRef: "index.html#models-b2" },
-    { id: "m-nai", label: "NovelAI", cat: "M", blurb: "二次元付费平台，基于 SD 二次训练，动漫风格突出。", detailRef: "index.html#models-b3" },
-    { id: "m-flux", label: "Flux", cat: "M", blurb: "新一代半开源模型，原 SD 团队创办，文本理解极强。", detailRef: "index.html#models-b5" },
-    { id: "m-banana", label: "Banana AI", cat: "M", blurb: "无服务器 GPU 平台，把 SD 部署为 API（非画图模型）。", detailRef: "index.html#models-b4", tut: "docs.html#cloud" },
+    { id: "m-dalle", label: "DALL·E 3", cat: "M", blurb: "OpenAI 文生图，与 ChatGPT 集成，理解力强。", detailRef: "index.html#models-b16" },
+    { id: "m-mj", label: "Midjourney", cat: "M", blurb: "闭源商业模型，艺术质感出众，付费订阅。", detailRef: "index.html#models-b17" },
+    { id: "m-nai", label: "NovelAI", cat: "M", blurb: "二次元付费平台，基于 SD 二次训练，动漫风格突出。", detailRef: "index.html#models-b8" },
+    { id: "m-flux", label: "Flux", cat: "M", blurb: "新一代半开源模型，原 SD 团队创办，文本理解极强。", detailRef: "index.html#models-b24" },
+    { id: "m-banana", label: "Banana AI", cat: "M", blurb: "无服务器 GPU 平台，把 SD 部署为 API（非画图模型）。", detailRef: "index.html#models-b23", tut: "docs.html#cloud" },
     { id: "m-sd3", label: "SD3", cat: "M", blurb: "引入多模态 Transformer，文本理解大幅提升。", detailRef: "index.html#models-b0" },
 
     /* ---- 整合方案与工具 T ---- */
