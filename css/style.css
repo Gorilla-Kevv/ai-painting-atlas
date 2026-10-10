@@ -1394,7 +1394,7 @@ textarea.kb-input { resize: vertical; min-height: 60px; line-height: 1.6; }
 /* block 悬浮操作：✚ 补充 / ✎ 编辑 */
 .block { position: relative; }
 .kb-block-actions {
-  position: absolute; top: 16px; right: 0; z-index: 5;
+  position: absolute; top: 1px; right: 0; z-index: 5; /* top≈头部行垂直居中对齐（行高29/按钮28），勿回16px */
   display: flex; gap: 6px; opacity: 0; transition: opacity .2s;
 }
 .block:hover .kb-block-actions, .kb-block-actions:focus-within { opacity: 1; }

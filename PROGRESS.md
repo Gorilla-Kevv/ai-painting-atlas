@@ -227,8 +227,8 @@
 - **改动文件**：`js/data.js`、`js/app.js`、`css/style.css`、`index.html`、`docs.html`、`admin.html`、`network.html`、`PROGRESS.md`、`HANDOFF.md`
 - **风险**：MJ V1 公测日（2022-07）与 WAI v1.0 首发月为通说未精核；NB 免费额度、Pro 分辨率上限（2K/4K 两说）等存疑项已按保守表述；2026 模型月更节奏下 meta 数据建议每季度复查
 - **下一阶段入口**：推送发布（待用户发起）/ 采样器与调度器专题 / 3D 图谱与思维导图纳入 16–25 阶段新增条目（债务项）
-- **UI 热修（用户报障，随本阶段收尾）**：meta 徽章与「✚补充/✎编辑」悬浮按钮右上角重叠 → `.block-head` 统一 `padding-right:150px` 避让 + `flex-wrap`；徽章 10.5px 等宽小字发虚 → 改 12px Manrope 加字体平滑。截图目验无重叠、文字清晰；style.css → `20261010b`（四页）；坑#10 已扩充
-- **本次文档更新时间**：10.10 03:05
+- **UI 热修（用户报障，随本阶段收尾）**：①meta 徽章与「✚补充/✎编辑」悬浮按钮右上角重叠 → `.block-head` 统一 `padding-right:150px` 避让 + `flex-wrap`；②徽章 10.5px 等宽小字发虚 → 改 12px Manrope 加字体平滑；③按钮与徽章行不水平对齐 → `.kb-block-actions` top 16px→1px（按头部行 29px/按钮 28px 量算，实测中心差 0.6px）。截图目验通过；style.css → `20261010c`（四页）；坑#10 已扩充
+- **本次文档更新时间**：10.10 03:20
 
 ## 当前风险与债务
 
