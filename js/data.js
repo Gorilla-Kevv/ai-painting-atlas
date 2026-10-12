@@ -1673,10 +1673,12 @@ const RESOURCES = [
       { label: "GitHub", url: "https://github.com/Comfy-Org/ComfyUI-Manager" },
       { label: "Comfy Registry", url: "https://registry.comfy.org/" }
     ]},
-    { name: "ComfyUI 工作流资源", role: "官方 Hub 与社区工作流站入口", links: [
+    { name: "ComfyUI 工作流资源", role: "官方 Hub 与社区工作流站/入门示范合集", links: [
       { label: "Comfy Hub（官方）", url: "https://comfy.org/workflows" },
       { label: "官方示例集", url: "https://comfyanonymous.github.io/ComfyUI_examples/" },
-      { label: "ComfyWorkflows", url: "https://comfyworkflows.com/" }
+      { label: "ComfyWorkflows（分享站）", url: "https://comfyworkflows.com/" },
+      { label: "基础工作流示范（cubiq）", url: "https://github.com/cubiq/ComfyUI_Workflows" },
+      { label: "基础工作流示范（wyrde）", url: "https://github.com/wyrde/wyrde-comfyui-workflows" }
     ]},
     { name: "秋叶整合包 / 绘世启动器", role: "民间打包的 SD 开箱即用环境（无单一官网）", links: [
       { label: "B 站搜索『秋叶』", url: "https://search.bilibili.com/all?keyword=%E7%A7%8B%E5%8F%B" }
@@ -1718,6 +1720,10 @@ const RESOURCES = [
     ]},
     { name: "Real-ESRGAN", role: "图像放大算法与模型，补足细节", links: [
       { label: "GitHub", url: "https://github.com/xinntao/Real-ESRGAN" }
+    ]},
+    { name: "NovelAI 标签工具（tags / spell）", role: "NovelAI 社区标签站：标签超市浏览组合 + 原图反推提取标签", links: [
+      { label: "标签超市（浏览/解析组合）", url: "https://tags.novelai.dev/" },
+      { label: "原图提取标签", url: "https://spell.novelai.dev/" }
     ]}
   ]},
 
@@ -1775,6 +1781,13 @@ const RESOURCES = [
     ]},
     { name: "OpenXLab 浦源", role: "上海 AI 实验室开源模型与算力平台", links: [
       { label: "官网", url: "https://openxlab.org.cn" }
+    ]},
+    { name: "模型分享资源（网盘 / B站合集）", role: "社区整理的模型打包分享（夸克网盘 + B站按时间线合集）；网盘/视频链接时效性弱，失效请回退至 Civitai·HF·Liblib", links: [
+      { label: "常用模型合集（夸克网盘）", url: "https://pan.quark.cn/s/32f374eef667" },
+      { label: "模型分享 · 2023.04（B站）", url: "https://www.bilibili.com/video/BV1em4y1z7Dg" },
+      { label: "模型分享 · 2023.05–06（B站）", url: "https://www.bilibili.com/video/BV1Nk4y1T7ft" },
+      { label: "模型分享 · 2023.07–09（B站）", url: "https://www.bilibili.com/video/BV1v8411y7uR" },
+      { label: "模型分享 · 2024.01（B站）", url: "https://www.bilibili.com/video/BV14a4y127DA" }
     ]}
   ]},
 
@@ -1886,7 +1899,10 @@ const RESOURCE_MAP = [
   { names: ["Nano Banana", "纳米香蕉", "Gemini Image", "NB2", "Gemini 2.5 Flash Image", "Gemini 3 Pro Image"], resCat: "基础模型", resName: "Nano Banana", secId: "models", blockIdx: 14 },
   { names: ["Kontext", "FLUX.1 Kontext", "指令改图"], resCat: "基础模型", resName: "FLUX.1 Kontext dev", secId: "models", blockIdx: 4 },
   { names: ["ChenkinNoob", "CKXL", "ChenkinLab", "Chenkin"], resCat: "基础模型", resName: "ChenkinNoob-XL", secId: "models", blockIdx: 7 },
-  { names: ["NewBie", "NewBie-image", "NewBieAI", "Next-DiT"], resCat: "基础模型", resName: "NewBie-image", secId: "models", blockIdx: 11 }
+  { names: ["NewBie", "NewBie-image", "NewBieAI", "Next-DiT"], resCat: "基础模型", resName: "NewBie-image", secId: "models", blockIdx: 11 },
+  { names: ["工作流示范", "ComfyUI_Workflows", "cubiq", "wyrde", "工作流分享", "ComfyWorkflows", "工作流地图"], resCat: "工具与界面", resName: "ComfyUI 工作流资源", secId: "tools", blockIdx: 8 },
+  { names: ["标签超市", "tags.novelai", "spell.novelai", "提取标签", "反推标签", "NovelAI 标签"], resCat: "工具与界面", resName: "NovelAI 标签工具（tags / spell）", secId: "tools", blockIdx: 9 },
+  { names: ["模型分享", "夸克网盘", "pan.quark", "B站模型", "模型合集"], resCat: "社区与平台", resName: "模型分享资源（网盘 / B站合集）", secId: "community", blockIdx: 2 }
 ];
 
 /* ---------- 参考书↔配置教程 双向跳转映射 ----------
